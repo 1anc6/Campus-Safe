@@ -6,7 +6,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const DEFAULT_APP_NAME = "Grok App";
+export const DEFAULT_APP_NAME = "CampusSafe";
 export const OG_SERVICE_URL_DEFAULT = "https://og.grok.me";
 export const OG_SITE_REL_PATH = "src/lib/og/site.json";
 
@@ -112,8 +112,22 @@ export function publicAppHost(hostHeader) {
  */
 export function resolvePublicHost(hostHeader) {
   return (
-    publicAppHost(process.env?.VITE_PUBLIC_HOSTNAME) || publicAppHost(hostHeader)
+    publicAppHost(process.env?.VITE_PUBLIC_HOSTNAME) ||
+    vercelProductionHost() ||
+    publicAppHost(hostHeader)
   );
+}
+
+/**
+ * Self-hosted on Vercel: the project's production domain (e.g.
+ * campus-safe.vercel.app) is public — only preview deployments sit behind
+ * Vercel's login — so share cards can point their image there.
+ */
+function vercelProductionHost() {
+  const host = String(process.env?.VERCEL_PROJECT_PRODUCTION_URL ?? "")
+    .trim()
+    .toLowerCase();
+  return /^[a-z0-9.-]+$/.test(host) && host.includes(".") ? host : "";
 }
 
 export function isInstallQuery(url) {

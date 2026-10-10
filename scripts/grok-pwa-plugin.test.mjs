@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
+  DEFAULT_APP_NAME,
   appNameFromHost,
   createHeadInjector,
   grokXCreatorHeadTags,
@@ -449,14 +450,14 @@ test("strips install params from the app link", () => {
 });
 
 test("names the install page from host slug", () => {
-  assert.equal(appNameFromHost("localhost:8080"), "Grok App");
-  assert.equal(appNameFromHost("172.17.154.217:8080"), "Grok App");
+  assert.equal(appNameFromHost("localhost:8080"), DEFAULT_APP_NAME);
+  assert.equal(appNameFromHost("172.17.154.217:8080"), DEFAULT_APP_NAME);
   assert.equal(appNameFromHost("wild-race.grok.me"), "Wild Race");
 });
 
 test("rejects hosts that are not plain slugs", () => {
-  assert.equal(appNameFromHost("<script>alert(1)</script>"), "Grok App");
-  assert.equal(appNameFromHost('"><img src=x onerror=1>.grok.me'), "Grok App");
+  assert.equal(appNameFromHost("<script>alert(1)</script>"), DEFAULT_APP_NAME);
+  assert.equal(appNameFromHost('"><img src=x onerror=1>.grok.me'), DEFAULT_APP_NAME);
 });
 
 test("renders install page markup", () => {
