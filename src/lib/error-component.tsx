@@ -1,5 +1,6 @@
 import { useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { TriangleAlert } from "lucide-react";
+import { forgetViewer } from "@/lib/auth/viewer-cache";
 
 const FALLBACK_MESSAGE = "An unexpected error occurred. Try reloading the page.";
 
@@ -22,6 +23,7 @@ export function AppErrorComponent({ error, reset }: ErrorComponentProps) {
         type="button"
         onClick={() => {
           reset();
+          forgetViewer();
           void router.invalidate();
         }}
         className="btn-ghost mt-2"

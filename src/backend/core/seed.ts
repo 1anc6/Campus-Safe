@@ -130,15 +130,25 @@ function sampleDataEnabled(): boolean {
   return dbSource === "pglite" || process.env.SEED_SAMPLE_DATA?.trim() === "true";
 }
 
+const seedState = globalThis as typeof globalThis & { __seedChecked__?: boolean };
+
+/**
+ * Runs on every page change (via getViewer), so once this server process knows
+ * seeding is done it skips the database check entirely.
+ */
 export async function ensureSeedData() {
-  if (!sampleDataEnabled()) return;
+  if (seedState.__seedChecked__ || !sampleDataEnabled()) return;
   const sql = await getSql();
   const flag = await sql<{ value: string }>`select value from app_meta where key = ${"seeded"}`;
-  if (flag[0]?.value === "1") return;
+  if (flag[0]?.value === "1") {
+    seedState.__seedChecked__ = true;
+    return;
+  }
 
   const existing = await sql<{ n: number }>`select count(*)::int as n from incidents`;
   if ((existing[0]?.n ?? 0) > 0) {
     await sql`insert into app_meta (key, value) values (${"seeded"}, ${"1"}) on conflict (key) do nothing`;
+    seedState.__seedChecked__ = true;
     return;
   }
 

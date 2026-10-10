@@ -10,6 +10,10 @@ export function getRouter() {
     // Shown while guards resolve the session on slow connections.
     defaultPendingComponent: BootScreen,
     defaultPendingMs: 400,
+    // Start loading a page's code and checks as soon as the pointer hovers (or a
+    // finger touches) its link, so it's ready by the time the click lands.
+    defaultPreload: "intent",
+    defaultPreloadDelay: 50,
     scrollRestoration: true,
   });
 }

@@ -28,6 +28,7 @@ import { authClient } from "@/lib/auth/client";
 import { changeMyEmail, getMyProfile, updateMyProfile } from "@/backend/functions/profile";
 import { BLOOD_GROUPS, type BloodGroup, type MyProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { forgetViewer } from "@/lib/auth/viewer-cache";
 
 /* ------------------------------------------------------------------ context */
 
@@ -195,6 +196,7 @@ function PanelBody({
       const next = await updateMyProfile({ data: form });
       onSaved(next);
       setForm(toForm(next));
+      forgetViewer();
       await router.invalidate(); // refresh the name shown across the app
       toast.success("Profile saved");
     } catch {
@@ -639,6 +641,7 @@ function EmailChanger({
       const res = await changeMyEmail({ data: { email: email.trim(), currentPassword: password } });
       if (!res.ok) return setError(res.error);
       onChanged(res.profile);
+      forgetViewer();
       await router.invalidate();
       toast.success("Email updated — use it next time you sign in");
       setEditing(false);

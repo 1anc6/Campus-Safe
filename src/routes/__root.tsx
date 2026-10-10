@@ -4,6 +4,7 @@ import { PreviewHostBridge } from "@/components/shared/preview-host-bridge";
 import { BrandMark } from "@/components/shared/brand";
 import { BRAND } from "@/lib/brand";
 import { getViewer } from "@/backend/functions/viewer";
+import { rememberedViewer, rememberViewer } from "@/lib/auth/viewer-cache";
 import { THEME_BOOT_SCRIPT, useTheme } from "@/lib/theme";
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
@@ -11,7 +12,16 @@ import appCss from "../styles.css?url";
 export const Route = createRootRoute({
   // The verified viewer (role from the database) for every route guard below.
   // A failed lookup is treated as signed out rather than crashing the page.
-  beforeLoad: async () => ({ viewer: await getViewer().catch(() => null) }),
+  // In the browser, a recent answer is reused (30 s) so page switches are
+  // instant; the server re-checks the session on every data call regardless.
+  beforeLoad: async () => {
+    const isBrowser = typeof window !== "undefined";
+    const remembered = isBrowser ? rememberedViewer() : null;
+    if (remembered) return { viewer: remembered };
+    const viewer = await getViewer().catch(() => null);
+    if (isBrowser) rememberViewer(viewer);
+    return { viewer };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },

@@ -7,6 +7,7 @@ import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { BRAND } from "@/lib/brand";
 import { postLoginDestination } from "@/lib/roles";
 import { getViewer, prepareSignIn } from "@/backend/functions/viewer";
+import { forgetViewer } from "@/lib/auth/viewer-cache";
 
 type LoginSearch = { redirect?: string };
 
@@ -77,6 +78,7 @@ function Login() {
         "Signed in, but this browser blocked the session. Open the app at http://localhost:8080 or over HTTPS.",
       );
     }
+    forgetViewer();
     await router.invalidate();
     await navigate({ href: postLoginDestination(viewer.role, redirectTo), replace: true });
   }

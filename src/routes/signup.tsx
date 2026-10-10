@@ -5,6 +5,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { applySessionToken, authClient, authEnabled } from "@/lib/auth/client";
 import { postLoginDestination } from "@/lib/roles";
 import { getViewer } from "@/backend/functions/viewer";
+import { forgetViewer } from "@/lib/auth/viewer-cache";
 
 type SignupSearch = { redirect?: string };
 
@@ -79,6 +80,7 @@ function Signup() {
       await navigate({ to: "/login", search: { redirect: redirectTo }, replace: true });
       return;
     }
+    forgetViewer();
     await router.invalidate();
     await navigate({ href: postLoginDestination(viewer.role, redirectTo), replace: true });
   }
