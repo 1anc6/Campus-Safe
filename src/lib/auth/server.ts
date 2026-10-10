@@ -103,14 +103,23 @@ const LOCAL_DEV_ORIGINS: string[] = [
   "http://127.0.0.1:8080",
   "http://[::1]:8080",
 ];
+// On Vercel, the deployment's own addresses (production domain, branch and
+// per-deploy preview URLs) arrive as system env vars — trust them automatically
+// so sign-in works even before BETTER_AUTH_URL is configured.
+const vercelHosts: string[] = [
+  env("VERCEL_PROJECT_PRODUCTION_URL"),
+  env("VERCEL_BRANCH_URL"),
+  env("VERCEL_URL"),
+].filter((h): h is string => Boolean(h));
+
 const baseURL = explicitBaseURL ?? {
   // Include loopback hosts so dynamic baseURL resolves for local email/password
   // (not only the preview wildcard).
-  allowedHosts: [...previewAllowedHosts, "localhost", "127.0.0.1", "[::1]"],
+  allowedHosts: [...previewAllowedHosts, ...vercelHosts, "localhost", "127.0.0.1", "[::1]"],
   // `auto` → trust both http:// and https:// expansions of allowedHosts
   // (preview is https; local dev is http).
   protocol: "auto" as const,
-  fallback: "http://localhost:8080",
+  fallback: vercelHosts[0] ? `https://${vercelHosts[0]}` : "http://localhost:8080",
 };
 
 // Origins Better Auth accepts on credentialed POSTs (sign-up/sign-in, etc.).
@@ -137,7 +146,8 @@ function hostnameIsTrusted(hostname: string): boolean {
 }
 
 const STATIC_TRUSTED_ORIGINS: string[] = [
-  ...(explicitBaseURL ? [explicitBaseURL] : []),
+  ...(explicitBaseURL ? [explicitBaseURL.replace(/\/+$/, "")] : []),
+  ...vercelHosts.map((h) => `https://${h}`),
   ...LOCAL_DEV_ORIGINS,
   "http://localhost:5173",
   "http://127.0.0.1:5173",
