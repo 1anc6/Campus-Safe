@@ -1,15 +1,9 @@
-import {
-  createRootRoute,
-  HeadContent,
-  Link,
-  Outlet,
-  Scripts,
-} from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
-import { PreviewHostBridge } from "@/components/preview-host-bridge";
-import { BrandMark } from "@/components/brand";
+import { PreviewHostBridge } from "@/components/shared/preview-host-bridge";
+import { BrandMark } from "@/components/shared/brand";
 import { BRAND } from "@/lib/brand";
-import { getViewer } from "@/lib/server/viewer";
+import { getViewer } from "@/backend/functions/viewer";
 import { THEME_BOOT_SCRIPT, useTheme } from "@/lib/theme";
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";

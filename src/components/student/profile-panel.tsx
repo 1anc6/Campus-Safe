@@ -22,10 +22,10 @@ import {
   type ReactNode,
 } from "react";
 import { toast } from "sonner";
-import { Avatar, SignOutButton } from "@/components/account-menu";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Avatar, SignOutButton } from "@/components/shared/account-menu";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { authClient } from "@/lib/auth/client";
-import { changeMyEmail, getMyProfile, updateMyProfile } from "@/lib/server/profile";
+import { changeMyEmail, getMyProfile, updateMyProfile } from "@/backend/functions/profile";
 import { BLOOD_GROUPS, type BloodGroup, type MyProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 

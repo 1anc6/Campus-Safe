@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { StudentShell } from "@/components/student-shell";
+import { StudentShell } from "@/components/student/student-shell";
 import { requireRole } from "@/lib/auth/guards";
 
 /**

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldOff } from "lucide-react";
-import { SignOutButton } from "@/components/account-menu";
+import { SignOutButton } from "@/components/shared/account-menu";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { homeForRole, roleLabel } from "@/lib/roles";
 

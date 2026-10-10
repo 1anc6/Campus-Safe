@@ -1,10 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight, CircleCheck, FileWarning, FolderOpen, MapPin, Siren, Timer } from "lucide-react";
+import {
+  ChevronRight,
+  CircleCheck,
+  FileWarning,
+  FolderOpen,
+  MapPin,
+  Siren,
+  Timer,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { SeverityChip, StatusPill } from "@/components/pills";
-import { PageHeading } from "@/components/student-shell";
-import { listMyIncidents } from "@/lib/server/reports";
-import { listMySos } from "@/lib/server/sos";
+import { SeverityChip, StatusPill } from "@/components/shared/pills";
+import { PageHeading } from "@/components/student/student-shell";
+import { listMyIncidents } from "@/backend/functions/reports";
+import { listMySos } from "@/backend/functions/sos";
 import type { Incident, SosAlert } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 
@@ -14,7 +22,8 @@ export const Route = createFileRoute("/_student/reports/")({
 });
 
 type Filter = "all" | "sos" | "incident";
-type Row = { kind: "sos"; at: string; sos: SosAlert } | { kind: "incident"; at: string; incident: Incident };
+type Row =
+  { kind: "sos"; at: string; sos: SosAlert } | { kind: "incident"; at: string; incident: Incident };
 
 const OPEN_SOS = new Set(["sent", "received", "assigned", "arrived"]);
 const OPEN_INCIDENT = new Set(["reported", "under_review", "in_progress"]);
@@ -45,7 +54,11 @@ function MyReports() {
   const rows: Row[] = useMemo(() => {
     const all: Row[] = [
       ...(sos ?? []).map((s) => ({ kind: "sos" as const, at: s.startedAt, sos: s })),
-      ...(incidents ?? []).map((i) => ({ kind: "incident" as const, at: i.createdAt, incident: i })),
+      ...(incidents ?? []).map((i) => ({
+        kind: "incident" as const,
+        at: i.createdAt,
+        incident: i,
+      })),
     ];
     return all
       .filter((r) => filter === "all" || r.kind === filter)
@@ -65,17 +78,40 @@ function MyReports() {
 
   return (
     <>
-      <PageHeading eyebrow="History" title="My reports" subtitle="Every SOS and incident you've filed, with live status." />
+      <PageHeading
+        eyebrow="History"
+        title="My reports"
+        subtitle="Every SOS and incident you've filed, with live status."
+      />
 
       <div className="mb-5 grid grid-cols-3 gap-2 sm:gap-3">
-        <Stat icon={FolderOpen} label="Total filed" value={loading ? "–" : total} tone="bg-neon-dim text-neon" />
+        <Stat
+          icon={FolderOpen}
+          label="Total filed"
+          value={loading ? "–" : total}
+          tone="bg-neon-dim text-neon"
+        />
         <Stat icon={Timer} label="Open" value={loading ? "–" : open} tone="bg-warn/15 text-warn" />
-        <Stat icon={CircleCheck} label="Closed" value={loading ? "–" : total - open} tone="bg-ok/15 text-ok" />
+        <Stat
+          icon={CircleCheck}
+          label="Closed"
+          value={loading ? "–" : total - open}
+          tone="bg-ok/15 text-ok"
+        />
       </div>
 
-      <div className="seg mb-4 w-full sm:w-auto sm:self-start [&>button]:flex-1 sm:[&>button]:flex-none" role="group" aria-label="Filter">
+      <div
+        className="seg mb-4 w-full sm:w-auto sm:self-start [&>button]:flex-1 sm:[&>button]:flex-none"
+        role="group"
+        aria-label="Filter"
+      >
         {filters.map((f) => (
-          <button key={f.id} type="button" aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>
+          <button
+            key={f.id}
+            type="button"
+            aria-pressed={filter === f.id}
+            onClick={() => setFilter(f.id)}
+          >
             {f.label} <span className="ml-1 font-mono text-[11px] opacity-70">{f.count}</span>
           </button>
         ))}
@@ -101,7 +137,9 @@ function MyReports() {
             <FileWarning className="size-6" />
           </span>
           <p className="mt-3 font-medium">{filter === "all" ? "No filings yet" : "Nothing here"}</p>
-          <p className="mt-1 text-sm text-muted">Hold the red SOS button in an emergency, or file an incident from Report.</p>
+          <p className="mt-1 text-sm text-muted">
+            Hold the red SOS button in an emergency, or file an incident from Report.
+          </p>
           <Link to="/report" className="btn-neon mt-5">
             Report an incident
           </Link>
@@ -151,7 +189,9 @@ function Stat({
 
 function SosCard({ s }: { s: SosAlert }) {
   const open = OPEN_SOS.has(s.status);
-  const lastedMs = s.resolvedAt ? new Date(s.resolvedAt).getTime() - new Date(s.startedAt).getTime() : null;
+  const lastedMs = s.resolvedAt
+    ? new Date(s.resolvedAt).getTime() - new Date(s.startedAt).getTime()
+    : null;
   const lasted =
     lastedMs == null || open
       ? null

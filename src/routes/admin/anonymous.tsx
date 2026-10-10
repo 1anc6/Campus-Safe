@@ -3,10 +3,10 @@ import { ChevronDown, EyeOff } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Panel, ReplyForm, StatusButtons, ThreadList } from "@/components/admin/case-panels";
-import { AdminPageHeader } from "@/components/admin-shell";
-import { SeverityChip, StatusPill } from "@/components/pills";
-import { listAnonymousAdmin } from "@/lib/server/admin";
-import { postThread, staffSetAnonymousStatus, trackAnonymous } from "@/lib/server/reports";
+import { AdminPageHeader } from "@/components/admin/admin-shell";
+import { SeverityChip, StatusPill } from "@/components/shared/pills";
+import { listAnonymousAdmin } from "@/backend/functions/admin";
+import { postThread, staffSetAnonymousStatus, trackAnonymous } from "@/backend/functions/reports";
 import type { ThreadMessage } from "@/lib/types";
 import { cn, formatClock } from "@/lib/utils";
 
@@ -65,7 +65,12 @@ function AnonymousPage() {
                 <SeverityChip value={r.severity} />
                 <StatusPill status={r.status} />
               </div>
-              <ChevronDown className={cn("mt-1 size-4 shrink-0 text-dim transition-transform", open === r.id && "rotate-180")} />
+              <ChevronDown
+                className={cn(
+                  "mt-1 size-4 shrink-0 text-dim transition-transform",
+                  open === r.id && "rotate-180",
+                )}
+              />
             </button>
             {open === r.id && <AnonymousCase row={r} onChanged={load} />}
           </li>
@@ -100,7 +105,9 @@ function AnonymousCase({ row, onChanged }: { row: Row; onChanged: () => Promise<
             staffSetAnonymousStatus({ data: { id: row.id, status } })
               .then(() => Promise.all([onChanged(), loadThread()]))
               .then(() => toast.success("Status updated"))
-              .catch((err: unknown) => toast.error(err instanceof Error ? err.message : "Action failed"))
+              .catch((err: unknown) =>
+                toast.error(err instanceof Error ? err.message : "Action failed"),
+              )
               .finally(() => setBusy(false));
           }}
         />

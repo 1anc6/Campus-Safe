@@ -10,11 +10,11 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
-import { StatusPill } from "@/components/pills";
-import { LiveDot, ResponderShell } from "@/components/responder-shell";
+import { StatusPill } from "@/components/shared/pills";
+import { LiveDot, ResponderShell } from "@/components/responder/responder-shell";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { directionsUrl, useNow } from "@/lib/responder";
-import { listAssignedSos } from "@/lib/server/sos";
+import { listAssignedSos } from "@/backend/functions/sos";
 import type { SosAlert } from "@/lib/types";
 import { cn, waitLabel } from "@/lib/utils";
 

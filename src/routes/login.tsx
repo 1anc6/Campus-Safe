@@ -1,12 +1,12 @@
 import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { AlertCircle, Eye, EyeOff, LoaderCircle, UserPlus, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AuthLayout } from "@/components/auth-layout";
+import { AuthLayout } from "@/components/auth/auth-layout";
 import { applySessionToken, authClient, authEnabled } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { BRAND } from "@/lib/brand";
 import { postLoginDestination } from "@/lib/roles";
-import { getViewer, prepareSignIn } from "@/lib/server/viewer";
+import { getViewer, prepareSignIn } from "@/backend/functions/viewer";
 
 type LoginSearch = { redirect?: string };
 

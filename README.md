@@ -1,106 +1,114 @@
-# CampusSafe — unified Campus Safety app
+# CampusSafe — Campus Safety Platform
 
-One application for students and campus administrators, merged from the
-**Campus Safety Student** (base: TanStack Start, Better Auth, Postgres) and
-**Campus Safety Admin** (login design, admin layout, incident filters/detail, user
-management) projects.
+A web app that helps students get help fast on campus. Students can raise a
+**hold-to-send SOS** with live GPS, **report incidents** (with a photo), or file an
+**anonymous report**. Campus command watches everything live from an **admin
+console**, and **responders** get their assigned alerts on a field app.
 
-Everyone signs in on the same page, `/login`. The account's role decides where they
-land and what they can do.
+Built for Graphic Era (Deemed to be) University, Dehradun.
 
-| Role        | Lands on  | Experience                                                                                     |
-| ----------- | --------- | ---------------------------------------------------------------------------------------------- |
-| `student`   | `/`       | Hold-to-send SOS with live location, report incidents, anonymous reports, report history/tracking |
-| `admin`     | `/admin`  | Operations console: live dashboard, SOS, incidents, anonymous reports, users, responders, analytics |
-| `responder` | `/staff`  | Field app for SOS alerts assigned to their unit (kept from the base project)                   |
+> New here? Read **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — it explains
+> every folder, how a request travels from the screen to the database, and where
+> the Operating System and DBMS concepts live.
 
-Public without an account: `/anonymous` (anonymous report) and `/track/<code>` (follow it).
+## Who uses it
 
-## Quick start (local)
+| Role        | Lands on | What they can do |
+| ----------- | -------- | ---------------- |
+| `student`   | `/`      | Hold SOS (live location), report incidents, anonymous reports, track their cases, profile & medical ID |
+| `responder` | `/staff` | See SOS alerts assigned to them, navigate, call the student, update status |
+| `admin`     | `/admin` | Live dashboard, SOS / incidents / anonymous queues, users, responders, analytics |
+
+No account needed: `/anonymous` (file an anonymous report) and `/track/<code>` (follow it).
+
+## Tech stack
+
+| Layer | Technology |
+| ----- | ---------- |
+| Frontend | React 19, TanStack Router (pages), Tailwind CSS (styling), Leaflet + OpenStreetMap (maps) |
+| Backend | TanStack Start server functions on Node.js, Better Auth (sign-in, sessions) |
+| Database | PostgreSQL — **Neon** in production, embedded **PGLite** for local development |
+| Hosting | Vercel |
+
+## Project structure (short version)
+
+```
+campus-safe/
+├── src/
+│   ├── routes/        FRONTEND  pages — the file path is the URL
+│   ├── components/    FRONTEND  reusable UI, grouped by who uses it
+│   ├── backend/       BACKEND   server functions + database connection
+│   ├── lib/           SHARED    types, campus data, helpers, auth
+│   └── styles.css     global styles & theme colours
+├── migrations/        DATABASE  SQL files that create/upgrade the tables
+├── public/            static files (icons, images)
+├── scripts/           build / migration / tooling scripts
+├── server/            hosting middleware (install page, share card)
+└── docs/              documentation
+```
+
+Full map with every file: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Run it locally
 
 ```bash
 npm ci
-export BOOTSTRAP_ADMIN_EMAIL=admin@campus.test BOOTSTRAP_ADMIN_PASSWORD='choose-a-long-password'
-npm run dev   # http://localhost:8080
+npm run dev:local
 ```
 
-Or keep them in a git-ignored `.env.local.example` (`KEY=value` lines) and run
-`npm run dev:local`, which loads that file automatically (any terminal, incl. PowerShell).
+Open http://localhost:8080. `dev:local` loads the test accounts from
+`.env.local.example` (an admin and a student). Without `DATABASE_URL` the app uses an
+in-memory database that resets every time the server restarts.
 
-Without `DATABASE_URL` the app uses an embedded PGLite database (in memory; it
-resets when the dev server restarts) and loads sample campus incidents for demos.
+To use a real **Neon** database locally, put `DATABASE_URL=...` in a `.env.local`
+file (git-ignored), then:
 
-## Accounts and roles
+```bash
+node --env-file=.env.local scripts/migrate.mjs
+node --env-file=.env.local scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080
+```
 
-Public self-registration is **disabled**. Password accounts come from:
+## Accounts
 
-1. **Bootstrap env vars** (server-side only), created on first visit to `/login`:
+- **Students** sign up themselves at `/signup` (always as `student`).
+  Set `SIGNUP_ALLOWED_DOMAINS=yourcollege.ac.in` to allow only campus emails.
+- **Responders and admins** are created by an admin on **Admin → Users**.
+- The **first admin** comes from `BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD`.
 
-   | Variable                                          | Purpose                           |
-   | ------------------------------------------------- | --------------------------------- |
-   | `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | First admin account (required to administer a fresh install) |
-   | `BOOTSTRAP_ADMIN_NAME`                            | Optional display name             |
-   | `BOOTSTRAP_STUDENT_EMAIL`, `BOOTSTRAP_STUDENT_PASSWORD`, `BOOTSTRAP_STUDENT_NAME` | Optional demo student |
+## Environment variables
 
-   Passwords must be at least 8 characters. Existing passwords are never reset;
-   the role is re-asserted on each server start.
+| Variable | Needed for | Purpose |
+| -------- | ---------- | ------- |
+| `DATABASE_URL` | production | Neon Postgres connection string (use the *pooled* one) |
+| `BETTER_AUTH_SECRET` | production | Long random string that signs sessions |
+| `BETTER_AUTH_URL` | production | Public site URL, e.g. `https://campus-safe.vercel.app` |
+| `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | first run | Creates the first admin account |
+| `SIGNUP_ALLOWED_DOMAINS` | optional | Comma-separated email domains allowed to sign up |
+| `SEED_SAMPLE_DATA` | optional | `true` loads demo incidents into a real database |
 
-2. **Admins → Users → New account**: create a student, responder or admin with a
-   temporary password, and change roles later (an admin cannot change their own role).
+## Commands
 
-3. **Google / X sign-in** (via the Grok auth broker), when configured. New
-   federated accounts start as `student`.
+| Command | What it does |
+| ------- | ------------ |
+| `npm run dev` / `npm run dev:local` | Start the dev server on port 8080 (`dev:local` adds test accounts) |
+| `npm run build` | Production build for Vercel, then applies database migrations |
+| `npm run typecheck` | TypeScript type check |
+| `npm run lint` | ESLint |
+| `npm test` | Unit tests |
 
-## How access control works
+## Deploy (GitHub → Vercel)
 
-- `profiles.role` (`student | responder | admin`) is the single role source.
-- `getViewer` (`src/lib/server/viewer.ts`) resolves the session and reads the role
-  from the database on every navigation; the root route exposes it as `context.viewer`.
-- Route guards (`src/lib/auth/guards.ts`) run in `beforeLoad`, on the server for
-  direct URLs/refreshes and on the client for in-app navigation:
-  - `/admin/*` → admins only; anyone else gets `/forbidden`.
-  - `/`, `/report`, `/reports/*`, `/sos/*` → students; other roles are sent to their home.
-  - `/staff/*` → responders and admins.
-  - Signed out → `/login?redirect=<path>`; after sign-in the user returns there if
-    their role allows it (`src/lib/roles.ts`), otherwise to their role's home.
-- Every privileged server function re-checks the role (`requireAdmin`,
-  `requireStaff` in `src/lib/server/helpers.ts`); responders can only see and update
-  SOS alerts assigned to their unit. Hiding a link is never the only protection.
+1. Push this repo to GitHub.
+2. On vercel.com: **Add New → Project → Import** the repo.
+3. Add the environment variables above (at least `DATABASE_URL`, `BETTER_AUTH_SECRET`,
+   `BETTER_AUTH_URL`, and the bootstrap admin).
+4. **Deploy.** The build creates the database tables automatically; every later
+   `git push` redeploys.
 
-## Scripts
+## Notes
 
-| Command             | What it does                                       |
-| ------------------- | -------------------------------------------------- |
-| `npm run dev`       | Dev server on :8080                                |
-| `npm run build`     | Production build (Vercel preset) + migrations when `DATABASE_URL` is set |
-| `npm run typecheck` | TypeScript                                         |
-| `npm run lint`      | ESLint                                             |
-| `npm test`          | Unit tests (incl. `src/lib/roles.test.ts`)         |
-
-## Live GPS tracking
-
-- When a student holds SOS, the phone's GPS position is sent with the alert, then the
-  SOS screen streams updates (every ~7 s while moving, a heartbeat every 20 s when still).
-- Admins see each live alert on **SOS Alerts**: position, accuracy circle, movement trail,
-  "updated Xs ago", and a *signal lost* warning after 60 s without an update.
-- **Browsers only allow GPS on HTTPS or `localhost`.** On a phone opening
-  `http://192.168.x.x:8080`, location is blocked and the app says so. Test on phones via
-  the deployed HTTPS site or an HTTPS tunnel (e.g. VS Code port forwarding / dev tunnels).
-- Tracking runs while the SOS screen is open; mobile browsers pause it if the screen is
-  locked or the app is backgrounded (the screen is kept awake with the Wake Lock API).
-- Campus map and locations: Graphic Era (Deemed to be) University, Clement Town, Dehradun,
-  from OpenStreetMap (`src/lib/campus.ts`, `migrations/0004_graphic_era_campus.sql`).
-
-## Production setup
-
-- `DATABASE_URL` (Postgres/Neon) — **required**. The production server bundle does not
-  run on the embedded PGLite fallback. Migrations in `migrations/` apply during
-  `npm run build`, including `0003_student_role.sql` (renames `citizen` → `student`).
-- `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` — required for stable sessions.
-- `BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD` — first admin.
-- `SEED_SAMPLE_DATA=true` — only if you want demo incidents in a real database.
-- Map tiles: `src/components/live-map.tsx` uses keyless OpenStreetMap tiles (darkened in CSS).
-  For heavy production traffic use a tile provider with an API key — OSM's public tiles have a
-  fair-use policy.
-- Security desk number in the student shell comes from `RESPONDER_UNITS[0]` in
-  `src/lib/campus.ts`. Set it to your real campus security line.
+- Browsers only allow GPS on **HTTPS** (or `localhost`) — test location on phones
+  through the deployed site.
+- Campus security phone number: `RESPONDER_UNITS` in `src/lib/campus.ts`.
+- Map tiles are free OpenStreetMap tiles; heavy production traffic should use a tile
+  provider with an API key.

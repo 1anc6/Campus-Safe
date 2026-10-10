@@ -1,5 +1,5 @@
 import { createRouter } from "@tanstack/react-router";
-import { BootScreen } from "@/components/auth-gate";
+import { BootScreen } from "@/components/auth/auth-gate";
 import { AppErrorComponent } from "@/lib/error-component";
 import { routeTree } from "./routeTree.gen";
 

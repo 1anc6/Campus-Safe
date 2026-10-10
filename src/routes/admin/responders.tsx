@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Phone, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AdminPageHeader } from "@/components/admin-shell";
-import { listResponders } from "@/lib/server/admin";
+import { AdminPageHeader } from "@/components/admin/admin-shell";
+import { listResponders } from "@/backend/functions/admin";
 import type { Responder } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -54,19 +54,29 @@ function RespondersPage() {
                 <p className="truncate font-medium">{u.name}</p>
                 <p className="truncate text-sm text-muted">{u.unit}</p>
               </div>
-              <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize", STATUS_TONE[u.status])}>
+              <span
+                className={cn(
+                  "rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize",
+                  STATUS_TONE[u.status],
+                )}
+              >
                 {u.status.replace("_", " ")}
               </span>
             </div>
             {u.phone && (
-              <a href={`tel:${u.phone.replaceAll(" ", "")}`} className="inline-flex min-h-10 items-center gap-1.5 text-xs text-muted hover:text-neon">
+              <a
+                href={`tel:${u.phone.replaceAll(" ", "")}`}
+                className="inline-flex min-h-10 items-center gap-1.5 text-xs text-muted hover:text-neon"
+              >
                 <Phone className="size-3.5" /> {u.phone}
               </a>
             )}
           </li>
         ))}
       </ul>
-      {units?.length === 0 && <p className="card p-6 text-sm text-muted">No responder units yet.</p>}
+      {units?.length === 0 && (
+        <p className="card p-6 text-sm text-muted">No responder units yet.</p>
+      )}
     </div>
   );
 }

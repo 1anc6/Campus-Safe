@@ -2,12 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { KeyRound, LoaderCircle, Search, Shield, UserPlus, Users, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Avatar } from "@/components/account-menu";
-import { AdminPageHeader } from "@/components/admin-shell";
+import { Avatar } from "@/components/shared/account-menu";
+import { AdminPageHeader } from "@/components/admin/admin-shell";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { USER_ROLES, type UserRole } from "@/lib/campus";
 import { roleLabel } from "@/lib/roles";
-import { createAccount, listPeople, resetPassword, setPersonRole, type PersonRow } from "@/lib/server/profile";
+import {
+  createAccount,
+  listPeople,
+  resetPassword,
+  setPersonRole,
+  type PersonRow,
+} from "@/backend/functions/profile";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/users")({ component: UsersPage });
@@ -19,9 +25,30 @@ const ROLE_TONE: Record<UserRole, string> = {
 };
 
 const PERMISSIONS: { role: UserRole; perms: string[] }[] = [
-  { role: "student", perms: ["Hold-to-send SOS with live location", "Report incidents & track own reports", "Anonymous reporting"] },
-  { role: "responder", perms: ["Field app for assigned SOS alerts", "Update arrival & resolution", "No console access"] },
-  { role: "admin", perms: ["Full operations console", "Dispatch, status & remarks", "Manage users, roles & analytics"] },
+  {
+    role: "student",
+    perms: [
+      "Hold-to-send SOS with live location",
+      "Report incidents & track own reports",
+      "Anonymous reporting",
+    ],
+  },
+  {
+    role: "responder",
+    perms: [
+      "Field app for assigned SOS alerts",
+      "Update arrival & resolution",
+      "No console access",
+    ],
+  },
+  {
+    role: "admin",
+    perms: [
+      "Full operations console",
+      "Dispatch, status & remarks",
+      "Manage users, roles & analytics",
+    ],
+  },
 ];
 
 function UsersPage() {
@@ -170,12 +197,19 @@ function UsersPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">
                 {p.name}
-                {p.userId === viewer?.userId && <span className="ml-1 text-xs text-dim">(you)</span>}
+                {p.userId === viewer?.userId && (
+                  <span className="ml-1 text-xs text-dim">(you)</span>
+                )}
               </p>
               <p className="truncate text-xs text-muted">{p.email ?? "No email"}</p>
             </div>
             <div className="flex items-center gap-1">
-              <RoleSelect person={p} self={p.userId === viewer?.userId} saving={savingId === p.userId} onChange={changeRole} />
+              <RoleSelect
+                person={p}
+                self={p.userId === viewer?.userId}
+                saving={savingId === p.userId}
+                onChange={changeRole}
+              />
               <ResetButton person={p} onClick={() => setResetting(p)} />
             </div>
           </li>
@@ -203,16 +237,23 @@ function UsersPage() {
                       <Avatar profile={{ ...p, phone: null, avatarUrl: null }} />
                       <span className="font-medium">
                         {p.name}
-                        {p.userId === viewer?.userId && <span className="ml-1 text-xs text-dim">(you)</span>}
+                        {p.userId === viewer?.userId && (
+                          <span className="ml-1 text-xs text-dim">(you)</span>
+                        )}
                       </span>
                     </div>
                   </td>
                   <td className="px-5 py-3 text-muted">{p.email ?? "—"}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-1">
-              <RoleSelect person={p} self={p.userId === viewer?.userId} saving={savingId === p.userId} onChange={changeRole} />
-              <ResetButton person={p} onClick={() => setResetting(p)} />
-            </div>
+                      <RoleSelect
+                        person={p}
+                        self={p.userId === viewer?.userId}
+                        saving={savingId === p.userId}
+                        onChange={changeRole}
+                      />
+                      <ResetButton person={p} onClick={() => setResetting(p)} />
+                    </div>
                   </td>
                   <td className="hidden px-5 py-3 text-xs text-muted xl:table-cell">
                     {p.hasPassword ? (
@@ -332,7 +373,9 @@ function ResetPasswordForm({
     try {
       await resetPassword({ data: { userId: person.userId, password } });
       toast.success(
-        self ? "Your password was changed" : `Password reset for ${person.name}. They were signed out everywhere.`,
+        self
+          ? "Your password was changed"
+          : `Password reset for ${person.name}. They were signed out everywhere.`,
       );
       onDone();
     } catch (err) {
@@ -343,7 +386,11 @@ function ResetPasswordForm({
   }
 
   return (
-    <form onSubmit={submit} className="card space-y-4 p-4 sm:p-5" aria-label={`Reset password for ${person.name}`}>
+    <form
+      onSubmit={submit}
+      className="card space-y-4 p-4 sm:p-5"
+      aria-label={`Reset password for ${person.name}`}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="font-display text-lg font-semibold">Reset password</h2>
@@ -351,21 +398,42 @@ function ResetPasswordForm({
             {person.name} · {person.email ?? "no email"}
           </p>
         </div>
-        <button type="button" onClick={onClose} className="grid size-10 place-items-center rounded-lg text-muted hover:bg-panel-2" aria-label="Close">
+        <button
+          type="button"
+          onClick={onClose}
+          className="grid size-10 place-items-center rounded-lg text-muted hover:bg-panel-2"
+          aria-label="Close"
+        >
           <X className="size-4" />
         </button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label>
           <span className="field-label">New password (min. 8 characters)</span>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" autoComplete="new-password" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+            autoComplete="new-password"
+          />
         </label>
         <label>
           <span className="field-label">Confirm new password</span>
-          <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="input" autoComplete="new-password" />
+          <input
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            className="input"
+            autoComplete="new-password"
+          />
         </label>
       </div>
-      {!self && <p className="text-xs text-dim">They'll be signed out on every device and must use the new password.</p>}
+      {!self && (
+        <p className="text-xs text-dim">
+          They'll be signed out on every device and must use the new password.
+        </p>
+      )}
       {error && (
         <p className="text-sm text-sos" role="alert">
           {error}
@@ -376,7 +444,11 @@ function ResetPasswordForm({
           Cancel
         </button>
         <button type="submit" disabled={busy} className="btn-neon">
-          {busy ? <LoaderCircle className="size-4 animate-spin" /> : <KeyRound className="size-4" />}
+          {busy ? (
+            <LoaderCircle className="size-4 animate-spin" />
+          ) : (
+            <KeyRound className="size-4" />
+          )}
           Set new password
         </button>
       </div>
@@ -400,7 +472,9 @@ function CreateAccountForm({ onClose, onCreated }: { onClose: () => void; onCrea
     if (password.length < 8) return setError("Temporary password must be at least 8 characters.");
     setBusy(true);
     try {
-      const res = await createAccount({ data: { name: name.trim(), email: email.trim(), password, role } });
+      const res = await createAccount({
+        data: { name: name.trim(), email: email.trim(), password, role },
+      });
       if (!res.ok) {
         setError(res.error);
         return;
@@ -418,14 +492,24 @@ function CreateAccountForm({ onClose, onCreated }: { onClose: () => void; onCrea
     <form onSubmit={submit} className="card space-y-4 p-4 sm:p-5" aria-label="New account">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg font-semibold">New account</h2>
-        <button type="button" onClick={onClose} className="grid size-10 place-items-center rounded-lg text-muted hover:bg-panel-2" aria-label="Close">
+        <button
+          type="button"
+          onClick={onClose}
+          className="grid size-10 place-items-center rounded-lg text-muted hover:bg-panel-2"
+          aria-label="Close"
+        >
           <X className="size-4" />
         </button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label>
           <span className="field-label">Full name</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} className="input" autoComplete="off" />
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input"
+            autoComplete="off"
+          />
         </label>
         <label>
           <span className="field-label">Email</span>
@@ -451,7 +535,11 @@ function CreateAccountForm({ onClose, onCreated }: { onClose: () => void; onCrea
         </label>
         <label>
           <span className="field-label">Role</span>
-          <select value={role} onChange={(e) => setRole(e.target.value as UserRole)} className="input">
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as UserRole)}
+            className="input"
+          >
             {USER_ROLES.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.label}
@@ -470,7 +558,11 @@ function CreateAccountForm({ onClose, onCreated }: { onClose: () => void; onCrea
           Cancel
         </button>
         <button type="submit" disabled={busy} className="btn-neon">
-          {busy ? <LoaderCircle className="size-4 animate-spin" /> : <UserPlus className="size-4" />}
+          {busy ? (
+            <LoaderCircle className="size-4 animate-spin" />
+          ) : (
+            <UserPlus className="size-4" />
+          )}
           Create account
         </button>
       </div>

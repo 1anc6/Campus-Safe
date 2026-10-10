@@ -1,6 +1,6 @@
 import { LocateFixed, MapPin, MapPinOff, Navigation } from "lucide-react";
 import { useState } from "react";
-import { LiveMap, type MapMarker } from "@/components/live-map";
+import { LiveMap, type MapMarker } from "@/components/shared/live-map";
 import type { LiveLocation } from "@/lib/use-live-location";
 import { cn } from "@/lib/utils";
 
@@ -22,14 +22,30 @@ const HELP_COPY: Partial<Record<LiveLocation["status"], string>> = {
  * Ride-hailing style "you are here" map: follows the student, pauses following
  * when they pan, and offers a one-tap re-centre.
  */
-export function MyLocationMap({ location, className }: { location: LiveLocation; className?: string }) {
+export function MyLocationMap({
+  location,
+  className,
+}: {
+  location: LiveLocation;
+  className?: string;
+}) {
   const [follow, setFollow] = useState(true);
   const [recenter, setRecenter] = useState(0);
   const { fix, status, near, onCampus } = location;
   const live = status === "live" && fix && !fix.approx;
 
   const markers: MapMarker[] = fix
-    ? [{ id: "me", lat: fix.lat, lng: fix.lng, kind: "self", label: "You", accuracyM: live ? fix.acc : null, approx: !live }]
+    ? [
+        {
+          id: "me",
+          lat: fix.lat,
+          lng: fix.lng,
+          kind: "self",
+          label: "You",
+          accuracyM: live ? fix.acc : null,
+          approx: !live,
+        },
+      ]
     : [];
   const focus = follow && fix ? { lat: fix.lat, lng: fix.lng } : null;
 
@@ -51,14 +67,21 @@ export function MyLocationMap({ location, className }: { location: LiveLocation;
           )}
           role="status"
         >
-          <span className={cn("grid size-6 shrink-0 place-items-center rounded-full", live ? "bg-neon-dim text-neon" : "bg-warn/15 text-warn")}>
+          <span
+            className={cn(
+              "grid size-6 shrink-0 place-items-center rounded-full",
+              live ? "bg-neon-dim text-neon" : "bg-warn/15 text-warn",
+            )}
+          >
             {live ? <MapPin className="size-3.5" /> : <MapPinOff className="size-3.5" />}
           </span>
           <span className="min-w-0 truncate">
             {live ? (
               <>
                 {near ? `Near ${near.name}` : onCampus ? "On campus" : "Off campus"}
-                {fix?.acc != null && <span className="text-muted"> · ±{Math.round(fix.acc)} m</span>}
+                {fix?.acc != null && (
+                  <span className="text-muted"> · ±{Math.round(fix.acc)} m</span>
+                )}
               </>
             ) : (
               STATUS_COPY[status as Exclude<LiveLocation["status"], "live">]

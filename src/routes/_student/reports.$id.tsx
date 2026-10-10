@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SeverityChip, StatusPill } from "@/components/pills";
-import { StatusStepper } from "@/components/status-stepper";
+import { SeverityChip, StatusPill } from "@/components/shared/pills";
+import { StatusStepper } from "@/components/shared/status-stepper";
 import { INCIDENT_STATUSES } from "@/lib/campus";
-import { getIncident } from "@/lib/server/reports";
+import { getIncident } from "@/backend/functions/reports";
 import type { Incident, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
 
@@ -37,7 +37,10 @@ function IncidentDetail() {
 
   return (
     <>
-      <Link to="/reports" className="mb-4 inline-flex min-h-10 items-center gap-1.5 text-sm text-muted hover:text-fg">
+      <Link
+        to="/reports"
+        className="mb-4 inline-flex min-h-10 items-center gap-1.5 text-sm text-muted hover:text-fg"
+      >
         <ArrowLeft className="size-4" /> My reports
       </Link>
       {error && (
@@ -45,7 +48,9 @@ function IncidentDetail() {
           {error}
         </p>
       )}
-      {!incident && !error && <div className="h-48 animate-pulse rounded-2xl bg-panel" aria-busy="true" />}
+      {!incident && !error && (
+        <div className="h-48 animate-pulse rounded-2xl bg-panel" aria-busy="true" />
+      )}
       {incident && (
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0">
@@ -53,7 +58,9 @@ function IncidentDetail() {
               <SeverityChip value={incident.severity} />
               <StatusPill status={incident.status} />
             </div>
-            <h1 className="mt-3 font-display text-2xl font-semibold md:text-3xl">{incident.categoryName}</h1>
+            <h1 className="mt-3 font-display text-2xl font-semibold md:text-3xl">
+              {incident.categoryName}
+            </h1>
             <p className="mt-1 text-sm text-muted">
               {incident.locationName ?? "Dropped pin"} · {formatClock(incident.occurredAt)}
             </p>
@@ -67,7 +74,9 @@ function IncidentDetail() {
                 className="mt-4 max-h-72 w-full rounded-2xl object-cover ring-1 ring-line"
               />
             )}
-            <h2 className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-muted">Updates</h2>
+            <h2 className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-muted">
+              Updates
+            </h2>
             <div className="space-y-2">
               {messages.length === 0 && <p className="text-sm text-muted">No updates yet.</p>}
               {messages.map((m) => (

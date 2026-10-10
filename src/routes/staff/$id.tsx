@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { LiveMap, type MapMarker } from "@/components/live-map";
-import { MedicalCard } from "@/components/medical-card";
-import { StatusPill } from "@/components/pills";
-import { ResponderShell } from "@/components/responder-shell";
+import { LiveMap, type MapMarker } from "@/components/shared/live-map";
+import { MedicalCard } from "@/components/shared/medical-card";
+import { StatusPill } from "@/components/shared/pills";
+import { ResponderShell } from "@/components/responder/responder-shell";
 import { distanceM, SOS_STEPS } from "@/lib/campus";
 import { directionsUrl, formatDistance, useNow } from "@/lib/responder";
-import { getSos, setSosStatus } from "@/lib/server/sos";
+import { getSos, setSosStatus } from "@/backend/functions/sos";
 import type { SosAlert, SosPoint } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn, formatClock, waitLabel } from "@/lib/utils";

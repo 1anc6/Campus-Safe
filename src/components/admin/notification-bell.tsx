@@ -6,7 +6,7 @@ import {
   getAdminNotifications,
   markAdminNotificationsSeen,
   type AdminNotification,
-} from "@/lib/server/admin";
+} from "@/backend/functions/admin";
 import { cn, waitLabel } from "@/lib/utils";
 
 const ICONS = { sos: Radio, incident: FileText, anonymous: EyeOff } as const;

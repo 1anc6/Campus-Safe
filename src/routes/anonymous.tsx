@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Check, Copy, EyeOff, LoaderCircle, Lock, Search, Send, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { AdaptiveShell } from "@/components/student-shell";
+import { AdaptiveShell } from "@/components/student/student-shell";
 import { FormSection } from "@/components/student/form-section";
 import { CATEGORIES, LOCATIONS, SEVERITIES, type Severity } from "@/lib/campus";
-import { createAnonymous } from "@/lib/server/reports";
+import { createAnonymous } from "@/backend/functions/reports";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/anonymous")({ component: AnonymousPage });
@@ -74,9 +74,12 @@ function AnonymousPage() {
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-violet">
           <EyeOff className="size-3.5" /> Anonymous report
         </p>
-        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight md:text-3xl">Your identity is not saved.</h1>
+        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight md:text-3xl">
+          Your identity is not saved.
+        </h1>
         <p className="mt-2 max-w-2xl text-sm text-muted">
-          Tell campus command what happened without revealing who you are. You'll get a private code to follow the case.
+          Tell campus command what happened without revealing who you are. You'll get a private code
+          to follow the case.
         </p>
       </header>
 
@@ -96,7 +99,9 @@ function AnonymousPage() {
                       aria-pressed={role === id}
                       className={cn(
                         "min-h-12 rounded-xl px-2 text-xs font-semibold ring-1 transition-colors",
-                        role === id ? "bg-violet/15 text-violet ring-violet/60" : "bg-panel-2/40 ring-line hover:bg-panel-2",
+                        role === id
+                          ? "bg-violet/15 text-violet ring-violet/60"
+                          : "bg-panel-2/40 ring-line hover:bg-panel-2",
                       )}
                     >
                       {label}
@@ -109,7 +114,11 @@ function AnonymousPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="block">
                     <span className="field-label">Category</span>
-                    <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="input">
+                    <select
+                      value={categoryId}
+                      onChange={(e) => setCategoryId(e.target.value)}
+                      className="input"
+                    >
                       {CATEGORIES.map((c) => (
                         <option key={c.id} value={c.id}>
                           {c.name}
@@ -119,7 +128,11 @@ function AnonymousPage() {
                   </label>
                   <label className="block">
                     <span className="field-label">Campus place</span>
-                    <select value={locationId} onChange={(e) => setLocationId(e.target.value)} className="input">
+                    <select
+                      value={locationId}
+                      onChange={(e) => setLocationId(e.target.value)}
+                      className="input"
+                    >
                       {LOCATIONS.map((l) => (
                         <option key={l.id} value={l.id}>
                           {l.name}
@@ -150,7 +163,9 @@ function AnonymousPage() {
                       aria-pressed={severity === s.id}
                       className={cn(
                         "min-h-14 rounded-xl px-1 text-xs ring-1 transition-colors",
-                        severity === s.id ? "bg-violet/15 text-violet ring-violet/60" : "bg-panel-2/40 ring-line hover:bg-panel-2",
+                        severity === s.id
+                          ? "bg-violet/15 text-violet ring-violet/60"
+                          : "bg-panel-2/40 ring-line hover:bg-panel-2",
                       )}
                     >
                       <span className="block font-bold">{s.id}</span>
@@ -160,7 +175,12 @@ function AnonymousPage() {
                 </div>
               </FormSection>
 
-              <FormSection step={4} title="Describe it" hint="Avoid details that could identify you." tone="violet">
+              <FormSection
+                step={4}
+                title="Describe it"
+                hint="Avoid details that could identify you."
+                tone="violet"
+              >
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -214,11 +234,22 @@ function AnonymousPage() {
   );
 }
 
-function SubmitBlock({ busy, error, formId }: { busy: boolean; error: string | null; formId?: string }) {
+function SubmitBlock({
+  busy,
+  error,
+  formId,
+}: {
+  busy: boolean;
+  error: string | null;
+  formId?: string;
+}) {
   return (
     <>
       {error && (
-        <p className="mb-3 rounded-lg bg-sos/10 p-2.5 text-sm text-sos ring-1 ring-sos/30" role="alert">
+        <p
+          className="mb-3 rounded-lg bg-sos/10 p-2.5 text-sm text-sos ring-1 ring-sos/30"
+          role="alert"
+        >
           {error}
         </p>
       )}
@@ -241,9 +272,13 @@ function CodeCard({ code }: { code: string }) {
         <ShieldCheck className="size-6" />
       </span>
       <p className="mt-4 font-display text-xl font-semibold">Report sent anonymously</p>
-      <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted">Your private tracking code</p>
+      <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted">
+        Your private tracking code
+      </p>
       <div className="mt-2 flex items-center gap-2">
-        <p className="select-all break-all font-mono text-2xl font-semibold tracking-wide text-violet sm:text-3xl">{code}</p>
+        <p className="select-all break-all font-mono text-2xl font-semibold tracking-wide text-violet sm:text-3xl">
+          {code}
+        </p>
         <button
           type="button"
           onClick={() => {
@@ -292,7 +327,12 @@ function TrackBox() {
           className="input flex-1 font-mono uppercase"
           aria-label="Tracking code"
         />
-        <button type="submit" disabled={cleaned.length < 6} className="btn-ghost px-3" aria-label="Track">
+        <button
+          type="submit"
+          disabled={cleaned.length < 6}
+          className="btn-ghost px-3"
+          aria-label="Track"
+        >
           <Search className="size-4" />
         </button>
       </div>

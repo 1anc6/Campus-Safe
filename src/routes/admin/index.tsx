@@ -1,21 +1,35 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, Check, CheckCircle2, Inbox, MapPinned, Phone, Siren, Timer } from "lucide-react";
+import {
+  ArrowUpRight,
+  Check,
+  CheckCircle2,
+  Inbox,
+  MapPinned,
+  Phone,
+  Siren,
+  Timer,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { ReplyForm, ResponderPicker, StatusButtons, ThreadList } from "@/components/admin/case-panels";
+import {
+  ReplyForm,
+  ResponderPicker,
+  StatusButtons,
+  ThreadList,
+} from "@/components/admin/case-panels";
 import { DashCard as Card } from "@/components/admin/dash-card";
-import { CategoryDonut, DailyBars, HotspotBars } from "@/components/charts";
-import { KindChip, SeverityChip, StatusPill } from "@/components/pills";
+import { CategoryDonut, DailyBars, HotspotBars } from "@/components/shared/charts";
+import { KindChip, SeverityChip, StatusPill } from "@/components/shared/pills";
 import { INCIDENT_STATUSES, SOS_STEPS } from "@/lib/campus";
-import { getLive, listAnonymousAdmin } from "@/lib/server/admin";
+import { getLive, listAnonymousAdmin } from "@/backend/functions/admin";
 import {
   getIncident,
   postThread,
   staffSetAnonymousStatus,
   staffSetIncidentStatus,
   trackAnonymous,
-} from "@/lib/server/reports";
-import { assignSos, getSos, setSosStatus } from "@/lib/server/sos";
+} from "@/backend/functions/reports";
+import { assignSos, getSos, setSosStatus } from "@/backend/functions/sos";
 import type { LivePayload, QueueItem, SosAlert, ThreadMessage } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 
@@ -84,7 +98,9 @@ function Command() {
       prevSos.current = ids;
       // Keep the selection in sync with fresh queue data (status changes).
       setSelected((cur) =>
-        cur ? (d.queue.find((q) => q.kind === cur.kind && q.id === cur.id) ?? cur) : (d.queue[0] ?? null),
+        cur
+          ? (d.queue.find((q) => q.kind === cur.kind && q.id === cur.id) ?? cur)
+          : (d.queue[0] ?? null),
       );
     } catch {
       setLoadError(true);
@@ -132,9 +148,22 @@ function Command() {
       </header>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi icon={Siren} tone="sos" label="Active SOS" value={c?.activeSos} hint="Live alerts" alert={(c?.activeSos ?? 0) > 0} />
+        <Kpi
+          icon={Siren}
+          tone="sos"
+          label="Active SOS"
+          value={c?.activeSos}
+          hint="Live alerts"
+          alert={(c?.activeSos ?? 0) > 0}
+        />
         <Kpi icon={Inbox} tone="neon" label="New" value={c?.incoming} hint="Awaiting triage" />
-        <Kpi icon={Timer} tone="warn" label="In progress" value={c?.inProgress} hint="Being handled" />
+        <Kpi
+          icon={Timer}
+          tone="warn"
+          label="In progress"
+          value={c?.inProgress}
+          hint="Being handled"
+        />
         <Kpi
           icon={CheckCircle2}
           tone="ok"
@@ -152,7 +181,12 @@ function Command() {
           toolbar={
             <div className="seg w-full [&>button]:flex-1" role="group" aria-label="Filter queue">
               {KIND_FILTERS.map((f) => (
-                <button key={f.id} type="button" aria-pressed={kind === f.id} onClick={() => setKind(f.id)}>
+                <button
+                  key={f.id}
+                  type="button"
+                  aria-pressed={kind === f.id}
+                  onClick={() => setKind(f.id)}
+                >
                   {f.label}
                 </button>
               ))}
@@ -161,7 +195,9 @@ function Command() {
         >
           {!live && !loadError && <QueueSkeleton />}
           {live && queue.length === 0 && (
-            <p className="px-2 py-10 text-center text-sm text-muted">Nothing waiting here. Queue is clear.</p>
+            <p className="px-2 py-10 text-center text-sm text-muted">
+              Nothing waiting here. Queue is clear.
+            </p>
           )}
           <ul className="space-y-1.5">
             {queue.map((q) => {
@@ -177,7 +213,13 @@ function Command() {
                       on ? "bg-panel-2 ring-neon/40" : "ring-transparent hover:bg-panel-2/60",
                     )}
                   >
-                    <span className={cn("absolute inset-y-2 left-1.5 w-1 rounded-full", SEVERITY_BAR[q.severity])} aria-hidden="true" />
+                    <span
+                      className={cn(
+                        "absolute inset-y-2 left-1.5 w-1 rounded-full",
+                        SEVERITY_BAR[q.severity],
+                      )}
+                      aria-hidden="true"
+                    />
                     <KindChip kind={q.kind} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{q.title}</p>
@@ -185,7 +227,9 @@ function Command() {
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">
                       <SeverityChip value={q.severity} />
-                      <span className="font-mono text-[11px] tabular-nums text-dim">{waitLabel(q.startedAt, now)}</span>
+                      <span className="font-mono text-[11px] tabular-nums text-dim">
+                        {waitLabel(q.startedAt, now)}
+                      </span>
                     </div>
                   </button>
                 </li>
@@ -194,10 +238,7 @@ function Command() {
           </ul>
         </Card>
 
-        <Card
-          title="Case"
-          actions={selected && <OpenCaseLink item={selected} />}
-        >
+        <Card title="Case" actions={selected && <OpenCaseLink item={selected} />}>
           {selected ? (
             <Detail
               key={`${selected.kind}-${selected.id}`}
@@ -206,7 +247,9 @@ function Command() {
               onChange={() => void refresh()}
             />
           ) : (
-            <p className="px-2 py-10 text-center text-sm text-muted">Select an item in the queue to manage it.</p>
+            <p className="px-2 py-10 text-center text-sm text-muted">
+              Select an item in the queue to manage it.
+            </p>
           )}
         </Card>
       </div>
@@ -218,7 +261,12 @@ function Command() {
           actions={
             <div className="seg [&>button]:px-2.5 [&>button]:py-1" role="group" aria-label="Range">
               {(["today", "week", "month"] as const).map((r) => (
-                <button key={r} type="button" aria-pressed={range === r} onClick={() => setRange(r)}>
+                <button
+                  key={r}
+                  type="button"
+                  aria-pressed={range === r}
+                  onClick={() => setRange(r)}
+                >
                   {r === "today" ? "Today" : r === "week" ? "Week" : "Month"}
                 </button>
               ))}
@@ -267,12 +315,22 @@ function Kpi({
         alert && "ring-1 ring-sos/40",
       )}
     >
-      <span className={cn("grid size-9 shrink-0 place-items-center rounded-xl sm:size-11", KPI_TONE[tone])}>
+      <span
+        className={cn(
+          "grid size-9 shrink-0 place-items-center rounded-xl sm:size-11",
+          KPI_TONE[tone],
+        )}
+      >
         <Icon className="size-4 sm:size-5" />
       </span>
       <div className="w-full min-w-0">
         <p className="truncate text-xs text-muted">{label}</p>
-        <p className={cn("font-display text-2xl font-bold tabular-nums leading-tight", alert ? "text-sos" : "text-fg")}>
+        <p
+          className={cn(
+            "font-display text-2xl font-bold tabular-nums leading-tight",
+            alert ? "text-sos" : "text-fg",
+          )}
+        >
           {value ?? "–"}
         </p>
         <p className="truncate text-[11px] text-dim">{hint}</p>
@@ -292,7 +350,8 @@ function QueueSkeleton() {
 }
 
 function OpenCaseLink({ item }: { item: QueueItem }) {
-  const cls = "inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-xs text-neon hover:bg-panel-2";
+  const cls =
+    "inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-xs text-neon hover:bg-panel-2";
   const body = (
     <>
       Open full case <ArrowUpRight className="size-3.5" />
@@ -320,8 +379,17 @@ function OpenCaseLink({ item }: { item: QueueItem }) {
 }
 
 /** Compact horizontal progress track (keeps actions above the fold). */
-function StepTrack({ steps, current }: { steps: { id: string; label: string }[]; current: string }) {
-  const idx = Math.max(0, steps.findIndex((s) => s.id === current));
+function StepTrack({
+  steps,
+  current,
+}: {
+  steps: { id: string; label: string }[];
+  current: string;
+}) {
+  const idx = Math.max(
+    0,
+    steps.findIndex((s) => s.id === current),
+  );
   const finished = current === "resolved" || current === "closed";
   return (
     <ol className="grid" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
@@ -332,19 +400,31 @@ function StepTrack({ steps, current }: { steps: { id: string; label: string }[];
           <li key={s.id} className="relative flex flex-col items-center gap-1.5 text-center">
             {i > 0 && (
               <span
-                className={cn("absolute right-1/2 top-3 h-px w-full -translate-y-1/2", i <= idx ? "bg-neon/50" : "bg-line")}
+                className={cn(
+                  "absolute right-1/2 top-3 h-px w-full -translate-y-1/2",
+                  i <= idx ? "bg-neon/50" : "bg-line",
+                )}
                 aria-hidden="true"
               />
             )}
             <span
               className={cn(
                 "relative z-10 grid size-6 place-items-center rounded-full text-[10px] font-bold",
-                done ? "bg-ok text-ink" : active ? "bg-accent text-ink" : "bg-panel-2 text-muted ring-1 ring-line",
+                done
+                  ? "bg-ok text-ink"
+                  : active
+                    ? "bg-accent text-ink"
+                    : "bg-panel-2 text-muted ring-1 ring-line",
               )}
             >
               {done ? <Check className="size-3.5" strokeWidth={3} /> : i + 1}
             </span>
-            <span className={cn("px-0.5 text-[10px] leading-tight sm:text-[11px]", done || active ? "text-fg" : "text-dim")}>
+            <span
+              className={cn(
+                "px-0.5 text-[10px] leading-tight sm:text-[11px]",
+                done || active ? "text-fg" : "text-dim",
+              )}
+            >
               {s.label}
             </span>
           </li>
@@ -355,7 +435,11 @@ function StepTrack({ steps, current }: { steps: { id: string; label: string }[];
 }
 
 function SectionLabel({ children }: { children: ReactNode }) {
-  return <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">{children}</h3>;
+  return (
+    <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
+      {children}
+    </h3>
+  );
 }
 
 function Detail({
@@ -446,13 +530,17 @@ function Detail({
         </p>
       )}
       {desc && (
-        <p className="rounded-xl bg-panel-2/40 p-3 text-sm leading-relaxed text-fg ring-1 ring-line">{desc}</p>
+        <p className="rounded-xl bg-panel-2/40 p-3 text-sm leading-relaxed text-fg ring-1 ring-line">
+          {desc}
+        </p>
       )}
 
       <section>
         <SectionLabel>Progress</SectionLabel>
         <StepTrack
-          steps={item.kind === "sos" ? SOS_STEPS.filter((s) => s.id !== "cancelled") : INCIDENT_STATUSES}
+          steps={
+            item.kind === "sos" ? SOS_STEPS.filter((s) => s.id !== "cancelled") : INCIDENT_STATUSES
+          }
           current={item.status}
         />
       </section>
@@ -464,13 +552,23 @@ function Detail({
             responders={responders}
             current={sos?.assignedTo ?? null}
             disabled={busy}
-            onPick={(id) => void act(() => assignSos({ data: { id: item.id, responderId: id } }), "Responder assigned")}
+            onPick={(id) =>
+              void act(
+                () => assignSos({ data: { id: item.id, responderId: id } }),
+                "Responder assigned",
+              )
+            }
           />
           <div className="mt-3 grid grid-cols-2 gap-2">
             <button
               type="button"
               disabled={busy}
-              onClick={() => void act(() => setSosStatus({ data: { id: item.id, status: "arrived" } }), "Marked arrived")}
+              onClick={() =>
+                void act(
+                  () => setSosStatus({ data: { id: item.id, status: "arrived" } }),
+                  "Marked arrived",
+                )
+              }
               className="btn-ghost"
             >
               Mark arrived
@@ -478,7 +576,12 @@ function Detail({
             <button
               type="button"
               disabled={busy}
-              onClick={() => void act(() => setSosStatus({ data: { id: item.id, status: "resolved" } }), "SOS resolved")}
+              onClick={() =>
+                void act(
+                  () => setSosStatus({ data: { id: item.id, status: "resolved" } }),
+                  "SOS resolved",
+                )
+              }
               className="inline-flex min-h-11 items-center justify-center rounded-xl bg-ok text-sm font-semibold text-ink disabled:opacity-50"
             >
               Resolve
@@ -492,7 +595,8 @@ function Detail({
             current={item.status}
             disabled={busy}
             onPick={(status) => {
-              const fn = item.kind === "incident" ? staffSetIncidentStatus : staffSetAnonymousStatus;
+              const fn =
+                item.kind === "incident" ? staffSetIncidentStatus : staffSetAnonymousStatus;
               void act(() => fn({ data: { id: item.id, status } }), "Status updated");
             }}
           />

@@ -3,7 +3,8 @@ import { distanceM, nearestLocation, CAMPUS } from "./campus";
 import { gpsBlockedByInsecureOrigin, readLastFix, writeLastFix } from "./gps";
 import type { GpsFix } from "./types";
 
-export type LiveLocationStatus = "locating" | "live" | "denied" | "insecure" | "unsupported" | "unavailable";
+export type LiveLocationStatus =
+  "locating" | "live" | "denied" | "insecure" | "unsupported" | "unavailable";
 
 export type LiveLocation = {
   /** Latest real fix (or the last stored one while waiting). */
@@ -39,7 +40,12 @@ export function useLiveLocation(): LiveLocation {
     }
     const id = navigator.geolocation.watchPosition(
       (p) => {
-        const next: GpsFix = { lat: p.coords.latitude, lng: p.coords.longitude, acc: p.coords.accuracy, approx: false };
+        const next: GpsFix = {
+          lat: p.coords.latitude,
+          lng: p.coords.longitude,
+          acc: p.coords.accuracy,
+          approx: false,
+        };
         writeLastFix(next);
         setFix(next);
         setStatus("live");

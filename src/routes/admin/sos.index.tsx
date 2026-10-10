@@ -1,12 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, CheckCircle2, Crosshair, LocateFixed, MapPinOff, Phone, ShieldCheck, SignalLow, X } from "lucide-react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Crosshair,
+  LocateFixed,
+  MapPinOff,
+  Phone,
+  ShieldCheck,
+  SignalLow,
+  X,
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DashCard } from "@/components/admin/dash-card";
-import { LiveMap, type MapMarker } from "@/components/live-map";
-import { StatusPill } from "@/components/pills";
+import { LiveMap, type MapMarker } from "@/components/shared/live-map";
+import { StatusPill } from "@/components/shared/pills";
 import { CAMPUS } from "@/lib/campus";
-import { getLive } from "@/lib/server/admin";
+import { getLive } from "@/backend/functions/admin";
 import type { LivePayload, RecentSos, SosAlert } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 
@@ -42,7 +52,11 @@ function gpsLine(s: SosAlert, now: number): { text: string; tone: GpsTone } {
   return { text: `${acc} · ${when}`, tone: "ok" };
 }
 
-const GPS_TONE: Record<GpsTone, string> = { ok: "text-ok", approx: "text-warn", stale: "text-warn" };
+const GPS_TONE: Record<GpsTone, string> = {
+  ok: "text-ok",
+  approx: "text-warn",
+  stale: "text-warn",
+};
 
 function GpsIcon({ tone }: { tone: GpsTone }) {
   if (tone === "ok") return <Crosshair className="size-3.5 shrink-0" />;
@@ -109,17 +123,37 @@ function SosBoard() {
   const markers: MapMarker[] = useMemo(() => {
     if (!live) return [];
     return [
-      ...live.incidents.map((i) => ({ id: i.id, lat: i.lat, lng: i.lng, kind: "incident" as const, severity: i.severity, label: "Incident" })),
-      ...live.anonymous.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, kind: "anonymous" as const, severity: a.severity, label: "Anonymous report" })),
+      ...live.incidents.map((i) => ({
+        id: i.id,
+        lat: i.lat,
+        lng: i.lng,
+        kind: "incident" as const,
+        severity: i.severity,
+        label: "Incident",
+      })),
+      ...live.anonymous.map((a) => ({
+        id: a.id,
+        lat: a.lat,
+        lng: a.lng,
+        kind: "anonymous" as const,
+        severity: a.severity,
+        label: "Anonymous report",
+      })),
       ...live.sos.filter(hasFix).map((s) => ({
         id: s.id,
         lat: s.lat!,
         lng: s.lng!,
         kind: "sos" as const,
-        label: s.isApproximate ? `SOS · ${s.reporterName} (approximate — no GPS)` : `SOS · ${s.reporterName}`,
+        label: s.isApproximate
+          ? `SOS · ${s.reporterName} (approximate — no GPS)`
+          : `SOS · ${s.reporterName}`,
         approx: s.isApproximate,
         // Approximate positions always show their uncertainty; precise ones when selected.
-        accuracyM: s.isApproximate ? Math.max(s.accuracyM ?? 0, 80) : s.id === focusId ? s.accuracyM : null,
+        accuracyM: s.isApproximate
+          ? Math.max(s.accuracyM ?? 0, 80)
+          : s.id === focusId
+            ? s.accuracyM
+            : null,
       })),
       ...(focusedRecent && focusedRecent.lat != null && focusedRecent.lng != null
         ? [
@@ -137,7 +171,12 @@ function SosBoard() {
   }, [live, focusId, focusedRecent]);
 
   const trails = useMemo(
-    () => (live?.trails ?? []).map((t) => ({ id: t.alertId, points: t.points, highlight: t.alertId === focusId })),
+    () =>
+      (live?.trails ?? []).map((t) => ({
+        id: t.alertId,
+        points: t.points,
+        highlight: t.alertId === focusId,
+      })),
     [live, focusId],
   );
 
@@ -154,7 +193,10 @@ function SosBoard() {
         <div>
           <h1 className="font-display text-2xl font-semibold tracking-tight">SOS alerts</h1>
           <p className="mt-1 flex items-center gap-2 text-sm text-muted">
-            <span className={cn("size-2 rounded-full", error ? "bg-sos" : "pulse-dot bg-ok")} aria-hidden="true" />
+            <span
+              className={cn("size-2 rounded-full", error ? "bg-sos" : "pulse-dot bg-ok")}
+              aria-hidden="true"
+            />
             {error ? "Live feed interrupted — retrying" : `Live GPS tracking · ${CAMPUS.name}`}
           </p>
         </div>
@@ -175,7 +217,10 @@ function SosBoard() {
           title="Live campus map"
           bodyClassName="relative h-[420px] flex-none p-0 sm:h-[480px] sm:p-0 lg:h-auto lg:flex-1"
           actions={
-            <ul className="flex flex-wrap items-center gap-3 text-xs text-muted" aria-label="Map legend">
+            <ul
+              className="flex flex-wrap items-center gap-3 text-xs text-muted"
+              aria-label="Map legend"
+            >
               {LEGEND.map((l) => (
                 <li key={l.label} className="flex items-center gap-1.5">
                   <span className={cn("size-2.5 rounded-full", l.dot)} aria-hidden="true" />
@@ -193,10 +238,16 @@ function SosBoard() {
             className="absolute inset-0 h-full w-full"
           />
           {focused && <FocusStrip alert={focused} now={now} onClose={() => setFocusId(null)} />}
-          {focusedRecent && <ClosedStrip alert={focusedRecent} now={now} onClose={() => setFocusId(null)} />}
+          {focusedRecent && (
+            <ClosedStrip alert={focusedRecent} now={now} onClose={() => setFocusId(null)} />
+          )}
         </DashCard>
 
-        <DashCard title="Live alerts" badge={alerts ? String(alerts.length) : undefined} bodyClassName="lg:max-h-none">
+        <DashCard
+          title="Live alerts"
+          badge={alerts ? String(alerts.length) : undefined}
+          bodyClassName="lg:max-h-none"
+        >
           {!alerts && !error && (
             <ul className="space-y-2" aria-hidden="true">
               {[0, 1, 2].map((i) => (
@@ -210,7 +261,9 @@ function SosBoard() {
                 <ShieldCheck className="size-6" />
               </span>
               <p className="mt-3 font-medium">All clear</p>
-              <p className="mt-1 text-sm text-muted">No live SOS. A student's alert appears here within 5 seconds.</p>
+              <p className="mt-1 text-sm text-muted">
+                No live SOS. A student's alert appears here within 5 seconds.
+              </p>
             </div>
           )}
           {alerts?.length === 0 && recent.length > 0 && (
@@ -233,7 +286,10 @@ function SosBoard() {
                       on ? "bg-panel-2 ring-sos/50" : "ring-line hover:bg-panel-2/60",
                     )}
                   >
-                    <span className="absolute inset-y-2 left-1.5 w-1 rounded-full bg-sos" aria-hidden="true" />
+                    <span
+                      className="absolute inset-y-2 left-1.5 w-1 rounded-full bg-sos"
+                      aria-hidden="true"
+                    />
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="truncate font-medium">{s.reporterName}</p>
@@ -247,7 +303,9 @@ function SosBoard() {
                       <GpsIcon tone={gps.tone} />
                       {gps.text}
                     </p>
-                    <p className="mt-0.5 truncate text-xs text-dim">{s.assignedName ? `Assigned: ${s.assignedName}` : "Unassigned"}</p>
+                    <p className="mt-0.5 truncate text-xs text-dim">
+                      {s.assignedName ? `Assigned: ${s.assignedName}` : "Unassigned"}
+                    </p>
                   </button>
                 </li>
               );
@@ -272,13 +330,23 @@ function SosBoard() {
                           on ? "bg-panel-2 ring-ok/50" : "ring-line hover:bg-panel-2/60",
                         )}
                       >
-                        <CheckCircle2 className={cn("mt-0.5 size-4 shrink-0", r.closedBy === "cancelled" ? "text-muted" : "text-ok")} />
+                        <CheckCircle2
+                          className={cn(
+                            "mt-0.5 size-4 shrink-0",
+                            r.closedBy === "cancelled" ? "text-muted" : "text-ok",
+                          )}
+                        />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
                             <p className="truncate font-medium">{r.reporterName}</p>
                             <StatusPill status={r.status} />
                           </div>
-                          <p className={cn("text-xs", r.closedBy === "reporter" ? "text-ok" : "text-muted")}>
+                          <p
+                            className={cn(
+                              "text-xs",
+                              r.closedBy === "reporter" ? "text-ok" : "text-muted",
+                            )}
+                          >
                             {closedLabel(r)} · {waitLabel(r.closedAt, now)} ago
                           </p>
                           <p className="truncate text-xs text-dim">
@@ -300,11 +368,22 @@ function SosBoard() {
 }
 
 /** Details for the selected alert, docked over the bottom of the map. */
-function FocusStrip({ alert, now, onClose }: { alert: SosAlert; now: number; onClose: () => void }) {
+function FocusStrip({
+  alert,
+  now,
+  onClose,
+}: {
+  alert: SosAlert;
+  now: number;
+  onClose: () => void;
+}) {
   const gps = gpsLine(alert, now);
   return (
     <div className="absolute inset-x-3 bottom-3 z-[500] flex flex-wrap items-center gap-3 rounded-xl bg-chrome/95 p-3 ring-1 ring-sos/40 backdrop-blur sm:inset-x-4 sm:bottom-4">
-      <span className="size-2.5 shrink-0 rounded-full bg-sos shadow-[0_0_10px_rgb(255,59,78,.7)]" aria-hidden="true" />
+      <span
+        className="size-2.5 shrink-0 rounded-full bg-sos shadow-[0_0_10px_rgb(255,59,78,.7)]"
+        aria-hidden="true"
+      />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold">{alert.reporterName}</p>
         <p className={cn("truncate text-xs", gps.tone === "ok" ? "text-muted" : "text-warn")}>
@@ -333,7 +412,15 @@ function FocusStrip({ alert, now, onClose }: { alert: SosAlert; now: number; onC
 }
 
 /** Summary for a closed alert, docked over the map. */
-function ClosedStrip({ alert, now, onClose }: { alert: RecentSos; now: number; onClose: () => void }) {
+function ClosedStrip({
+  alert,
+  now,
+  onClose,
+}: {
+  alert: RecentSos;
+  now: number;
+  onClose: () => void;
+}) {
   return (
     <div className="absolute inset-x-3 bottom-3 z-[500] flex flex-wrap items-center gap-3 rounded-xl bg-chrome/95 p-3 ring-1 ring-ok/40 backdrop-blur sm:inset-x-4 sm:bottom-4">
       <CheckCircle2 className="size-5 shrink-0 text-ok" />
@@ -344,7 +431,11 @@ function ClosedStrip({ alert, now, onClose }: { alert: RecentSos; now: number; o
           {alert.isApproximate ? " · last location was approximate" : ""}
         </p>
       </div>
-      <Link to="/admin/sos/$id" params={{ id: alert.id }} className="btn-ghost min-h-9 px-3 text-xs">
+      <Link
+        to="/admin/sos/$id"
+        params={{ id: alert.id }}
+        className="btn-ghost min-h-9 px-3 text-xs"
+      >
         View case <ArrowUpRight className="size-3.5" />
       </Link>
       <button

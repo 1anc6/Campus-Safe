@@ -2,13 +2,25 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Fact, Panel, ReplyForm, ResponderPicker, StatusButtons, ThreadList } from "@/components/admin/case-panels";
-import { LiveMap } from "@/components/live-map";
-import { SeverityChip, StatusPill } from "@/components/pills";
-import { StatusStepper } from "@/components/status-stepper";
+import {
+  Fact,
+  Panel,
+  ReplyForm,
+  ResponderPicker,
+  StatusButtons,
+  ThreadList,
+} from "@/components/admin/case-panels";
+import { LiveMap } from "@/components/shared/live-map";
+import { SeverityChip, StatusPill } from "@/components/shared/pills";
+import { StatusStepper } from "@/components/shared/status-stepper";
 import { INCIDENT_STATUSES, SEVERITIES } from "@/lib/campus";
-import { listResponders } from "@/lib/server/admin";
-import { assignIncident, getIncident, postThread, staffSetIncidentStatus } from "@/lib/server/reports";
+import { listResponders } from "@/backend/functions/admin";
+import {
+  assignIncident,
+  getIncident,
+  postThread,
+  staffSetIncidentStatus,
+} from "@/backend/functions/reports";
 import type { Incident, Responder, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
 
@@ -30,7 +42,9 @@ function IncidentCase() {
 
   useEffect(() => {
     load().catch((e: unknown) => setError(e instanceof Error ? e.message : "Not found"));
-    listResponders().then(setResponders).catch(() => setResponders([]));
+    listResponders()
+      .then(setResponders)
+      .catch(() => setResponders([]));
   }, [load]);
 
   async function act(fn: () => Promise<unknown>, success: string) {
@@ -93,7 +107,9 @@ function IncidentCase() {
             </div>
           </Panel>
           <Panel title="Description">
-            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{incident.description}</p>
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
+              {incident.description}
+            </p>
             {incident.photoData && (
               <img
                 src={incident.photoData}
@@ -105,7 +121,15 @@ function IncidentCase() {
           {incident.lat != null && incident.lng != null && (
             <div className="h-64 overflow-hidden rounded-2xl ring-1 ring-line">
               <LiveMap
-                markers={[{ id: incident.id, lat: incident.lat, lng: incident.lng, kind: "incident", label: incident.categoryName }]}
+                markers={[
+                  {
+                    id: incident.id,
+                    lat: incident.lat,
+                    lng: incident.lng,
+                    kind: "incident",
+                    label: incident.categoryName,
+                  },
+                ]}
                 focus={{ lat: incident.lat, lng: incident.lng }}
                 className="h-full w-full"
               />
@@ -130,7 +154,10 @@ function IncidentCase() {
               current={incident.status}
               disabled={busy}
               onPick={(status) =>
-                void act(() => staffSetIncidentStatus({ data: { id: incident.id, status } }), "Status updated")
+                void act(
+                  () => staffSetIncidentStatus({ data: { id: incident.id, status } }),
+                  "Status updated",
+                )
               }
             />
           </Panel>
@@ -142,7 +169,10 @@ function IncidentCase() {
                   type="button"
                   disabled={busy}
                   onClick={() =>
-                    void act(() => assignIncident({ data: { id: incident.id, responderId: null } }), "Assignment cleared")
+                    void act(
+                      () => assignIncident({ data: { id: incident.id, responderId: null } }),
+                      "Assignment cleared",
+                    )
                   }
                   className="text-xs text-muted hover:text-sos"
                 >
@@ -153,7 +183,8 @@ function IncidentCase() {
           >
             {incident.assignedTo && (
               <p className="mb-3 text-sm">
-                Assigned to <span className="font-medium text-neon">{assigned?.name ?? "a responder"}</span>
+                Assigned to{" "}
+                <span className="font-medium text-neon">{assigned?.name ?? "a responder"}</span>
               </p>
             )}
             <ResponderPicker
@@ -161,7 +192,10 @@ function IncidentCase() {
               current={incident.assignedTo}
               disabled={busy}
               onPick={(responderId) =>
-                void act(() => assignIncident({ data: { id: incident.id, responderId } }), "Responder assigned")
+                void act(
+                  () => assignIncident({ data: { id: incident.id, responderId } }),
+                  "Responder assigned",
+                )
               }
             />
           </Panel>
@@ -176,7 +210,10 @@ function IncidentCase() {
 
 function BackLink() {
   return (
-    <Link to="/admin/incidents" className="inline-flex min-h-10 items-center gap-1.5 text-sm text-muted hover:text-fg">
+    <Link
+      to="/admin/incidents"
+      className="inline-flex min-h-10 items-center gap-1.5 text-sm text-muted hover:text-fg"
+    >
       <ArrowLeft className="size-4" /> All incidents
     </Link>
   );

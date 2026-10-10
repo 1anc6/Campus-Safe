@@ -10,9 +10,9 @@ import {
   type ReactNode,
 } from "react";
 import { toast } from "sonner";
-import { SosButton } from "@/components/sos-button";
+import { SosButton } from "@/components/shared/sos-button";
 import { clearPendingSos, getFix, readPendingSos, writePendingSos } from "@/lib/gps";
-import { createSos } from "@/lib/server/sos";
+import { createSos } from "@/backend/functions/sos";
 import type { GpsFix } from "@/lib/types";
 import type { LiveLocation } from "@/lib/use-live-location";
 

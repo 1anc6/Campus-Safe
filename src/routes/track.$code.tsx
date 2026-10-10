@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AdaptiveShell } from "@/components/student-shell";
-import { SeverityChip, StatusPill } from "@/components/pills";
-import { StatusStepper } from "@/components/status-stepper";
+import { AdaptiveShell } from "@/components/student/student-shell";
+import { SeverityChip, StatusPill } from "@/components/shared/pills";
+import { StatusStepper } from "@/components/shared/status-stepper";
 import { INCIDENT_STATUSES } from "@/lib/campus";
-import { replyAnonymousPublic, trackAnonymous } from "@/lib/server/reports";
+import { replyAnonymousPublic, trackAnonymous } from "@/backend/functions/reports";
 import { formatClock } from "@/lib/utils";
 import type { AnonymousReport, ThreadMessage } from "@/lib/types";
 import { useCallback, useEffect, useState } from "react";
@@ -42,7 +42,9 @@ function TrackPage() {
 
   return (
     <AdaptiveShell anon>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet">Anonymous track</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet">
+        Anonymous track
+      </p>
       <p className="mt-2 break-all font-mono text-xl font-semibold tracking-wide text-neon">
         {code.toUpperCase()}
       </p>
@@ -53,7 +55,9 @@ function TrackPage() {
       )}
       {report === undefined && !error && <p className="mt-6 text-sm text-muted">Looking up…</p>}
       {report === null && (
-        <p className="mt-6 text-sm text-sos">No report for that code. Codes are case-insensitive.</p>
+        <p className="mt-6 text-sm text-sos">
+          No report for that code. Codes are case-insensitive.
+        </p>
       )}
       {report && (
         <div className="mt-6 space-y-4">

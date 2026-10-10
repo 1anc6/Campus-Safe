@@ -9,14 +9,14 @@ import {
   ResponderPicker,
   ThreadList,
 } from "@/components/admin/case-panels";
-import { LiveMap } from "@/components/live-map";
-import { MedicalCard } from "@/components/medical-card";
-import { StatusPill } from "@/components/pills";
-import { StatusStepper } from "@/components/status-stepper";
+import { LiveMap } from "@/components/shared/live-map";
+import { MedicalCard } from "@/components/shared/medical-card";
+import { StatusPill } from "@/components/shared/pills";
+import { StatusStepper } from "@/components/shared/status-stepper";
 import { SOS_STEPS } from "@/lib/campus";
-import { listResponders } from "@/lib/server/admin";
-import { postThread } from "@/lib/server/reports";
-import { assignSos, getSos, setSosStatus } from "@/lib/server/sos";
+import { listResponders } from "@/backend/functions/admin";
+import { postThread } from "@/backend/functions/reports";
+import { assignSos, getSos, setSosStatus } from "@/backend/functions/sos";
 import type { Responder, SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
 import { formatClock, waitLabel } from "@/lib/utils";
 

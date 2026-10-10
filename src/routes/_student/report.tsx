@@ -17,12 +17,12 @@ import {
   UserX,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { PageHeading } from "@/components/student-shell";
+import { PageHeading } from "@/components/student/student-shell";
 import { FormSection, SummaryRow } from "@/components/student/form-section";
 import { MyLocationMap } from "@/components/student/my-location-map";
 import { CATEGORIES, LOCATIONS, SEVERITIES, type Severity } from "@/lib/campus";
 import { getFix } from "@/lib/gps";
-import { createIncident } from "@/lib/server/reports";
+import { createIncident } from "@/backend/functions/reports";
 import type { GpsFix } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn } from "@/lib/utils";
@@ -119,7 +119,11 @@ function ReportForm() {
         title="Report an incident"
         subtitle="Campus command reviews every report. Track status changes and replies under My reports."
       />
-      <form onSubmit={submit} noValidate className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+      <form
+        onSubmit={submit}
+        noValidate
+        className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start"
+      >
         <div className="min-w-0 space-y-4">
           <FormSection step={1} title="What happened?" hint="Pick the closest category.">
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -134,7 +138,9 @@ function ReportForm() {
                     aria-pressed={on}
                     className={cn(
                       "flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-xl px-1 text-center text-xs font-semibold ring-1 transition-colors",
-                      on ? "bg-neon-dim text-neon ring-neon/60" : "bg-panel-2/50 text-fg ring-line hover:bg-panel-2",
+                      on
+                        ? "bg-neon-dim text-neon ring-neon/60"
+                        : "bg-panel-2/50 text-fg ring-line hover:bg-panel-2",
                     )}
                   >
                     <Icon className="size-5" />
@@ -145,8 +151,16 @@ function ReportForm() {
             </div>
           </FormSection>
 
-          <FormSection step={2} title="Where and when?" hint="Choose a campus place, or drop a pin at your current position.">
-            <div className="seg mb-3 w-full [&>button]:flex-1" role="group" aria-label="Location type">
+          <FormSection
+            step={2}
+            title="Where and when?"
+            hint="Choose a campus place, or drop a pin at your current position."
+          >
+            <div
+              className="seg mb-3 w-full [&>button]:flex-1"
+              role="group"
+              aria-label="Location type"
+            >
               <button type="button" aria-pressed={!useGps} onClick={() => setUseGps(false)}>
                 Campus place
               </button>
@@ -160,7 +174,11 @@ function ReportForm() {
               ) : (
                 <label className="block">
                   <span className="field-label">Place</span>
-                  <select value={locationId} onChange={(e) => setLocationId(e.target.value)} className="input">
+                  <select
+                    value={locationId}
+                    onChange={(e) => setLocationId(e.target.value)}
+                    className="input"
+                  >
                     {LOCATIONS.map((l) => (
                       <option key={l.id} value={l.id}>
                         {l.name} · {l.zone}
@@ -191,7 +209,9 @@ function ReportForm() {
                   aria-pressed={severity === s.id}
                   className={cn(
                     "rounded-xl p-3 text-left ring-1 transition-colors",
-                    severity === s.id ? "bg-panel-2 ring-neon/50" : "bg-panel-2/40 ring-line hover:bg-panel-2",
+                    severity === s.id
+                      ? "bg-panel-2 ring-neon/50"
+                      : "bg-panel-2/40 ring-line hover:bg-panel-2",
                   )}
                 >
                   <span className={cn("font-display text-sm font-bold", SEVERITY_TONE[s.id])}>
@@ -203,7 +223,11 @@ function ReportForm() {
             </div>
           </FormSection>
 
-          <FormSection step={4} title="Details" hint="Facts only: where, who, what you need. A photo helps.">
+          <FormSection
+            step={4}
+            title="Details"
+            hint="Facts only: where, who, what you need. A photo helps."
+          >
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -225,8 +249,16 @@ function ReportForm() {
               </label>
               {photo && (
                 <div className="flex items-center gap-2">
-                  <img src={photo} alt="Attached" className="size-14 rounded-lg object-cover ring-1 ring-line" />
-                  <button type="button" onClick={() => setPhoto(null)} className="btn-ghost min-h-10 px-3 text-xs">
+                  <img
+                    src={photo}
+                    alt="Attached"
+                    className="size-14 rounded-lg object-cover ring-1 ring-line"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPhoto(null)}
+                    className="btn-ghost min-h-10 px-3 text-xs"
+                  >
                     <ImageOff className="size-3.5" /> Remove
                   </button>
                 </div>
@@ -241,23 +273,42 @@ function ReportForm() {
               <ListChecks className="size-4 text-neon" /> Your report
             </h2>
             <div className="divide-y divide-line">
-              <SummaryRow label="Category" value={category?.name ?? "Not chosen"} muted={!category} />
+              <SummaryRow
+                label="Category"
+                value={category?.name ?? "Not chosen"}
+                muted={!category}
+              />
               <SummaryRow label="Location" value={place ?? "—"} />
-              <SummaryRow label="Severity" value={<span className={SEVERITY_TONE[severity]}>{severity} · {sev.label}</span>} />
+              <SummaryRow
+                label="Severity"
+                value={
+                  <span className={SEVERITY_TONE[severity]}>
+                    {severity} · {sev.label}
+                  </span>
+                }
+              />
               <SummaryRow label="Photo" value={photo ? "Attached" : "None"} muted={!photo} />
             </div>
             {error && (
-              <p className="mt-3 rounded-lg bg-sos/10 p-2.5 text-sm text-sos ring-1 ring-sos/30" role="alert">
+              <p
+                className="mt-3 rounded-lg bg-sos/10 p-2.5 text-sm text-sos ring-1 ring-sos/30"
+                role="alert"
+              >
                 {error}
               </p>
             )}
             <button type="submit" disabled={busy} className="btn-neon mt-4 min-h-12 w-full">
-              {busy ? <LoaderCircle className="size-4 animate-spin" /> : <Send className="size-4" />}
+              {busy ? (
+                <LoaderCircle className="size-4 animate-spin" />
+              ) : (
+                <Send className="size-4" />
+              )}
               {busy ? "Filing…" : "Submit report"}
             </button>
           </div>
           <p className="px-1 text-xs text-dim">
-            In danger right now? Use the SOS button on Home instead — it alerts command instantly with your location.
+            In danger right now? Use the SOS button on Home instead — it alerts command instantly
+            with your location.
           </p>
         </aside>
       </form>
@@ -276,7 +327,9 @@ function GpsPin({ onFix }: { onFix: (fix: GpsFix | null) => void }) {
       <MyLocationMap location={location} className="h-56 rounded-xl ring-1 ring-line" />
       <p className="mt-2 flex items-center gap-1.5 text-xs text-muted">
         <MapPin className="size-3.5 text-neon" />
-        {fix ? "The pin is placed where you are now." : "If GPS isn't available, an approximate position is used."}
+        {fix
+          ? "The pin is placed where you are now."
+          : "If GPS isn't available, an approximate position is used."}
       </p>
     </div>
   );

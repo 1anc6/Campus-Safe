@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { AdminShell } from "@/components/admin-shell";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { requireRole } from "@/lib/auth/guards";
 
 /**

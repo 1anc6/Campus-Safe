@@ -11,24 +11,13 @@ export const CAMPUS = {
   /** South-west / north-east corners of the campus, used to frame the map. */
   bounds: [
     [30.2662, 77.9925],
-    [30.2700, 77.9990],
+    [30.27, 77.999],
   ] as [[number, number], [number, number]],
 } as const;
 
 export type Severity = "P1" | "P2" | "P3" | "P4";
-export type IncidentStatus =
-  | "reported"
-  | "under_review"
-  | "in_progress"
-  | "resolved"
-  | "closed";
-export type SosStatus =
-  | "sent"
-  | "received"
-  | "assigned"
-  | "arrived"
-  | "resolved"
-  | "cancelled";
+export type IncidentStatus = "reported" | "under_review" | "in_progress" | "resolved" | "closed";
+export type SosStatus = "sent" | "received" | "assigned" | "arrived" | "resolved" | "cancelled";
 export type AnonRole = "victim" | "witness" | "heard";
 export type UserRole = "student" | "responder" | "admin";
 
@@ -80,18 +69,42 @@ export const LOCATIONS = [
   { id: "lh3", name: "CS-IT Block", zone: "Academic", lat: 30.26895, lng: 77.99318 },
   { id: "science", name: "B.Tech Block", zone: "Academic", lat: 30.2673, lng: 77.99525 },
   { id: "civil", name: "Civil Engineering Block", zone: "Academic", lat: 30.26686, lng: 77.99547 },
-  { id: "aryabhatt", name: "Aryabhatt Computer Center", zone: "Academic", lat: 30.26768, lng: 77.99575 },
+  {
+    id: "aryabhatt",
+    name: "Aryabhatt Computer Center",
+    zone: "Academic",
+    lat: 30.26768,
+    lng: 77.99575,
+  },
   { id: "chanakya", name: "Chanakya Block", zone: "Academic", lat: 30.26749, lng: 77.99699 },
   { id: "vishwakarma", name: "Vishwakarma Block", zone: "Academic", lat: 30.26805, lng: 77.99624 },
   { id: "pharma", name: "Pharma Block", zone: "Academic", lat: 30.26939, lng: 77.99286 },
   { id: "library", name: "Central Library", zone: "Academic", lat: 30.26729, lng: 77.99574 },
-  { id: "admin", name: "Silver Jubilee Convention Center", zone: "Admin", lat: 30.2693, lng: 77.99493 },
-  { id: "hostel-a", name: "Lakshmi Bai Girls Hostel", zone: "Residence", lat: 30.26768, lng: 77.99361 },
+  {
+    id: "admin",
+    name: "Silver Jubilee Convention Center",
+    zone: "Admin",
+    lat: 30.2693,
+    lng: 77.99493,
+  },
+  {
+    id: "hostel-a",
+    name: "Lakshmi Bai Girls Hostel",
+    zone: "Residence",
+    lat: 30.26768,
+    lng: 77.99361,
+  },
   { id: "hostel-p", name: "Priyadarshini Hostel", zone: "Residence", lat: 30.26872, lng: 77.99617 },
   { id: "mess", name: "Mess", zone: "Commons", lat: 30.26762, lng: 77.99393 },
   { id: "cafe", name: "Cafe and Gym", zone: "Commons", lat: 30.26714, lng: 77.99467 },
   { id: "sports", name: "Basketball Court", zone: "Recreation", lat: 30.26702, lng: 77.99596 },
-  { id: "badminton", name: "Indoor Badminton Court", zone: "Recreation", lat: 30.26688, lng: 77.99502 },
+  {
+    id: "badminton",
+    name: "Indoor Badminton Court",
+    zone: "Recreation",
+    lat: 30.26688,
+    lng: 77.99502,
+  },
   { id: "medical", name: "Dispensary", zone: "Health", lat: 30.26854, lng: 77.99503 },
   { id: "parking", name: "Parking", zone: "Entry", lat: 30.2684, lng: 77.99718 },
 ] as const;
@@ -129,13 +142,17 @@ export function severityRank(s: Severity | null | undefined): number {
 }
 
 /** Great-circle distance in metres (haversine). */
-export function distanceM(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+export function distanceM(
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number },
+): number {
   const R = 6371000;
   const toRad = (d: number) => (d * Math.PI) / 180;
   const dLat = toRad(b.lat - a.lat);
   const dLng = toRad(b.lng - a.lng);
   const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 

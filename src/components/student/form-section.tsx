@@ -38,7 +38,15 @@ export function FormSection({
 }
 
 /** Label/value line for the sticky summary panels. */
-export function SummaryRow({ label, value, muted }: { label: string; value: ReactNode; muted?: boolean }) {
+export function SummaryRow({
+  label,
+  value,
+  muted,
+}: {
+  label: string;
+  value: ReactNode;
+  muted?: boolean;
+}) {
   return (
     <div className="flex items-start justify-between gap-3 py-2 text-sm">
       <span className="text-muted">{label}</span>

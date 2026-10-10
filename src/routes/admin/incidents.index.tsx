@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Clock, Filter, MapPin, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { AdminPageHeader } from "@/components/admin-shell";
-import { SeverityChip, StatusPill } from "@/components/pills";
+import { AdminPageHeader } from "@/components/admin/admin-shell";
+import { SeverityChip, StatusPill } from "@/components/shared/pills";
 import { CATEGORIES, INCIDENT_STATUSES, SEVERITIES, type Severity } from "@/lib/campus";
-import { listIncidentsAdmin } from "@/lib/server/admin";
+import { listIncidentsAdmin } from "@/backend/functions/admin";
 import { cn, formatClock } from "@/lib/utils";
 
 type IncidentSearch = {
@@ -21,7 +21,10 @@ export const Route = createFileRoute("/admin/incidents/")({
   validateSearch: (s: Record<string, unknown>): IncidentSearch => ({
     q: typeof s.q === "string" && s.q ? s.q : undefined,
     status: typeof s.status === "string" && s.status ? s.status : undefined,
-    severity: typeof s.severity === "string" && SEVERITY_IDS.has(s.severity) ? (s.severity as Severity) : undefined,
+    severity:
+      typeof s.severity === "string" && SEVERITY_IDS.has(s.severity)
+        ? (s.severity as Severity)
+        : undefined,
     category: typeof s.category === "string" && s.category ? s.category : undefined,
     sort: s.sort === "date" ? "date" : undefined,
   }),
@@ -43,7 +46,9 @@ function IncidentsPage() {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [term, setTerm] = useState(search.q ?? "");
-  const [showFilters, setShowFilters] = useState(Boolean(search.status || search.severity || search.category));
+  const [showFilters, setShowFilters] = useState(
+    Boolean(search.status || search.severity || search.category),
+  );
 
   useEffect(() => {
     listIncidentsAdmin()
@@ -149,7 +154,9 @@ function IncidentsPage() {
               <span className="field-label">Priority</span>
               <select
                 value={search.severity ?? ""}
-                onChange={(e) => setFilter({ severity: (e.target.value || undefined) as Severity | undefined })}
+                onChange={(e) =>
+                  setFilter({ severity: (e.target.value || undefined) as Severity | undefined })
+                }
                 className="input"
               >
                 <option value="">All priorities</option>
@@ -178,7 +185,9 @@ function IncidentsPage() {
             {activeFilters > 0 && (
               <button
                 type="button"
-                onClick={() => setFilter({ status: undefined, severity: undefined, category: undefined })}
+                onClick={() =>
+                  setFilter({ status: undefined, severity: undefined, category: undefined })
+                }
                 className="flex min-h-10 items-center justify-center gap-1 text-sm text-sos hover:underline sm:col-span-3"
               >
                 <X className="size-3.5" /> Clear all filters

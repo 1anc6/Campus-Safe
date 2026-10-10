@@ -12,14 +12,14 @@ import {
   Siren,
 } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { KindChip, StatusPill } from "@/components/pills";
+import { KindChip, StatusPill } from "@/components/shared/pills";
 import { MyLocationMap } from "@/components/student/my-location-map";
 import { profileCompleteness, useProfilePanel } from "@/components/student/profile-panel";
 import { useSosFlow } from "@/components/student/sos-flow";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { CAMPUS, SECURITY_LINE } from "@/lib/campus";
-import { listMyIncidents } from "@/lib/server/reports";
-import { listMySos } from "@/lib/server/sos";
+import { listMyIncidents } from "@/backend/functions/reports";
+import { listMySos } from "@/backend/functions/sos";
 import type { Incident, SosAlert } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn, formatClock } from "@/lib/utils";

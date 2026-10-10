@@ -1,6 +1,6 @@
 import { CAMPUS } from "./campus";
 import type { GpsFix } from "./types";
-import type { GpsState } from "@/components/gps-strip";
+import type { GpsState } from "@/components/shared/gps-strip";
 
 const LAST_FIX_KEY = "aegis.last_fix";
 const PENDING_KEY = "aegis.sos_pending";
@@ -93,7 +93,11 @@ export function getFix(): Promise<GpsFix> {
   });
 }
 
-export function gpsStateFromFix(fix: GpsFix | null, locating: boolean, permission: PermissionState | "unknown"): GpsState {
+export function gpsStateFromFix(
+  fix: GpsFix | null,
+  locating: boolean,
+  permission: PermissionState | "unknown",
+): GpsState {
   if (gpsBlockedByInsecureOrigin()) return "insecure";
   if (locating) return "locating";
   if (permission === "denied") return "off";

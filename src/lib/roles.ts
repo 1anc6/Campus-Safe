@@ -3,7 +3,7 @@ import type { UserRole } from "./campus";
 /**
  * Single source of truth for role-based routing. Client-safe (no server imports):
  * route guards, the login redirect and the shells all read from here, while the
- * server enforces the same roles independently in `src/lib/server/helpers.ts`.
+ * server enforces the same roles independently in `src/backend/core/helpers.ts`.
  */
 
 /** Where each role lands after sign-in (and when visiting `/`). */

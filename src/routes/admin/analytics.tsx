@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, CheckCircle, Clock, Percent, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AdminPageHeader } from "@/components/admin-shell";
+import { AdminPageHeader } from "@/components/admin/admin-shell";
 import {
   CategoryDonut,
   DailyBars,
@@ -10,8 +10,8 @@ import {
   ResponseLine,
   SeverityBars,
   StatusDonut,
-} from "@/components/charts";
-import { getAnalytics, getLive, type AnalyticsPayload } from "@/lib/server/admin";
+} from "@/components/shared/charts";
+import { getAnalytics, getLive, type AnalyticsPayload } from "@/backend/functions/admin";
 import type { LivePayload } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/analytics")({ component: AnalyticsPage });

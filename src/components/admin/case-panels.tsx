@@ -39,7 +39,13 @@ const AUTHOR_LABEL: Record<ThreadMessage["authorRole"], string> = {
 };
 
 /** Case timeline: system events, command remarks, reporter replies. */
-export function ThreadList({ messages, empty = "No activity yet." }: { messages: ThreadMessage[]; empty?: string }) {
+export function ThreadList({
+  messages,
+  empty = "No activity yet.",
+}: {
+  messages: ThreadMessage[];
+  empty?: string;
+}) {
   if (messages.length === 0) return <p className="text-sm text-muted">{empty}</p>;
   return (
     <ol className="space-y-2">
@@ -96,7 +102,12 @@ export function ReplyForm({
           className="input flex-1"
           aria-label={placeholder}
         />
-        <button type="submit" disabled={busy || !body.trim()} className="btn-neon px-4" aria-label="Send">
+        <button
+          type="submit"
+          disabled={busy || !body.trim()}
+          className="btn-neon px-4"
+          aria-label="Send"
+        >
           {busy ? <LoaderCircle className="size-4 animate-spin" /> : <Send className="size-4" />}
         </button>
       </div>
@@ -141,7 +152,9 @@ export function ResponderPicker({
             )}
           >
             {r.name}
-            <span className={cn("ml-1.5 font-normal", on ? "text-panel/70" : UNIT_STATUS[r.status])}>
+            <span
+              className={cn("ml-1.5 font-normal", on ? "text-panel/70" : UNIT_STATUS[r.status])}
+            >
               · {r.unit}
             </span>
           </button>
@@ -174,7 +187,9 @@ export function StatusButtons({
             aria-pressed={on}
             className={cn(
               "min-h-9 rounded-full px-3 text-[11px] font-medium ring-1 transition-colors",
-              on ? "bg-neon-dim text-neon ring-neon/40" : "ring-line hover:bg-panel-2 disabled:opacity-50",
+              on
+                ? "bg-neon-dim text-neon ring-neon/40"
+                : "ring-line hover:bg-panel-2 disabled:opacity-50",
             )}
           >
             {s.label}

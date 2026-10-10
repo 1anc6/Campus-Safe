@@ -36,7 +36,7 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
-import { ensureDbReady, getPglite } from "../db";
+import { ensureDbReady, getPglite } from "@/backend/db";
 import { emailAndPasswordEnabled } from "./email-password";
 import { GATE_PROVIDER_ID, gateIdentitySessions } from "./gate-session.server";
 import { GROK_PROVIDERS } from "./providers";
@@ -278,7 +278,7 @@ export const auth = betterAuth({
   // Public self-registration (`/signup`) is on. Self-registered accounts are
   // always `student` (`getOrCreateProfile`); elevated roles come only from
   // admins (Users page) or server-side bootstrap env vars
-  // (`src/lib/server/accounts.ts`).
+  // (`src/backend/core/accounts.ts`).
   ...(emailAndPasswordEnabled ? { emailAndPassword: { enabled: true, minPasswordLength: 8 } } : {}),
 
   // `__Host-` prefixed cookies: the browser REFUSES any same-named cookie that
