@@ -4,6 +4,7 @@ import {
   EyeOff,
   FileText,
   LayoutDashboard,
+  Megaphone,
   Menu,
   Radio,
   Truck,
@@ -34,6 +35,7 @@ const NAV: NavItem[] = [
   { to: "/admin/sos", label: "SOS Alerts", icon: Radio, badge: (c) => c.activeSos, tone: "sos" },
   { to: "/admin/incidents", label: "Incidents", icon: FileText, badge: (c) => c.incoming },
   { to: "/admin/anonymous", label: "Anonymous", icon: EyeOff, tone: "violet" },
+  { to: "/admin/alerts", label: "Broadcasts", icon: Megaphone },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/responders", label: "Responders", icon: Truck },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
@@ -58,9 +60,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let live = true;
+    let lastLoad = 0;
     const load = () => {
-      // Skip polls while the tab is hidden; refresh as soon as it is visible again.
-      if (document.visibilityState === "hidden") return;
+      // Background tab: slow down to once a minute rather than stopping — this
+      // poll also drives the safe-walk watchdog, which must keep running.
+      if (document.visibilityState === "hidden" && Date.now() - lastLoad < 60_000) return;
+      lastLoad = Date.now();
       getAdminCounters()
         .then((c) => live && setCounters(c))
         .catch(() => {});

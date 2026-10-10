@@ -136,6 +136,11 @@ function AssignedAlert() {
             </h1>
             <StatusPill status={alert.status} />
           </div>
+          {alert.notes && (
+            <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-warn/15 px-3 py-1 text-xs font-semibold text-warn">
+              Auto-raised: {alert.notes}
+            </p>
+          )}
         </div>
         <div
           className={cn(

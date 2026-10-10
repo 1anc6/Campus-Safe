@@ -102,6 +102,11 @@ function SosCase() {
         )}
       </div>
       <h1 className="mt-2 font-display text-2xl font-semibold">{alert.reporterName}</h1>
+      {alert.notes && (
+        <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-warn/15 px-3 py-1 text-xs font-semibold text-warn">
+          Auto-raised: {alert.notes}
+        </p>
+      )}
 
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-4">

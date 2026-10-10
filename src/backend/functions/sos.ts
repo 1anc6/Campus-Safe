@@ -129,50 +129,63 @@ const fixSchema = {
   approx: z.boolean(),
 };
 
+type SosFix = { lat: number; lng: number; acc: number | null; approx: boolean };
+
+/**
+ * Raise (or reuse) a student's SOS. Shared by the SOS button and the safe-walk
+ * watchdog. One live SOS per student: a repeat press (double tap, retry after a
+ * dropped connection, offline queue) returns the alert already open instead of
+ * flooding command with duplicates. Never rate-limited — a real emergency must
+ * always get through. `reason` is shown to command (alert notes + timeline).
+ */
+export async function openSosForUser(
+  userId: string,
+  fix: SosFix,
+  reason?: string,
+): Promise<SosAlert> {
+  await getOrCreateProfile(userId);
+  const sql = await getSql();
+  const open = await sql<{ id: string }>`
+    select id from sos_alerts
+    where user_id = ${userId} and status not in ('resolved', 'cancelled')
+    order by started_at desc limit 1
+  `;
+  if (open[0]) {
+    await sql`
+      update sos_alerts set lat = ${fix.lat}, lng = ${fix.lng}, accuracy_m = ${fix.acc},
+        is_approximate = ${fix.approx}
+      where id = ${open[0].id}
+    `;
+    return (await fetchSos(open[0].id))!;
+  }
+  const id = newId();
+  const now = new Date().toISOString();
+  await sql`
+    insert into sos_alerts (
+      id, user_id, status, lat, lng, accuracy_m, is_approximate, started_at, received_at, notes
+    ) values (
+      ${id}, ${userId}, ${"sent"}, ${fix.lat}, ${fix.lng},
+      ${fix.acc}, ${fix.approx}, ${now}, ${now}, ${reason ?? null}
+    )
+  `;
+  await sql`
+    insert into sos_locations (id, alert_id, lat, lng, accuracy_m)
+    values (${newId()}, ${id}, ${fix.lat}, ${fix.lng}, ${fix.acc})
+  `;
+  await addSystemMessage(
+    "sos",
+    id,
+    reason ? `SOS raised automatically: ${reason}` : "SOS received by campus command.",
+  );
+  await audit(userId, "sos.create", "sos", id, reason);
+  await sql`update sos_alerts set status = ${"received"} where id = ${id}`;
+  return (await fetchSos(id))!;
+}
+
 export const createSos = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(z.object(fixSchema))
-  .handler(async ({ context, data }) => {
-    await getOrCreateProfile(context.userId);
-    const sql = await getSql();
-    // One live SOS per student: a repeat press (double tap, retry after a
-    // dropped connection, offline queue) returns the alert already open instead
-    // of flooding command with duplicates. Never rate-limited — a real
-    // emergency must always get through.
-    const open = await sql<{ id: string }>`
-      select id from sos_alerts
-      where user_id = ${context.userId} and status not in ('resolved', 'cancelled')
-      order by started_at desc limit 1
-    `;
-    if (open[0]) {
-      await sql`
-        update sos_alerts set lat = ${data.lat}, lng = ${data.lng}, accuracy_m = ${data.acc},
-          is_approximate = ${data.approx}
-        where id = ${open[0].id}
-      `;
-      return (await fetchSos(open[0].id))!;
-    }
-    const id = newId();
-    const now = new Date().toISOString();
-    await sql`
-      insert into sos_alerts (
-        id, user_id, status, lat, lng, accuracy_m, is_approximate, started_at, received_at
-      ) values (
-        ${id}, ${context.userId}, ${"sent"}, ${data.lat}, ${data.lng},
-        ${data.acc}, ${data.approx}, ${now}, ${now}
-      )
-    `;
-    await sql`
-      insert into sos_locations (id, alert_id, lat, lng, accuracy_m)
-      values (${newId()}, ${id}, ${data.lat}, ${data.lng}, ${data.acc})
-    `;
-    await addSystemMessage("sos", id, "SOS received by campus command.");
-    await audit(context.userId, "sos.create", "sos", id);
-    // Auto-flip to received a moment later conceptually — already set received_at.
-    await sql`update sos_alerts set status = ${"received"} where id = ${id}`;
-    const alert = await fetchSos(id);
-    return alert!;
-  });
+  .handler(({ context, data }) => openSosForUser(context.userId, data));
 
 /** Trail points closer together than this are merged (stops a runaway client filling the table). */
 const MIN_PING_GAP_MS = 2000;

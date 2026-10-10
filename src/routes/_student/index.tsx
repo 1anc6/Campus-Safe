@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { KindChip, StatusPill } from "@/components/shared/pills";
 import { MyLocationMap } from "@/components/student/my-location-map";
 import { profileCompleteness, useProfilePanel } from "@/components/student/profile-panel";
+import { SafeWalkCard } from "@/components/student/safe-walk";
 import { useSosFlow } from "@/components/student/sos-flow";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { CAMPUS, SECURITY_LINE } from "@/lib/campus";
@@ -102,13 +103,13 @@ function StudentHome() {
       className={cn(
         "grid grid-cols-1 gap-4",
         // Phone: greeting, a big map, safety card, reports. SOS lives in the tab bar.
-        "[grid-template-areas:'greet'_'map'_'safety'_'history']",
+        "[grid-template-areas:'greet'_'map'_'walk'_'safety'_'history']",
         // Tablet: full-width map, then actions; safety beside reports.
-        "md:grid-cols-2 md:[grid-template-areas:'greet_greet'_'map_map'_'quick_quick'_'safety_history']",
+        "md:grid-cols-2 md:[grid-template-areas:'greet_greet'_'map_map'_'quick_quick'_'walk_safety'_'history_history']",
         // Desktop: map on the left, a tidy side column on the right — fits the viewport.
         "xl:h-[calc(100dvh-3.5rem)] xl:grid-cols-[minmax(0,1fr)_minmax(340px,380px)]",
-        "xl:grid-rows-[auto_auto_auto_minmax(0,1fr)]",
-        "xl:[grid-template-areas:'greet_greet'_'map_quick'_'map_safety'_'map_history']",
+        "xl:grid-rows-[auto_auto_auto_auto_minmax(0,1fr)]",
+        "xl:[grid-template-areas:'greet_greet'_'map_quick'_'map_walk'_'map_safety'_'map_history']",
       )}
     >
       <header className="space-y-3 [grid-area:greet]">
@@ -154,6 +155,8 @@ function StudentHome() {
         <Quick to="/anonymous" icon={EyeOff} label="Anonymous" tone="violet" />
         <Quick to="/reports" icon={FolderOpen} label="My reports" />
       </nav>
+
+      <SafeWalkCard className="[grid-area:walk]" />
 
       <SafetyCard className="[grid-area:safety]" />
 

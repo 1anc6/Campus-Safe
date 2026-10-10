@@ -19,6 +19,7 @@ import { Route as StaffRouteRouteImport } from './routes/staff/route'
 import { Route as StudentIndexRouteImport } from './routes/_student/index'
 import { Route as StudentReportRouteImport } from './routes/_student/report'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAlertsRouteImport } from './routes/admin/alerts'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as AdminAnonymousRouteImport } from './routes/admin/anonymous'
 import { Route as AdminRespondersRouteImport } from './routes/admin/responders'
@@ -34,6 +35,7 @@ import { Route as AdminIncidentsIdRouteImport } from './routes/admin/incidents.$
 import { Route as AdminSosIndexRouteImport } from './routes/admin/sos.index'
 import { Route as AdminSosIdRouteImport } from './routes/admin/sos.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiCronWalksRouteImport } from './routes/api/cron/walks'
 
 const StudentRouteRoute = StudentRouteRouteImport.update({
   id: '/_student',
@@ -82,6 +84,11 @@ const StudentReportRoute = StudentReportRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAlertsRoute = AdminAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
@@ -159,6 +166,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronWalksRoute = ApiCronWalksRouteImport.update({
+  id: '/api/cron/walks',
+  path: '/api/cron/walks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof StudentIndexRoute
@@ -169,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/report': typeof StudentReportRoute
+  '/admin/alerts': typeof AdminAlertsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/anonymous': typeof AdminAnonymousRoute
   '/admin/responders': typeof AdminRespondersRoute
@@ -182,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/admin/incidents/$id': typeof AdminIncidentsIdRoute
   '/admin/sos/$id': typeof AdminSosIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/walks': typeof ApiCronWalksRoute
   '/reports/': typeof StudentReportsIndexRoute
   '/admin/incidents/': typeof AdminIncidentsIndexRoute
   '/admin/sos/': typeof AdminSosIndexRoute
@@ -192,6 +206,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/report': typeof StudentReportRoute
+  '/admin/alerts': typeof AdminAlertsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/anonymous': typeof AdminAnonymousRoute
   '/admin/responders': typeof AdminRespondersRoute
@@ -206,6 +221,7 @@ export interface FileRoutesByTo {
   '/admin/incidents/$id': typeof AdminIncidentsIdRoute
   '/admin/sos/$id': typeof AdminSosIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/walks': typeof ApiCronWalksRoute
   '/reports': typeof StudentReportsIndexRoute
   '/admin/incidents': typeof AdminIncidentsIndexRoute
   '/admin/sos': typeof AdminSosIndexRoute
@@ -220,6 +236,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/_student/report': typeof StudentReportRoute
+  '/admin/alerts': typeof AdminAlertsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/anonymous': typeof AdminAnonymousRoute
   '/admin/responders': typeof AdminRespondersRoute
@@ -234,6 +251,7 @@ export interface FileRoutesById {
   '/admin/incidents/$id': typeof AdminIncidentsIdRoute
   '/admin/sos/$id': typeof AdminSosIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/walks': typeof ApiCronWalksRoute
   '/_student/reports/': typeof StudentReportsIndexRoute
   '/admin/incidents/': typeof AdminIncidentsIndexRoute
   '/admin/sos/': typeof AdminSosIndexRoute
@@ -249,6 +267,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/report'
+    | '/admin/alerts'
     | '/admin/analytics'
     | '/admin/anonymous'
     | '/admin/responders'
@@ -262,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin/incidents/$id'
     | '/admin/sos/$id'
     | '/api/auth/$'
+    | '/api/cron/walks'
     | '/reports/'
     | '/admin/incidents/'
     | '/admin/sos/'
@@ -272,6 +292,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/report'
+    | '/admin/alerts'
     | '/admin/analytics'
     | '/admin/anonymous'
     | '/admin/responders'
@@ -286,6 +307,7 @@ export interface FileRouteTypes {
     | '/admin/incidents/$id'
     | '/admin/sos/$id'
     | '/api/auth/$'
+    | '/api/cron/walks'
     | '/reports'
     | '/admin/incidents'
     | '/admin/sos'
@@ -299,6 +321,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/_student/report'
+    | '/admin/alerts'
     | '/admin/analytics'
     | '/admin/anonymous'
     | '/admin/responders'
@@ -313,6 +336,7 @@ export interface FileRouteTypes {
     | '/admin/incidents/$id'
     | '/admin/sos/$id'
     | '/api/auth/$'
+    | '/api/cron/walks'
     | '/_student/reports/'
     | '/admin/incidents/'
     | '/admin/sos/'
@@ -329,6 +353,7 @@ export interface RootRouteChildren {
   SosIdRoute: typeof SosIdRoute
   TrackCodeRoute: typeof TrackCodeRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCronWalksRoute: typeof ApiCronWalksRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -401,6 +426,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/alerts': {
+      id: '/admin/alerts'
+      path: '/alerts'
+      fullPath: '/admin/alerts'
+      preLoaderRoute: typeof AdminAlertsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/analytics': {
@@ -508,6 +540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/walks': {
+      id: '/api/cron/walks'
+      path: '/api/cron/walks'
+      fullPath: '/api/cron/walks'
+      preLoaderRoute: typeof ApiCronWalksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -530,6 +569,7 @@ const StudentRouteRouteWithChildren = StudentRouteRoute._addFileChildren(
 )
 
 interface AdminRouteRouteChildren {
+  AdminAlertsRoute: typeof AdminAlertsRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminAnonymousRoute: typeof AdminAnonymousRoute
   AdminRespondersRoute: typeof AdminRespondersRoute
@@ -542,6 +582,7 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAlertsRoute: AdminAlertsRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminAnonymousRoute: AdminAnonymousRoute,
   AdminRespondersRoute: AdminRespondersRoute,
@@ -582,6 +623,7 @@ const rootRouteChildren: RootRouteChildren = {
   SosIdRoute: SosIdRoute,
   TrackCodeRoute: TrackCodeRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCronWalksRoute: ApiCronWalksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

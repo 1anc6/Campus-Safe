@@ -7,6 +7,7 @@ import { iso } from "@/lib/utils";
 import { catName, locName, requireAdmin } from "@/backend/core/helpers";
 import { ensureSeedData } from "@/backend/core/seed";
 import { fetchSos } from "@/backend/functions/sos";
+import { escalateOverdueWalks } from "./walks";
 
 type Sql = Awaited<ReturnType<typeof getSql>>;
 
@@ -112,6 +113,8 @@ export const getAdminCounters = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }): Promise<AdminCounters & { unseenCritical: number }> => {
     await requireAdmin(context.userId);
+    // Safe-walk watchdog piggybacks on this poll (throttled to every 15 s).
+    await escalateOverdueWalks().catch((err) => console.error("[walks] watchdog failed:", err));
     const sql = await getSql();
     const [counters, unseenCritical] = await Promise.all([
       loadCountersCached(sql),
