@@ -165,7 +165,7 @@ function ReportForm() {
                 Campus place
               </button>
               <button type="button" aria-pressed={useGps} onClick={() => setUseGps(true)}>
-                Use my GPS position
+                Use my GPS
               </button>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">

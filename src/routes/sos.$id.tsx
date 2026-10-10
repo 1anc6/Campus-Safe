@@ -7,7 +7,7 @@ import { getFix, gpsBlockedByInsecureOrigin, readLastFix } from "@/lib/gps";
 import { getSos, markSosSafe, pingSosLocation } from "@/backend/functions/sos";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 import type { SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
-import { ArrowLeft, Crosshair, Phone, SignalLow } from "lucide-react";
+import { ArrowLeft, Crosshair, MapPinOff, Phone } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /** Minimum gap between GPS uploads, and the heartbeat that re-sends the last fix. */
@@ -289,15 +289,11 @@ function SharingBanner({
     <div
       role="status"
       className={cn(
-        "mx-auto mt-3 flex max-w-md items-start gap-2 rounded-xl px-3 py-2 text-left text-xs ring-1",
+        "mx-auto mt-3 flex max-w-md items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-xs ring-1",
         ok ? "bg-ok/10 text-ok ring-ok/25" : "bg-warn/10 text-warn ring-warn/30",
       )}
     >
-      {ok ? (
-        <Crosshair className="mt-0.5 size-3.5 shrink-0" />
-      ) : (
-        <SignalLow className="mt-0.5 size-3.5 shrink-0" />
-      )}
+      {ok ? <Crosshair className="size-4 shrink-0" /> : <MapPinOff className="size-4 shrink-0" />}
       <span>
         {SHARING_COPY[sharing]}
         {sharing === "live" && accuracy != null && ` · ±${Math.round(accuracy)} m`}

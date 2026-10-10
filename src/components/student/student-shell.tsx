@@ -61,7 +61,7 @@ export function StudentShell({
   return (
     <SosFlowProvider>
       <ProfilePanelProvider>
-        <div className="min-h-dvh bg-bg text-fg md:flex">
+        <div className="min-h-dvh overflow-x-clip bg-bg text-fg md:flex">
           <aside
             className="sticky top-0 hidden h-dvh w-[76px] shrink-0 flex-col border-r border-line bg-chrome md:flex 2xl:w-64"
             aria-label="Student sidebar"

@@ -56,7 +56,7 @@ export function KindChip({ kind }: { kind: "sos" | "incident" | "anonymous" }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wider",
+        "inline-flex w-11 shrink-0 items-center justify-center rounded-full py-0.5 text-[10px] font-bold tracking-wider",
         map[kind],
       )}
     >

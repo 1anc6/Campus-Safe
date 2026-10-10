@@ -121,7 +121,7 @@ export const RESPONDER_UNITS = [
  * configured responder units — set it to your real campus security line.
  */
 export const SECURITY_LINE = {
-  label: RESPONDER_UNITS[0].unit,
+  label: "Campus Security",
   phone: RESPONDER_UNITS[0].phone,
 } as const;
 

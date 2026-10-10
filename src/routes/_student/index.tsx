@@ -100,7 +100,7 @@ function StudentHome() {
   return (
     <div
       className={cn(
-        "grid gap-4",
+        "grid grid-cols-1 gap-4",
         // Phone: greeting, a big map, safety card, reports. SOS lives in the tab bar.
         "[grid-template-areas:'greet'_'map'_'safety'_'history']",
         // Tablet: full-width map, then actions; safety beside reports.

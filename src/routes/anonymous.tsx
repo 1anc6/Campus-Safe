@@ -145,7 +145,7 @@ function AnonymousPage() {
                     <input
                       value={timeRange}
                       onChange={(e) => setTimeRange(e.target.value)}
-                      placeholder="e.g. Last night, between 9 and 11 pm"
+                      placeholder="e.g. Last night, 9–11 pm"
                       maxLength={80}
                       className="input"
                     />
