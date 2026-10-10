@@ -32,6 +32,7 @@ import {
 import { assignSos, getSos, setSosStatus } from "@/backend/functions/sos";
 import type { LivePayload, QueueItem, SosAlert, ThreadMessage } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
+import { SkeletonList } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/")({ component: Command });
 
@@ -340,13 +341,7 @@ function Kpi({
 }
 
 function QueueSkeleton() {
-  return (
-    <ul className="space-y-1.5" aria-hidden="true">
-      {Array.from({ length: 6 }, (_, i) => (
-        <li key={i} className="h-14 animate-pulse rounded-xl bg-panel-2/60" />
-      ))}
-    </ul>
-  );
+  return <SkeletonList rows={6} className="space-y-1.5" />;
 }
 
 function OpenCaseLink({ item }: { item: QueueItem }) {

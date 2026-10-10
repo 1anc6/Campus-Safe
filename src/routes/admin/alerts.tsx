@@ -11,6 +11,7 @@ import {
   type CampusAlertAdmin,
 } from "@/backend/functions/alerts";
 import { cn, formatClock } from "@/lib/utils";
+import { SkeletonList } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/alerts")({ component: BroadcastsPage });
 
@@ -158,7 +159,7 @@ function BroadcastsPage() {
           <section className="card p-5">
             <h2 className="text-sm font-semibold">Live now</h2>
             {data === null ? (
-              <div className="mt-3 h-16 animate-pulse rounded-2xl bg-panel-2" />
+              <SkeletonList rows={1} className="mt-3" />
             ) : live.length === 0 ? (
               <p className="mt-3 text-sm text-muted">No broadcast is showing right now.</p>
             ) : (

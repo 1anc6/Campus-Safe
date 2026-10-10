@@ -217,7 +217,7 @@ export function SafeWalkProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function formatTimer(totalSeconds: number): string {
+function formatTimer(totalSeconds: number): string {
   const s = Math.max(0, totalSeconds);
   const m = Math.floor(s / 60);
   return `${m}:${String(s % 60).padStart(2, "0")}`;

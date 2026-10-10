@@ -19,6 +19,7 @@ import { postThread } from "@/backend/functions/reports";
 import { assignSos, getSos, setSosStatus } from "@/backend/functions/sos";
 import type { Responder, SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
 import { formatClock, waitLabel } from "@/lib/utils";
+import { SkeletonDetail } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/sos/$id")({ component: SosCase });
 
@@ -77,9 +78,9 @@ function SosCase() {
   }
   if (!alert) {
     return (
-      <div className="space-y-3 p-4 sm:p-6" aria-busy="true">
+      <div className="space-y-3 p-4 sm:p-6">
         <BackLink />
-        <div className="h-72 animate-pulse rounded-2xl bg-panel" />
+        <SkeletonDetail withMap />
       </div>
     );
   }

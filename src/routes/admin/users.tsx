@@ -15,6 +15,7 @@ import {
   type PersonRow,
 } from "@/backend/functions/profile";
 import { cn } from "@/lib/utils";
+import { SkeletonList } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/users")({ component: UsersPage });
 
@@ -188,6 +189,8 @@ function UsersPage() {
           {error}
         </p>
       )}
+
+      {people === null && !error && <SkeletonList rows={5} />}
 
       {/* Phones / small tablets: cards */}
       <ul className="space-y-2 md:hidden">

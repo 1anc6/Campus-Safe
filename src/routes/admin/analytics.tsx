@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AdminPageHeader } from "@/components/admin/admin-shell";
 import {
   CategoryDonut,
+  ChartSkeleton,
   DailyBars,
   HotspotBars,
   ReportingDonut,
@@ -13,6 +14,7 @@ import {
 } from "@/components/shared/charts";
 import { getAnalytics, getLive, type AnalyticsPayload } from "@/backend/functions/admin";
 import type { LivePayload } from "@/lib/types";
+import { Skeleton as SkeletonBlock } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/analytics")({ component: AnalyticsPage });
 
@@ -74,26 +76,26 @@ function AnalyticsPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <div className="card p-4 md:col-span-2 xl:col-span-3">
-          <p className="mb-2 text-xs text-muted">Daily volume · today hatched</p>
-          <DailyBars data={sliced} />
+          <p className="mb-2 text-xs text-muted">Daily volume · today highlighted</p>
+          {stats || live ? <DailyBars data={sliced} /> : <ChartSkeleton tall />}
         </div>
         <Card title="Safety hotspots">
-          <HotspotBars data={live?.hotspots ?? []} />
+          {live ? <HotspotBars data={live.hotspots} /> : <ChartSkeleton bars="horizontal" />}
         </Card>
         <Card title="Incidents by category">
-          <CategoryDonut data={live?.categories ?? []} />
+          {live ? <CategoryDonut data={live.categories} /> : <ChartSkeleton donut />}
         </Card>
         <Card title="Severity distribution">
-          <SeverityBars data={stats?.severities ?? []} />
+          {stats ? <SeverityBars data={stats.severities} /> : <ChartSkeleton />}
         </Card>
         <Card title="Status overview">
-          <StatusDonut data={stats?.statuses ?? []} />
+          {stats ? <StatusDonut data={stats.statuses} /> : <ChartSkeleton donut />}
         </Card>
         <Card title="Reporting method">
-          <ReportingDonut data={stats?.reporting ?? { identified: 0, anonymous: 0, sos: 0 }} />
+          {stats ? <ReportingDonut data={stats.reporting} /> : <ChartSkeleton donut />}
         </Card>
         <Card title="Trend">
-          <ResponseLine data={sliced} />
+          {stats || live ? <ResponseLine data={sliced} /> : <ChartSkeleton />}
         </Card>
       </div>
     </div>
@@ -125,7 +127,11 @@ function Stat({
   return (
     <div className={`card p-3 sm:p-4 ${className ?? ""}`}>
       <Icon className={`size-4 ${tone}`} />
-      <p className="mt-2 font-display text-2xl font-bold tabular-nums">{value ?? "–"}</p>
+      {value == null ? (
+        <SkeletonBlock className="mt-2.5 h-7 w-16" />
+      ) : (
+        <p className="mt-2 font-display text-2xl font-bold tabular-nums">{value}</p>
+      )}
       <p className="text-xs text-muted">{label}</p>
     </div>
   );

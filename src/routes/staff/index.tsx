@@ -17,6 +17,7 @@ import { directionsUrl, useNow } from "@/lib/responder";
 import { listAssignedSos } from "@/backend/functions/sos";
 import type { SosAlert } from "@/lib/types";
 import { cn, waitLabel } from "@/lib/utils";
+import { SkeletonCard, SkeletonGroup } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/staff/")({ component: Assigned });
 
@@ -61,11 +62,11 @@ function Assigned() {
       </div>
 
       {rows === null ? (
-        <div className="mt-5 grid gap-3 md:grid-cols-2" aria-busy="true">
+        <SkeletonGroup label="Loading alerts" className="mt-5 grid gap-3 md:grid-cols-2">
           {[0, 1].map((i) => (
-            <div key={i} className="h-44 animate-pulse card" />
+            <SkeletonCard key={i} lines={3} />
           ))}
-        </div>
+        </SkeletonGroup>
       ) : rows.length === 0 ? (
         <AllClear />
       ) : (

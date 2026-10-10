@@ -690,6 +690,40 @@ html.theme-transition *::after {
     color 200ms var(--ease-out) !important;
 }
 
+/* ============ Loading placeholders: a soft light sweep across glass ============ */
+:root {
+  --skeleton-fill: rgb(148 163 184 / 0.16);
+  --skeleton-shine: rgb(255 255 255 / 0.75);
+}
+:root[data-theme="dark"] {
+  --skeleton-fill: rgb(255 255 255 / 0.06);
+  --skeleton-shine: rgb(255 255 255 / 0.09);
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--skeleton-fill);
+  border-radius: 12px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(100deg, transparent 20%, var(--skeleton-shine) 50%, transparent 80%);
+  animation: skeleton-shimmer 1.6s var(--ease-out) infinite;
+}
+@keyframes skeleton-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    display: none;
+  }
+}
+
 /* Onboarding: the SOS ring fills like a 2-second hold, then resets. */
 @property --onb-p {
   syntax: "<percentage>";

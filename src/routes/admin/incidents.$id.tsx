@@ -23,6 +23,7 @@ import {
 } from "@/backend/functions/reports";
 import type { Incident, Responder, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
+import { SkeletonDetail } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/incidents/$id")({ component: IncidentCase });
 
@@ -73,10 +74,9 @@ function IncidentCase() {
   }
   if (!incident) {
     return (
-      <div className="space-y-3 p-4 sm:p-6" aria-busy="true">
+      <div className="space-y-3 p-4 sm:p-6">
         <BackLink />
-        <div className="h-8 w-64 animate-pulse rounded bg-panel-2" />
-        <div className="h-40 animate-pulse rounded-2xl bg-panel" />
+        <SkeletonDetail />
       </div>
     );
   }

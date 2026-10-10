@@ -19,6 +19,7 @@ import { CAMPUS } from "@/lib/campus";
 import { getLive } from "@/backend/functions/admin";
 import type { LivePayload, RecentSos, SosAlert } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
+import { SkeletonList } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/sos/")({ component: SosBoard });
 
@@ -248,13 +249,7 @@ function SosBoard() {
           badge={alerts ? String(alerts.length) : undefined}
           bodyClassName="lg:max-h-none"
         >
-          {!alerts && !error && (
-            <ul className="space-y-2" aria-hidden="true">
-              {[0, 1, 2].map((i) => (
-                <li key={i} className="h-20 animate-pulse rounded-xl bg-panel-2/60" />
-              ))}
-            </ul>
-          )}
+          {!alerts && !error && <SkeletonList rows={3} />}
           {alerts?.length === 0 && recent.length === 0 && (
             <div className="flex flex-col items-center px-4 py-12 text-center">
               <span className="grid size-12 place-items-center rounded-2xl bg-ok/12 text-ok">

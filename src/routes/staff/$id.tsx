@@ -23,6 +23,7 @@ import { getSos, setSosStatus } from "@/backend/functions/sos";
 import type { SosAlert, SosPoint } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
+import { SkeletonCard, SkeletonDetail, SkeletonGroup } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/staff/$id")({ component: AssignedAlert });
 
@@ -89,18 +90,24 @@ function AssignedAlert() {
   if (!alert) {
     return (
       <ResponderShell>
-        <div className="grid min-h-[60dvh] place-items-center text-center text-sm">
-          {error ? (
+        {error ? (
+          <div className="grid min-h-[60dvh] place-items-center text-center text-sm">
             <div>
               <p className="text-sos">{error}</p>
               <Link to="/staff" className="btn-ghost mt-4">
                 <ArrowLeft className="size-4" /> Assigned alerts
               </Link>
             </div>
-          ) : (
-            <LoaderCircle className="size-6 animate-spin text-muted" aria-label="Loading alert" />
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+            <SkeletonDetail withMap />
+            <SkeletonGroup label="Loading alert" className="hidden space-y-4 lg:block">
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={3} />
+            </SkeletonGroup>
+          </div>
+        )}
       </ResponderShell>
     );
   }

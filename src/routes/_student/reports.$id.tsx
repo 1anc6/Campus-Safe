@@ -7,6 +7,7 @@ import { INCIDENT_STATUSES } from "@/lib/campus";
 import { getIncident } from "@/backend/functions/reports";
 import type { Incident, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
+import { SkeletonDetail } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/_student/reports/$id")({
   staticData: { width: "wide" },
@@ -48,9 +49,7 @@ function IncidentDetail() {
           {error}
         </p>
       )}
-      {!incident && !error && (
-        <div className="h-48 animate-pulse rounded-2xl bg-panel" aria-busy="true" />
-      )}
+      {!incident && !error && <SkeletonDetail />}
       {incident && (
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0">

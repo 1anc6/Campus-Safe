@@ -15,6 +15,7 @@ import { listMyIncidents } from "@/backend/functions/reports";
 import { listMySos } from "@/backend/functions/sos";
 import type { Incident, SosAlert } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
+import { SkeletonCard, SkeletonGroup } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/_student/reports/")({
   staticData: { width: "wide" },
@@ -124,11 +125,11 @@ function MyReports() {
       )}
 
       {loading && (
-        <div className="grid gap-3 md:grid-cols-2" aria-busy="true">
+        <SkeletonGroup label="Loading your reports" className="grid gap-3 md:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-2xl bg-panel" />
+            <SkeletonCard key={i} />
           ))}
-        </div>
+        </SkeletonGroup>
       )}
 
       {!loading && rows.length === 0 && (

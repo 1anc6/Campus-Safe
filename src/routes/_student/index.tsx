@@ -24,6 +24,7 @@ import { listMySos } from "@/backend/functions/sos";
 import type { Incident, SosAlert } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn, formatClock } from "@/lib/utils";
+import { Skeleton as SkeletonBlock, SkeletonList } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/_student/")({
   staticData: { width: "full" },
@@ -250,7 +251,11 @@ function SafetyCard({ className }: { className?: string }) {
         </div>
 
         {!profile || !completeness ? (
-          <div className="mt-3 h-12 animate-pulse rounded-xl bg-panel-2" />
+          <div className="mt-3 space-y-2" aria-hidden="true">
+            <SkeletonBlock className="h-3 w-1/2" />
+            <SkeletonBlock className="h-1.5 w-full rounded-full" />
+            <SkeletonBlock className="h-2.5 w-3/4" />
+          </div>
         ) : ready ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {profile.bloodGroup && (
@@ -378,13 +383,7 @@ function ViewAll() {
 }
 
 function Skeleton({ rows }: { rows: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className="h-12 animate-pulse rounded-xl bg-panel-2" />
-      ))}
-    </div>
-  );
+  return <SkeletonList rows={rows} />;
 }
 
 function Empty({ children }: { children: ReactNode }) {

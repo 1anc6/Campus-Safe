@@ -6,6 +6,7 @@ import { SeverityChip, StatusPill } from "@/components/shared/pills";
 import { CATEGORIES, INCIDENT_STATUSES, SEVERITIES, type Severity } from "@/lib/campus";
 import { listIncidentsAdmin } from "@/backend/functions/admin";
 import { cn, formatClock } from "@/lib/utils";
+import { SkeletonList } from "@/components/shared/skeleton";
 
 type IncidentSearch = {
   q?: string;
@@ -211,6 +212,7 @@ function IncidentsPage() {
         </div>
       )}
 
+      {!rows && <SkeletonList rows={6} />}
       <ul className="space-y-2.5">
         {filtered.map((inc) => (
           <li key={inc.id}>

@@ -9,6 +9,7 @@ import { listAnonymousAdmin } from "@/backend/functions/admin";
 import { postThread, staffSetAnonymousStatus, trackAnonymous } from "@/backend/functions/reports";
 import type { ThreadMessage } from "@/lib/types";
 import { cn, formatClock } from "@/lib/utils";
+import { SkeletonList } from "@/components/shared/skeleton";
 
 export const Route = createFileRoute("/admin/anonymous")({ component: AnonymousPage });
 
@@ -41,6 +42,7 @@ function AnonymousPage() {
           {error}
         </p>
       )}
+      {rows === null && !error && <SkeletonList rows={4} />}
       {rows?.length === 0 && <p className="card p-6 text-sm text-muted">No anonymous reports.</p>}
       <ul className="space-y-2.5">
         {rows?.map((r) => (
