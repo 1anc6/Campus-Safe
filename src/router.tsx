@@ -14,6 +14,8 @@ export function getRouter() {
     // finger touches) its link, so it's ready by the time the click lands.
     defaultPreload: "intent",
     defaultPreloadDelay: 50,
+    // Cross-fade between pages (View Transitions API; ignored where unsupported).
+    defaultViewTransition: true,
     scrollRestoration: true,
   });
 }

@@ -89,34 +89,47 @@ export function AdminShell({ children }: { children: ReactNode }) {
     };
   }, [open]);
 
+  // Local time of day, computed in the browser (the server's clock/timezone may differ).
+  const [hello, setHello] = useState<{ greeting: string; date: string } | null>(null);
+  useEffect(() => {
+    setHello({
+      greeting: greeting(),
+      date: new Date().toLocaleDateString(undefined, {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      }),
+    });
+  }, []);
+
   const activeSos = counters?.activeSos ?? 0;
   const onDashboard = pathname === "/admin" || pathname === "/admin/";
 
   return (
-    <div className="flex min-h-dvh bg-bg text-fg">
+    <div className="flex min-h-dvh text-fg">
       <aside
         id="admin-nav"
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-line bg-chrome pt-safe transition-transform duration-300 ease-[var(--ease-smooth-out)] lg:sticky lg:top-0 lg:h-dvh lg:translate-x-0",
-          open ? "translate-x-0" : "-translate-x-full",
+          "glass-bar vt-rail fixed bottom-3 left-3 top-[max(0.75rem,var(--safe-top))] z-50 flex w-64 flex-col rounded-[28px] transition-transform duration-300 ease-[var(--ease-smooth-out)] lg:sticky lg:top-3 lg:my-3 lg:ml-3 lg:h-[calc(100dvh-1.5rem)] lg:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-[calc(100%+1.5rem)]",
         )}
         aria-label="Admin navigation"
       >
-        <div className="flex items-center gap-2 border-b border-line px-4 py-4">
+        <div className="flex items-center gap-2 px-5 py-4">
           <div className="min-w-0 flex-1">
             <Wordmark to="/admin" caption="OPERATIONS CONSOLE" />
           </div>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="grid size-10 place-items-center rounded-lg text-muted hover:bg-panel lg:hidden"
+            className="grid size-10 place-items-center rounded-2xl text-muted hover:bg-panel-2 lg:hidden"
             aria-label="Close navigation"
           >
             <X className="size-4" />
           </button>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
           {NAV.map((item) => {
             const on = isActive(pathname, item);
             const badge = counters && item.badge ? item.badge(counters) : 0;
@@ -126,8 +139,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 to={item.to}
                 aria-current={on ? "page" : undefined}
                 className={cn(
-                  "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm transition-colors",
-                  on ? "nav-active bg-panel text-fg" : "text-muted hover:bg-panel/60 hover:text-fg",
+                  "flex min-h-11 items-center gap-3 rounded-2xl px-3.5 text-sm transition-[background-color,color,box-shadow] duration-200",
+                  on
+                    ? "bg-accent/15 text-fg shadow-[inset_0_0_0_1px_var(--color-neon-dim)]"
+                    : "text-muted hover:bg-panel-2 hover:text-fg",
                 )}
               >
                 <item.icon
@@ -146,7 +161,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 {badge > 0 && (
                   <span
                     className={cn(
-                      "rounded px-1.5 py-0.5 font-mono text-[10px] font-bold",
+                      "rounded-full px-2 py-0.5 font-mono text-[10px] font-bold",
                       item.tone === "sos" ? "bg-sos/15 text-sos" : "bg-neon-dim text-neon",
                     )}
                   >
@@ -158,16 +173,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="space-y-1 border-t border-line p-3 pb-[max(0.75rem,var(--safe-bottom))]">
+        <div className="space-y-1 p-3">
           <Link
             to="/staff"
-            className="flex min-h-10 items-center gap-2 rounded-lg px-3 text-xs text-muted hover:bg-panel hover:text-fg"
+            className="flex min-h-10 items-center gap-2 rounded-2xl px-3.5 text-xs text-muted hover:bg-panel-2 hover:text-fg"
           >
             <Smartphone className="size-3.5" />
             Responder field app
           </Link>
           {viewer && <IdentityCard profile={viewer} />}
-          <SignOutButton className="w-full" />
+          <SignOutButton className="w-full rounded-2xl" />
         </div>
       </aside>
 
@@ -180,13 +195,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 pt-safe backdrop-blur-md">
-          <div className="flex items-center justify-between gap-3 px-3 py-2.5 sm:px-4 lg:px-6">
+        <header className="sticky top-0 z-30 px-3 pt-[max(0.75rem,var(--safe-top))] lg:px-6">
+          <div className="glass-bar vt-topbar flex items-center justify-between gap-3 rounded-[22px] py-1.5 pl-2 pr-1.5 sm:pl-3">
             <div className="flex min-w-0 items-center gap-2">
               <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="grid size-10 place-items-center rounded-lg text-muted hover:bg-panel lg:hidden"
+                className="grid size-10 place-items-center rounded-2xl text-muted hover:bg-panel-2 lg:hidden"
                 aria-label="Open navigation"
                 aria-controls="admin-nav"
                 aria-expanded={open}
@@ -196,7 +211,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
               <div className="lg:hidden">
                 <Wordmark to="/admin" compact />
               </div>
-              {/* The dashboard shows these as KPI cards, so skip the duplicate pills there. */}
+              {/* The dashboard shows these as KPI cards, so it greets instead of repeating them. */}
+              {onDashboard && hello && (
+                <p className="hidden min-w-0 truncate pl-1 text-sm lg:block">
+                  <span className="font-medium">
+                    {hello.greeting}, {viewer?.name.split(" ")[0] ?? "Command"}
+                  </span>
+                  <span className="text-muted"> · {hello.date}</span>
+                </p>
+              )}
               {!onDashboard && (
                 <div className="flex min-w-0 items-center gap-2 overflow-x-auto">
                   <CounterPill label="Active SOS" value={activeSos} tone="sos" />
@@ -217,7 +240,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               )}
             </div>
             <div className="flex shrink-0 items-center gap-1">
-              <ThemeToggle />
+              <ThemeToggle className="rounded-2xl ring-0 hover:bg-panel-2" />
               <NotificationBell
                 unseen={counters?.unseenCritical ?? 0}
                 onSeen={() => setCounters((c) => (c ? { ...c, unseenCritical: 0 } : c))}
@@ -227,17 +250,22 @@ export function AdminShell({ children }: { children: ReactNode }) {
           {activeSos > 0 && (
             <Link
               to="/admin/sos"
-              className="block bg-sos px-4 py-1.5 text-center text-xs font-semibold text-white sm:text-sm"
+              className="mt-2 block rounded-2xl bg-sos px-4 py-2 text-center text-xs font-semibold text-white shadow-[0_8px_24px_-8px_var(--sos-glow)] sm:text-sm"
             >
               {activeSos} live SOS — jump the queue
             </Link>
           )}
         </header>
 
-        <main className="grid-bg flex min-w-0 flex-1 flex-col pb-safe">{children}</main>
+        <main className="flex min-w-0 flex-1 flex-col pb-safe">{children}</main>
       </div>
     </div>
   );
+}
+
+function greeting(): string {
+  const h = new Date().getHours();
+  return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
 }
 
 const TONES = {
@@ -259,7 +287,7 @@ function CounterPill({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 ring-1",
+        "flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 ring-1",
         TONES[tone],
       )}
     >

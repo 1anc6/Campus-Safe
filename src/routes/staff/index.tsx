@@ -63,7 +63,7 @@ function Assigned() {
       {rows === null ? (
         <div className="mt-5 grid gap-3 md:grid-cols-2" aria-busy="true">
           {[0, 1].map((i) => (
-            <div key={i} className="h-44 animate-pulse rounded-2xl bg-panel ring-1 ring-line" />
+            <div key={i} className="h-44 animate-pulse card" />
           ))}
         </div>
       ) : rows.length === 0 ? (
@@ -87,7 +87,7 @@ function AlertCard({ alert, now }: { alert: SosAlert; now: number }) {
   return (
     <article
       className={cn(
-        "flex h-full flex-col rounded-2xl bg-panel ring-1 transition-shadow",
+        "card glass-hover flex h-full flex-col ring-1",
         urgent ? "ring-sos/40 shadow-[0_0_0_4px_rgb(255_59_78/0.06)]" : "ring-line",
       )}
     >
@@ -139,7 +139,7 @@ function AlertCard({ alert, now }: { alert: SosAlert; now: number }) {
           </div>
         )}
       </Link>
-      <div className="grid grid-cols-3 gap-px overflow-hidden rounded-b-2xl border-t border-line bg-line">
+      <div className="grid grid-cols-3 divide-x divide-line overflow-hidden rounded-b-[22px] border-t border-line">
         {alert.reporterPhone ? (
           <a href={`tel:${alert.reporterPhone.replace(/\s/g, "")}`} className={cardAction}>
             <Phone className="size-4 text-neon" /> Call
@@ -176,7 +176,7 @@ function AlertCard({ alert, now }: { alert: SosAlert; now: number }) {
 }
 
 const cardAction =
-  "flex min-h-12 items-center justify-center gap-1.5 bg-panel text-xs font-medium text-muted transition-colors hover:bg-panel-2 hover:text-fg";
+  "flex min-h-12 items-center justify-center gap-1.5 text-xs font-medium text-muted transition-colors hover:bg-panel-2 hover:text-fg";
 
 function Stat({
   label,
@@ -189,7 +189,7 @@ function Stat({
 }) {
   const color = { sos: "text-sos", warn: "text-warn", ok: "text-ok" }[tone];
   return (
-    <div className="rounded-2xl bg-panel p-3 ring-1 ring-line sm:p-4">
+    <div className="card p-3 sm:p-4">
       <p
         className={cn(
           "font-display text-2xl font-semibold tabular-nums sm:text-3xl",
@@ -220,8 +220,6 @@ function AllClear() {
 
 function EmptyCard({ children }: { children: ReactNode }) {
   return (
-    <div className="mt-5 flex flex-col items-center rounded-2xl bg-panel px-6 py-12 text-center ring-1 ring-line">
-      {children}
-    </div>
+    <div className="mt-5 flex flex-col items-center card px-6 py-12 text-center">{children}</div>
   );
 }

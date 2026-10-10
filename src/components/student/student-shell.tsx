@@ -61,93 +61,101 @@ export function StudentShell({
   return (
     <SosFlowProvider>
       <ProfilePanelProvider>
-        <div className="min-h-dvh overflow-x-clip bg-bg text-fg md:flex">
-          <aside
-            className="sticky top-0 hidden h-dvh w-[76px] shrink-0 flex-col border-r border-line bg-chrome md:flex 2xl:w-64"
-            aria-label="Student sidebar"
-          >
-            <div className="flex h-[68px] items-center justify-center border-b border-line px-3 2xl:justify-start 2xl:px-4">
-              <span className="2xl:hidden">
-                <Wordmark to="/" compact />
-              </span>
-              <span className="hidden 2xl:block">
-                <Wordmark to="/" caption="STUDENT SAFETY" />
-              </span>
-            </div>
-            <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Student navigation">
-              {TABS.map((t) => {
-                const on = tabActive(pathname, t.to);
-                return (
-                  <Link
-                    key={t.to}
-                    to={t.to}
-                    aria-current={on ? "page" : undefined}
-                    aria-label={t.label}
-                    title={t.label}
-                    className={cn(
-                      "flex min-h-11 items-center justify-center gap-3 rounded-xl text-sm font-medium transition-colors 2xl:justify-start 2xl:px-3",
-                      on
-                        ? "nav-active bg-neon-dim text-fg"
-                        : "text-muted hover:bg-panel-2 hover:text-fg",
-                    )}
-                  >
-                    <t.icon className={cn("size-[18px] shrink-0", on ? "text-neon" : "text-dim")} />
-                    <span className="hidden 2xl:inline">{t.label}</span>
-                  </Link>
-                );
-              })}
-              <div className="flex flex-col items-center gap-1 pt-4 2xl:flex-row 2xl:gap-3 2xl:px-1">
-                <SosTrigger size="sm" className="mx-0" />
-                <span className="hidden text-left 2xl:block">
-                  <span className="block text-sm font-semibold text-sos">Emergency SOS</span>
-                  <span className="block text-[11px] text-muted">Hold for 2 seconds</span>
+        <div className="min-h-dvh overflow-x-clip text-fg md:flex">
+          {/* Desktop: a floating glass rail. */}
+          <div className="sticky top-0 hidden h-dvh shrink-0 p-3 pr-0 md:block">
+            <aside
+              className="glass-bar vt-rail flex h-full w-[76px] flex-col rounded-[28px] 2xl:w-60"
+              aria-label="Student sidebar"
+            >
+              <div className="flex h-[68px] items-center justify-center px-3 2xl:justify-start 2xl:px-5">
+                <span className="2xl:hidden">
+                  <Wordmark to="/" compact />
+                </span>
+                <span className="hidden 2xl:block">
+                  <Wordmark to="/" caption="STUDENT SAFETY" />
                 </span>
               </div>
-            </nav>
-            <div className="space-y-2 border-t border-line p-3">
-              <a
-                href={`tel:${SECURITY_LINE.phone.replaceAll(" ", "")}`}
-                title={`Call ${SECURITY_LINE.label}: ${SECURITY_LINE.phone}`}
-                aria-label={`Call ${SECURITY_LINE.label}, ${SECURITY_LINE.phone}`}
-                className="flex min-h-11 items-center justify-center gap-3 rounded-xl bg-sos/10 ring-1 ring-sos/25 hover:bg-sos/15 2xl:justify-start 2xl:px-3 2xl:py-3"
-              >
-                <Phone className="size-4 shrink-0 text-sos" />
-                <span className="hidden min-w-0 2xl:block">
-                  <span className="block text-xs font-semibold text-fg">{SECURITY_LINE.label}</span>
-                  <span className="block font-mono text-[11px] text-muted">
-                    {SECURITY_LINE.phone}
+              <nav className="flex-1 space-y-1.5 px-3 py-3" aria-label="Student navigation">
+                {TABS.map((t) => {
+                  const on = tabActive(pathname, t.to);
+                  return (
+                    <Link
+                      key={t.to}
+                      to={t.to}
+                      aria-current={on ? "page" : undefined}
+                      aria-label={t.label}
+                      title={t.label}
+                      className={cn(
+                        "flex min-h-11 items-center justify-center gap-3 rounded-2xl text-sm font-medium transition-[background-color,color,box-shadow] duration-200 2xl:justify-start 2xl:px-3.5",
+                        on
+                          ? "bg-accent/15 text-fg shadow-[inset_0_0_0_1px_var(--color-neon-dim)]"
+                          : "text-muted hover:bg-panel-2 hover:text-fg",
+                      )}
+                    >
+                      <t.icon
+                        className={cn("size-[18px] shrink-0", on ? "text-neon" : "text-dim")}
+                      />
+                      <span className="hidden 2xl:inline">{t.label}</span>
+                    </Link>
+                  );
+                })}
+                <div className="flex flex-col items-center gap-1 pt-5 2xl:flex-row 2xl:gap-3 2xl:px-1">
+                  <SosTrigger size="sm" className="mx-0" />
+                  <span className="hidden text-left 2xl:block">
+                    <span className="block text-sm font-semibold text-sos">Emergency SOS</span>
+                    <span className="block text-[11px] text-muted">Hold for 2 seconds</span>
                   </span>
+                </div>
+              </nav>
+              <div className="space-y-1.5 p-3">
+                <a
+                  href={`tel:${SECURITY_LINE.phone.replaceAll(" ", "")}`}
+                  title={`Call ${SECURITY_LINE.label}: ${SECURITY_LINE.phone}`}
+                  aria-label={`Call ${SECURITY_LINE.label}, ${SECURITY_LINE.phone}`}
+                  className="flex min-h-11 items-center justify-center gap-3 rounded-2xl bg-sos/10 ring-1 ring-sos/20 transition-colors hover:bg-sos/15 2xl:justify-start 2xl:px-3.5 2xl:py-3"
+                >
+                  <Phone className="size-4 shrink-0 text-sos" />
+                  <span className="hidden min-w-0 2xl:block">
+                    <span className="block text-xs font-semibold text-fg">
+                      {SECURITY_LINE.label}
+                    </span>
+                    <span className="block font-mono text-[11px] text-muted">
+                      {SECURITY_LINE.phone}
+                    </span>
+                  </span>
+                </a>
+                <span className="block 2xl:hidden">
+                  <ThemeToggle className="w-full rounded-2xl ring-0 hover:bg-panel-2" />
                 </span>
-              </a>
-              <span className="block 2xl:hidden">
-                <ThemeToggle className="w-full" />
-              </span>
-              <span className="hidden 2xl:block">
-                <ThemeToggle withLabel />
-              </span>
-              <span className="flex justify-center 2xl:hidden">
-                <ProfileButton />
-              </span>
-              <span className="hidden 2xl:block">
-                <ProfileButton withName />
-              </span>
-              <span className="block 2xl:hidden">
-                <SignOutButton compact className="w-full justify-center px-0" />
-              </span>
-              <span className="hidden 2xl:block">
-                <SignOutButton className="w-full" />
-              </span>
-            </div>
-          </aside>
+                <span className="hidden 2xl:block">
+                  <ThemeToggle withLabel className="rounded-2xl ring-0 hover:bg-panel-2" />
+                </span>
+                <span className="flex justify-center 2xl:hidden">
+                  <ProfileButton className="rounded-2xl" />
+                </span>
+                <span className="hidden 2xl:block">
+                  <ProfileButton withName className="rounded-2xl" />
+                </span>
+                <span className="block 2xl:hidden">
+                  <SignOutButton compact className="w-full justify-center rounded-2xl px-0" />
+                </span>
+                <span className="hidden 2xl:block">
+                  <SignOutButton className="w-full rounded-2xl" />
+                </span>
+              </div>
+            </aside>
+          </div>
 
           <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
-            <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 pt-safe backdrop-blur-md md:hidden">
-              <div className="flex items-center justify-between gap-3 px-4 py-2">
+            {/* Phone: a floating glass top bar. */}
+            <header className="sticky top-0 z-30 px-3 pt-[max(0.5rem,var(--safe-top))] md:hidden">
+              <div className="glass-bar vt-topbar flex items-center justify-between gap-3 rounded-[22px] py-1.5 pl-3 pr-1.5">
                 <Wordmark to="/" />
                 {/* Sign-out and settings live in the profile panel behind the avatar. */}
                 <div className="flex items-center gap-1">
-                  <ThemeToggle />
-                  <ProfileButton />
+                  <ThemeToggle className="rounded-2xl ring-0 hover:bg-panel-2" />
+                  <ProfileButton className="rounded-2xl" />
                 </div>
               </div>
             </header>
@@ -155,7 +163,7 @@ export function StudentShell({
             <main
               className={cn(
                 "mx-auto flex w-full flex-1 flex-col px-4 pt-4 sm:px-6 md:px-6 md:pb-8 md:pt-6 xl:px-8",
-                "pb-[calc(7rem+var(--safe-bottom))]",
+                "pb-[calc(8rem+var(--safe-bottom))]",
                 WIDTHS[width],
               )}
             >
@@ -163,17 +171,18 @@ export function StudentShell({
             </main>
           </div>
 
+          {/* Phone: a floating glass pill tab bar with SOS raised in the middle. */}
           <nav
-            className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-chrome/95 pb-safe backdrop-blur-md md:hidden"
+            className="fixed inset-x-3 bottom-[max(0.75rem,var(--safe-bottom))] z-30 md:hidden"
             aria-label="Student navigation"
           >
-            <ul className="mx-auto grid max-w-lg grid-cols-5">
+            <ul className="glass-bar vt-tabbar mx-auto grid max-w-lg grid-cols-5 rounded-[28px] px-1.5">
               {TABS.slice(0, 2).map((t) => (
                 <TabLink key={t.to} tab={t} on={tabActive(pathname, t.to)} />
               ))}
               {/* SOS rides up out of the bar so it is the biggest target on screen. */}
               <li className="relative flex justify-center">
-                <span className="absolute -top-10 rounded-full bg-chrome p-1 ring-1 ring-line">
+                <span className="glass-bar absolute -top-9 rounded-full p-1">
                   <SosTrigger size="md" />
                 </span>
               </li>
@@ -195,17 +204,23 @@ function TabLink({ tab, on }: { tab: (typeof TABS)[number]; on: boolean }) {
         to={tab.to}
         aria-current={on ? "page" : undefined}
         className={cn(
-          "flex min-h-14 flex-col items-center justify-center gap-1 text-[11px] font-medium",
+          "flex min-h-[62px] flex-col items-center justify-center gap-0.5 text-[10.5px] font-medium transition-colors duration-200",
           on ? "text-neon" : "text-muted",
         )}
       >
-        <tab.icon className="size-5" />
-        {tab.label}
+        <span
+          className={cn(
+            "grid h-8 w-12 place-items-center rounded-full transition-[background-color,transform] duration-300 ease-[var(--ease-smooth-out)]",
+            on ? "scale-100 bg-accent/15" : "scale-95",
+          )}
+        >
+          <tab.icon className="size-[19px]" />
+        </span>
+        <span className="max-w-full truncate px-0.5">{tab.label}</span>
       </Link>
     </li>
   );
 }
-
 /** Frame for public pages (anonymous report, tracker) when nobody — or a non-student — is signed in. */
 export function PublicShell({
   children,
@@ -219,11 +234,11 @@ export function PublicShell({
   const viewer = useViewer();
   useAnonTheme(anon);
   return (
-    <div className="min-h-dvh bg-bg text-fg">
-      <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 pt-safe backdrop-blur-md">
+    <div className="min-h-dvh text-fg">
+      <header className="sticky top-0 z-30 px-3 pt-[max(0.5rem,var(--safe-top))]">
         <div
           className={cn(
-            "mx-auto flex items-center justify-between gap-3 px-4 py-2.5 sm:px-6",
+            "glass-bar vt-topbar mx-auto flex items-center justify-between gap-3 rounded-[22px] py-1.5 pl-3 pr-1.5",
             WIDTHS[width],
           )}
         >

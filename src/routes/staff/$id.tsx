@@ -196,7 +196,7 @@ function AssignedAlert() {
         {/* Side column */}
         <aside className="space-y-4">
           {/* Next action — desktop (phones get the sticky bar) */}
-          <section className="hidden rounded-2xl bg-panel p-4 ring-1 ring-line lg:block">
+          <section className="hidden card p-4 lg:block">
             <Progress index={stepIndex} closed={closed} />
             {closed ? (
               <ClosedNote alert={alert} />
@@ -218,13 +218,13 @@ function AssignedAlert() {
           </section>
 
           {/* Progress on phones */}
-          <section className="rounded-2xl bg-panel p-4 ring-1 ring-line lg:hidden">
+          <section className="card p-4 lg:hidden">
             <Progress index={stepIndex} closed={closed} />
             {closed && <ClosedNote alert={alert} />}
           </section>
 
           {/* Student */}
-          <section className="rounded-2xl bg-panel p-4 ring-1 ring-line">
+          <section className="card p-4">
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
               Student
             </h2>

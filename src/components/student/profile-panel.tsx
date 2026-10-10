@@ -94,7 +94,7 @@ export function ProfilePanelProvider({ children }: { children: ReactNode }) {
           <Dialog.Overlay className="fixed inset-0 z-[1100] bg-black/50 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=open]:fade-in-0" />
           <Dialog.Content
             className={cn(
-              "fixed inset-0 z-[1101] flex flex-col bg-bg outline-none",
+              "glass-bar fixed inset-0 z-[1101] flex flex-col outline-none",
               "md:inset-y-0 md:left-auto md:right-0 md:w-[440px] md:border-l md:border-line md:shadow-2xl",
               "data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
             )}

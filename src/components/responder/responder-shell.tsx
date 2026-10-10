@@ -18,9 +18,9 @@ export function ResponderShell({
 }) {
   const viewer = useViewer();
   return (
-    <div className="min-h-dvh bg-bg text-fg">
-      <header className="sticky top-0 z-[600] border-b border-line bg-chrome/95 pt-safe backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
+    <div className="min-h-dvh text-fg">
+      <header className="sticky top-0 z-[600] px-3 pt-[max(0.75rem,var(--safe-top))] sm:px-6">
+        <div className="glass-bar vt-topbar mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-[22px] py-1.5 pl-3 pr-1.5">
           <Wordmark to={viewer?.role === "admin" ? "/admin" : "/staff"} caption="RESPONDER" />
           <div className="flex items-center gap-1 sm:gap-2">
             <LiveDot className="hidden sm:inline-flex" />
@@ -29,8 +29,8 @@ export function ResponderShell({
                 {viewer.name}
               </span>
             )}
-            <ThemeToggle />
-            <SignOutButton compact className="size-11 justify-center px-0" />
+            <ThemeToggle className="rounded-2xl ring-0 hover:bg-panel-2" />
+            <SignOutButton compact className="size-11 justify-center rounded-2xl px-0" />
           </div>
         </div>
       </header>

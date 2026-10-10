@@ -80,7 +80,7 @@ function RootDocument() {
 
 function NotFound() {
   return (
-    <main className="grid min-h-dvh place-items-center bg-bg px-6 text-center">
+    <main className="grid min-h-dvh place-items-center px-6 text-center">
       <div className="flex flex-col items-center">
         <BrandMark size="lg" />
         <p className="mt-6 font-display text-2xl font-semibold">Page not found</p>

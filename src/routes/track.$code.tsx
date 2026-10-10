@@ -69,8 +69,8 @@ function TrackPage() {
           <p className="text-sm text-muted">
             {report.locationName} · {report.timeRange} · {report.role}
           </p>
-          <p className="rounded-2xl bg-panel p-4 text-sm ring-1 ring-line">{report.description}</p>
-          <div className="rounded-2xl bg-panel p-4 ring-1 ring-line">
+          <p className="card p-4 text-sm">{report.description}</p>
+          <div className="card p-4">
             <StatusStepper steps={INCIDENT_STATUSES} current={report.status} />
           </div>
           <div className="space-y-2">

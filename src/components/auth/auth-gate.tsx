@@ -7,7 +7,7 @@ import { BRAND } from "@/lib/brand";
  */
 export function BootScreen() {
   return (
-    <div className="grid min-h-dvh place-items-center bg-bg" role="status" aria-live="polite">
+    <div className="grid min-h-dvh place-items-center" role="status" aria-live="polite">
       <div className="flex flex-col items-center gap-3">
         <span className="animate-pulse">
           <BrandMark size="lg" />

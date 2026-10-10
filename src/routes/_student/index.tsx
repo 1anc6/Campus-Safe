@@ -136,12 +136,12 @@ function StudentHome() {
 
       {/* Live campus map — the centrepiece. */}
       <section
-        className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-line bg-panel shadow-[var(--card-shadow)] [grid-area:map] md:rounded-2xl"
+        className="card flex min-h-0 flex-col overflow-hidden rounded-[28px] p-1.5 [grid-area:map]"
         aria-label="Live campus map"
       >
         <MyLocationMap
           location={location}
-          className="h-[calc(100dvh-17rem-var(--safe-top)-var(--safe-bottom))] min-h-[340px] flex-none md:h-[440px] xl:h-auto xl:min-h-0 xl:flex-1"
+          className="rounded-[22px] h-[calc(100dvh-17rem-var(--safe-top)-var(--safe-bottom))] min-h-[340px] flex-none md:h-[440px] xl:h-auto xl:min-h-0 xl:flex-1"
         />
       </section>
 
@@ -399,7 +399,7 @@ function Quick({
   return (
     <Link
       to={to}
-      className="card flex min-h-[76px] flex-col items-center justify-center gap-1.5 p-2 text-center transition-colors hover:bg-panel-2"
+      className="card glass-hover flex min-h-[76px] flex-col items-center justify-center gap-1.5 p-2 text-center"
     >
       <span
         className={cn(

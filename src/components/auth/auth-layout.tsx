@@ -27,7 +27,7 @@ export function AuthLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-dvh flex-col overflow-hidden grid-bg bg-bg lg:items-center lg:justify-center lg:px-4 lg:py-10">
+    <div className="relative flex min-h-dvh flex-col overflow-hidden lg:items-center lg:justify-center lg:px-4 lg:py-10">
       {/* Phone header */}
       <header className="relative bg-[linear-gradient(135deg,#0e7490_0%,#4f46b8_100%)] px-4 pb-12 pt-[max(0.75rem,var(--safe-top))] text-white lg:hidden">
         <div className="flex items-center justify-between gap-3">
@@ -86,7 +86,7 @@ export function AuthLayout({
           </div>
         </section>
 
-        <section className="-mt-6 flex-1 rounded-t-3xl bg-panel px-5 pb-[max(1.5rem,var(--safe-bottom))] pt-7 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-2xl lg:border lg:border-line lg:p-8 lg:shadow-[var(--card-shadow)]">
+        <section className="-mt-6 flex-1 rounded-t-3xl bg-panel px-5 pb-[max(1.5rem,var(--safe-bottom))] pt-7 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[28px] lg:border lg:border-[var(--glass-border)] lg:p-8 lg:shadow-[var(--glass-shadow)] lg:backdrop-blur-2xl">
           <div className="mx-auto w-full max-w-md">{children}</div>
         </section>
       </div>

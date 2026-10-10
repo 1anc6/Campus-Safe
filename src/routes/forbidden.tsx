@@ -17,7 +17,7 @@ function Forbidden() {
   const { from } = Route.useSearch();
   const home = viewer ? homeForRole(viewer.role) : "/login";
   return (
-    <main className="grid min-h-dvh place-items-center bg-bg px-6 py-10 text-center">
+    <main className="grid min-h-dvh place-items-center px-6 py-10 text-center">
       <div className="card flex w-full max-w-md flex-col items-center p-8">
         <span className="grid size-14 place-items-center rounded-2xl bg-sos/10 ring-1 ring-sos/30">
           <ShieldOff className="size-7 text-sos" />

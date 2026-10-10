@@ -10,9 +10,10 @@
 @theme {
   --color-bg: #f3f5f8;
   --color-chrome: #ffffff;
-  --color-panel: #ffffff;
-  --color-panel-2: #f7f9fc;
-  --color-panel-3: #eef2f7;
+  /* Panels are translucent so the aurora glows through (liquid glass). */
+  --color-panel: rgb(255 255 255 / 0.8);
+  --color-panel-2: rgb(255 255 255 / 0.55);
+  --color-panel-3: rgb(226 232 240 / 0.6);
   --color-line: #e2e7ef;
   --color-line-strong: #cbd3df;
   --color-fg: #1b2430;
@@ -62,15 +63,34 @@
   --scrollbar: rgb(27 36 48 / 0.18);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ---- Liquid glass ---- */
+  /* Ambient "aurora" behind every page: soft colour glows the glass refracts. */
+  --aurora:
+    radial-gradient(60vmax 50vmax at 8% 0%, rgb(0 207 232 / 0.22), transparent 60%),
+    radial-gradient(55vmax 45vmax at 100% 10%, rgb(139 124 255 / 0.2), transparent 60%),
+    radial-gradient(60vmax 55vmax at 85% 100%, rgb(56 189 248 / 0.16), transparent 60%),
+    radial-gradient(50vmax 40vmax at 0% 95%, rgb(255 67 87 / 0.08), transparent 60%),
+    linear-gradient(180deg, #eef3f9 0%, #e7edf6 100%);
+  /* Frosted panel fill, its brighter variant (bars, sheets) and a faint fill for rows/inputs. */
+  --glass: rgb(255 255 255 / 0.55);
+  --glass-strong: rgb(255 255 255 / 0.72);
+  --glass-soft: rgb(255 255 255 / 0.5);
+  /* Light catches the top edge; a hairline keeps panels distinct. */
+  --glass-border: rgb(255 255 255 / 0.75);
+  --glass-edge: rgb(15 23 42 / 0.07);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --glass-shadow: 0 10px 30px -12px rgb(30 41 72 / 0.18), 0 2px 6px -2px rgb(30 41 72 / 0.06);
+  --glass-blur: 22px;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
   --color-bg: #070b14;
   --color-chrome: #0b0f17;
-  --color-panel: #0d1524;
-  --color-panel-2: #111c30;
-  --color-panel-3: #162238;
+  --color-panel: rgb(17 24 42 / 0.78);
+  --color-panel-2: rgb(255 255 255 / 0.05);
+  --color-panel-3: rgb(255 255 255 / 0.08);
   --color-line: rgb(148 163 184 / 0.14);
   --color-line-strong: rgb(148 163 184 / 0.24);
   --color-fg: #e8eef7;
@@ -94,6 +114,20 @@
   --card-shadow: none;
   --grid-line: rgb(53 224 255 / 0.03);
   --scrollbar: rgb(148 163 184 / 0.22);
+
+  --aurora:
+    radial-gradient(60vmax 50vmax at 5% 0%, rgb(53 224 255 / 0.16), transparent 60%),
+    radial-gradient(55vmax 45vmax at 100% 5%, rgb(139 124 255 / 0.2), transparent 60%),
+    radial-gradient(60vmax 55vmax at 90% 100%, rgb(14 116 144 / 0.22), transparent 60%),
+    radial-gradient(50vmax 40vmax at 0% 100%, rgb(255 59 78 / 0.09), transparent 60%),
+    linear-gradient(180deg, #060a14 0%, #0a1020 100%);
+  --glass: rgb(22 30 50 / 0.42);
+  --glass-strong: rgb(14 20 36 / 0.66);
+  --glass-soft: rgb(255 255 255 / 0.045);
+  --glass-border: rgb(255 255 255 / 0.09);
+  --glass-edge: rgb(255 255 255 / 0.06);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.07);
+  --glass-shadow: 0 16px 40px -16px rgb(0 0 0 / 0.55), 0 2px 8px -2px rgb(0 0 0 / 0.3);
 }
 
 /* Anonymous flow: one class flips the accent to violet in either theme. */
@@ -123,6 +157,18 @@ html.anon[data-theme="dark"] {
     color: var(--color-fg);
     font-family: var(--font-sans);
     min-height: 100dvh;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* The aurora sits on a fixed layer, so it never scrolls or repaints with content. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--aurora);
+    pointer-events: none;
   }
 
   button:not(:disabled),
@@ -248,7 +294,9 @@ html.anon[data-theme="dark"] {
     box-shadow: 0 0 28px var(--sos-glow);
   }
   50% {
-    box-shadow: 0 0 56px var(--sos-glow), 0 0 0 6px rgb(255 67 87 / 0.08);
+    box-shadow:
+      0 0 56px var(--sos-glow),
+      0 0 0 6px rgb(255 67 87 / 0.08);
   }
 }
 
@@ -279,7 +327,9 @@ html.anon[data-theme="dark"] {
   border-radius: 50%;
   background: var(--color-accent);
   border: 3px solid #fff;
-  box-shadow: 0 0 0 0 rgb(53 224 255 / 0.55), 0 2px 8px rgb(0 0 0 / 0.5);
+  box-shadow:
+    0 0 0 0 rgb(53 224 255 / 0.55),
+    0 2px 8px rgb(0 0 0 / 0.5);
   animation: self-halo 2s var(--ease-out) infinite;
 }
 .marker-self.approx {
@@ -289,13 +339,19 @@ html.anon[data-theme="dark"] {
 }
 @keyframes self-halo {
   0% {
-    box-shadow: 0 0 0 0 rgb(53 224 255 / 0.55), 0 2px 8px rgb(0 0 0 / 0.5);
+    box-shadow:
+      0 0 0 0 rgb(53 224 255 / 0.55),
+      0 2px 8px rgb(0 0 0 / 0.5);
   }
   70% {
-    box-shadow: 0 0 0 16px rgb(53 224 255 / 0), 0 2px 8px rgb(0 0 0 / 0.5);
+    box-shadow:
+      0 0 0 16px rgb(53 224 255 / 0),
+      0 2px 8px rgb(0 0 0 / 0.5);
   }
   100% {
-    box-shadow: 0 0 0 0 rgb(53 224 255 / 0), 0 2px 8px rgb(0 0 0 / 0.5);
+    box-shadow:
+      0 0 0 0 rgb(53 224 255 / 0),
+      0 2px 8px rgb(0 0 0 / 0.5);
   }
 }
 
@@ -375,11 +431,7 @@ html.anon[data-theme="dark"] {
 }
 
 .hatched {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    var(--color-neon) 0 3px,
-    transparent 3px 7px
-  );
+  background-image: repeating-linear-gradient(-45deg, var(--color-neon) 0 3px, transparent 3px 7px);
 }
 
 html.sos-flash header,
@@ -395,11 +447,51 @@ html.sos-flash .bg-chrome {
 
 /* ============ Shared primitives (from the CampusSafe admin design) ============ */
 @layer components {
-  .card {
-    background: var(--color-panel);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--card-shadow);
+  /* Frosted-glass panel: translucent fill, backdrop blur, a lit top edge. */
+  .card,
+  .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+    border: 1px solid var(--glass-border);
+    border-radius: 22px;
+    box-shadow:
+      var(--glass-highlight),
+      0 0 0 1px var(--glass-edge),
+      var(--glass-shadow);
+  }
+  [data-theme="dark"] .card,
+  [data-theme="dark"] .glass {
+    border-color: var(--glass-border);
+  }
+
+  /* Navigation chrome (sidebars, top bars, tab bar): denser glass, always legible. */
+  .glass-bar {
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(28px) saturate(1.8);
+    backdrop-filter: blur(28px) saturate(1.8);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      var(--glass-highlight),
+      0 0 0 1px var(--glass-edge),
+      var(--glass-shadow);
+  }
+
+  /* Soft lift on hover for clickable glass tiles (pointer devices only). */
+  @media (hover: hover) {
+    .glass-hover {
+      transition:
+        transform 220ms var(--ease-smooth-out),
+        box-shadow 220ms var(--ease-smooth-out),
+        background-color 220ms var(--ease-smooth-out);
+    }
+    .glass-hover:hover {
+      transform: translateY(-2px);
+      background: var(--glass-strong);
+    }
+  }
+  .glass-hover:active {
+    transform: scale(0.985);
   }
 
   .btn-neon {
@@ -409,20 +501,24 @@ html.sos-flash .bg-chrome {
     gap: 0.5rem;
     min-height: 2.75rem;
     padding: 0.625rem 1.125rem;
-    border-radius: var(--radius-md);
+    border-radius: 14px;
     background: var(--color-accent);
     color: var(--color-ink);
     font-size: 0.8125rem;
     font-weight: 700;
     letter-spacing: 0.02em;
-    box-shadow: 0 0 0 1px var(--color-accent), 0 4px 16px var(--neon-glow);
+    box-shadow:
+      0 0 0 1px var(--color-accent),
+      0 4px 16px var(--neon-glow);
     transition:
       filter 150ms var(--ease-out),
       box-shadow 150ms var(--ease-out);
   }
   .btn-neon:hover:not(:disabled) {
     filter: brightness(1.08);
-    box-shadow: 0 0 0 1px var(--color-accent), 0 6px 24px var(--neon-glow);
+    box-shadow:
+      0 0 0 1px var(--color-accent),
+      0 6px 24px var(--neon-glow);
   }
   .btn-neon:disabled {
     opacity: 0.55;
@@ -436,8 +532,9 @@ html.sos-flash .bg-chrome {
     gap: 0.5rem;
     min-height: 2.75rem;
     padding: 0.625rem 1.125rem;
-    border-radius: var(--radius-md);
+    border-radius: 14px;
     border: 1px solid var(--color-line);
+    background: var(--glass-soft);
     color: var(--color-fg);
     font-size: 0.8125rem;
     font-weight: 500;
@@ -454,9 +551,9 @@ html.sos-flash .bg-chrome {
     width: 100%;
     min-height: 2.75rem;
     padding: 0.625rem 0.875rem;
-    border-radius: var(--radius-md);
+    border-radius: 14px;
     border: 1px solid var(--color-line);
-    background: var(--color-panel-2);
+    background: var(--glass-soft);
     color: var(--color-fg);
     /* 16px keeps iOS Safari from zooming into focused fields. */
     font-size: 1rem;
@@ -491,13 +588,16 @@ html.sos-flash .bg-chrome {
     display: inline-flex;
     gap: 2px;
     padding: 4px;
-    background: var(--color-panel-2);
+    background: var(--glass-soft);
     border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
+    border-radius: 14px;
   }
   .seg > button {
     padding: 6px 14px;
-    border-radius: 8px;
+    border-radius: 10px;
+    transition:
+      background-color 200ms var(--ease-smooth-out),
+      color 200ms var(--ease-smooth-out);
     color: var(--color-muted);
     font-size: 0.75rem;
     font-weight: 500;
@@ -588,4 +688,53 @@ html.theme-transition *::after {
     background-color 200ms var(--ease-out),
     border-color 200ms var(--ease-out),
     color 200ms var(--ease-out) !important;
+}
+
+/* ============ Smooth page transitions (View Transitions API) ============ */
+/* Pages cross-fade with a small rise; navigation chrome carries its own
+   view-transition-name (see the shells) so it stays perfectly still. */
+::view-transition-old(root) {
+  animation: vt-fade-out 140ms var(--ease-out) both;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in 260ms var(--ease-smooth-out) both;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.995);
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+}
+.vt-rail {
+  view-transition-name: app-rail;
+}
+.vt-topbar {
+  view-transition-name: app-topbar;
+}
+.vt-tabbar {
+  view-transition-name: app-tabbar;
+}
+::view-transition-group(app-rail),
+::view-transition-group(app-topbar),
+::view-transition-group(app-tabbar) {
+  animation-duration: 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Lower-power phones: lighter blur keeps scrolling smooth. */
+@media (max-width: 767px) {
+  :root {
+    --glass-blur: 16px;
+  }
 }

@@ -141,7 +141,7 @@ function Active() {
 
   if (!alert) {
     return (
-      <div className="grid min-h-dvh place-items-center bg-bg px-6 text-center">
+      <div className="grid min-h-dvh place-items-center px-6 text-center">
         {error ? (
           <div>
             <p className="text-sm text-sos">{error}</p>
@@ -166,7 +166,7 @@ function Active() {
     alert.status === "resolved" ? "resolved" : alert.status === "cancelled" ? "sent" : alert.status;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col bg-bg pb-safe pt-safe">
+    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col pb-safe pt-safe">
       <div className="px-5 pt-3">
         <Link
           to="/"
@@ -217,12 +217,12 @@ function Active() {
         </div>
 
         <div className="px-5 py-5">
-          <div className="rounded-2xl bg-panel p-4 ring-1 ring-line">
+          <div className="card p-4">
             <StatusStepper steps={stepsFor(alert, markedSafe)} current={currentId} />
           </div>
 
           {alert.assignedName && (
-            <div className="mt-4 flex items-center justify-between rounded-2xl bg-panel p-4 ring-1 ring-line">
+            <div className="mt-4 flex items-center justify-between card p-4">
               <div>
                 <p className="text-xs text-muted">Responder</p>
                 <p className="font-medium">{alert.assignedName}</p>
