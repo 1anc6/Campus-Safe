@@ -224,7 +224,17 @@ function Command() {
                     <KindChip kind={q.kind} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{q.title}</p>
-                      <p className="truncate text-xs text-muted">{q.place}</p>
+                      <p className="truncate text-xs text-muted">
+                        {q.place}
+                        {q.agedTo && (
+                          <span
+                            className="ml-1.5 font-semibold text-warn"
+                            title="Waiting a long time, so its priority was raised (aging)"
+                          >
+                            · aged {q.severity}→{q.agedTo}
+                          </span>
+                        )}
+                      </p>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">
                       <SeverityChip value={q.severity} />
@@ -497,6 +507,11 @@ function Detail({
           <KindChip kind={item.kind} />
           <SeverityChip value={item.severity} />
           <StatusPill status={item.status} />
+          {item.agedTo && (
+            <span className="text-xs font-semibold text-warn">
+              Aged to {item.agedTo} (waiting long)
+            </span>
+          )}
         </div>
         <h2 className="mt-2.5 font-display text-xl font-semibold">{item.title}</h2>
         <p className="mt-0.5 text-sm text-muted">
@@ -544,6 +559,7 @@ function Detail({
         <section>
           <SectionLabel>Dispatch</SectionLabel>
           <ResponderPicker
+            forSos
             responders={responders}
             current={sos?.assignedTo ?? null}
             disabled={busy}

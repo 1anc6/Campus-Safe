@@ -1,78 +1,27 @@
 #!/usr/bin/env node
 /**
- * Run a command with `.grok/app-env.json` merged into its environment.
+ * Run a project command (`vite dev`, `vite build`, …) as a CHILD PROCESS.
  *
- * `dev`, `build` and `preview` all route through this wrapper, so the dev
- * server, the built bundle and the preview server can never disagree about
- * `VITE_AUTH_ENABLED` — a divergence that only shows up as a built-output
- * mismatch long after the fact. Anything that starts Vite directly bypasses it.
- *
- * Only `VITE_`-prefixed keys are honored: the file is a build flag carrier, not
- * a secret store, and only `VITE_` vars reach the browser anyway. A real
- * `process.env` entry always wins, so an explicit override still works.
- *
- * That precedence also means the file governs this workspace only. A deployed
- * build runs with the provider's project env, where the deployer sets
- * `VITE_AUTH_ENABLED` itself (today unconditionally `"true"`), so the deployed
- * flag is the platform's, not this file's.
- *
- * Vite picks the values up because `loadEnv` prefix-matches entries already in
- * `process.env`, which is why the merge has to happen before Vite starts.
+ * Operating-system concepts in one small file:
+ *   - Process creation: `spawn()` (fork + exec under the hood) starts the child.
+ *   - Signals: SIGINT / SIGTERM / SIGHUP sent to this wrapper are forwarded to
+ *     the child, so Ctrl+C stops the dev server cleanly.
+ *   - Exit status: the child's exit code (or 128 + signal number, as a shell
+ *     reports it) becomes this process's exit code — like `wait()` in UNIX.
+ *   - Environment: the project's `node_modules/.bin` is prepended to PATH so
+ *     local tools are found, as a shell would resolve them.
  */
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync, realpathSync } from "node:fs";
+import { existsSync, realpathSync } from "node:fs";
 import { constants as osConstants } from "node:os";
 import { delimiter, dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const APP_ENV_REL_PATH = ".grok/app-env.json";
-
-const VITE_PREFIX = "VITE_";
-
-/**
- * Parse an app-env document, keeping only `VITE_`-prefixed string entries.
- * Anything unparseable is an empty environment — a workspace without the file
- * must behave exactly like today (auth on, no overrides).
- */
-export function parseAppEnv(text) {
-  let parsed;
-  try {
-    parsed = JSON.parse(text);
-  } catch {
-    return {};
-  }
-  if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) return {};
-  const env = {};
-  for (const [key, value] of Object.entries(parsed)) {
-    if (!key.startsWith(VITE_PREFIX)) continue;
-    if (typeof value !== "string") continue;
-    env[key] = value;
-  }
-  return env;
-}
-
-/** The app env recorded under `root`, or `{}` when the file is absent. */
-export function readAppEnv(root) {
-  try {
-    return parseAppEnv(readFileSync(join(root, APP_ENV_REL_PATH), "utf8"));
-  } catch {
-    return {};
-  }
-}
-
-/** File values under the process environment: an explicit override wins. */
-export function mergeAppEnv(appEnv, processEnv) {
-  return { ...appEnv, ...processEnv };
-}
-
 /**
  * Translate a child's `exit` `(code, signal)` into this process's exit status.
  *
- * Do not re-raise the signal with `process.kill(process.pid, signal)`: under
- * qemu-user (amd64 image builds on an arm host) a self-directed signal is
- * routinely delivered as SIGSEGV to the wrong process, which takes down the
- * test worker and fails the image build. `128 + signo` is what a shell reports
- * for a signal-killed command, so a cancelled `vite build` is still a failure.
+ * `128 + signo` is what a shell reports for a signal-killed command, so a
+ * cancelled `vite build` still counts as a failure.
  */
 export function exitStatusFromChild(code, signal) {
   if (signal) {
@@ -82,7 +31,7 @@ export function exitStatusFromChild(code, signal) {
   return code ?? 1;
 }
 
-/** The workspace root (this file lives in `<root>/scripts/`). */
+/** The project root (this file lives in `<root>/scripts/`). */
 export function projectRoot() {
   return dirname(dirname(fileURLToPath(import.meta.url)));
 }
@@ -158,10 +107,10 @@ export function resolveSpawn(command, args) {
 function main(argv) {
   const [command, ...args] = argv;
   if (!command) {
-    console.error("usage: node scripts/with-app-env.mjs <command> [args…]");
+    console.error("usage: node scripts/run.mjs <command> [args…]");
     process.exit(2);
   }
-  const env = withLocalBinPath(mergeAppEnv(readAppEnv(projectRoot()), process.env));
+  const env = withLocalBinPath(process.env);
   const resolved = resolveSpawn(command, args);
   const child = spawn(resolved.file, resolved.args, {
     stdio: "inherit",
@@ -175,10 +124,10 @@ function main(argv) {
     process.on(signal, () => child.kill(signal));
   }
   child.on("error", (err) => {
-    console.error(`[with-app-env] failed to run ${command}:`, err?.message || err);
+    console.error(`[run] failed to run ${command}:`, err?.message || err);
     if (err && err.code === "ENOENT") {
       console.error(
-        `[with-app-env] '${command}' was not found. In the folder that contains package.json, run:\n  npm install\n  npm run dev`,
+        `[run] '${command}' was not found. In the folder that contains package.json, run:\n  npm install\n  npm run dev`,
       );
     }
     process.exit(127);

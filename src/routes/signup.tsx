@@ -47,7 +47,7 @@ function signUpErrorMessage(error: { status?: number; code?: string; message?: s
   return error.message || "Sign-up failed. Try again.";
 }
 
-/** Embedded previews partition cookies, so the session also rides a bearer token there. */
+/** Inside an iframe cookies are partitioned, so the session also rides a bearer token there. */
 function isEmbedded(): boolean {
   try {
     return window.self !== window.top;
@@ -222,13 +222,13 @@ function Signup() {
             className="input"
           />
         </div>
-        <button type="submit" disabled={busy || !authEnabled} className="btn-neon w-full">
+        <button type="submit" disabled={busy || !authEnabled} className="btn-auth mt-2 w-full">
           {busy ? (
             <LoaderCircle className="size-4 animate-spin" />
           ) : (
             <UserPlus className="size-4" />
           )}
-          {busy ? "CREATING ACCOUNT…" : "CREATE ACCOUNT"}
+          {busy ? "Creating account…" : "Create account"}
         </button>
       </form>
 

@@ -1,6 +1,4 @@
 node_modules/
-.project_id
-.github_repo
 .env
 .env.*
 
@@ -14,7 +12,3 @@ dist/
 screenshots/
 artifacts/
 attachments/
-
-# App-builder tooling (keep only the env flags file the npm scripts read)
-.grok/*
-!.grok/app-env.json

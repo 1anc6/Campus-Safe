@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/lib/auth/middleware";
-import { getSql } from "@/backend/db";
+import { getSql, type Sql } from "@/backend/db";
+import { MAX_ACTIVE_SOS_PER_RESPONDER } from "@/lib/scheduling";
 import type {
   BloodGroup,
   MedicalInfo,
@@ -115,6 +116,52 @@ async function staffCanAccessSos(profile: Profile, alert: SosAlert): Promise<boo
   return Boolean(unit[0]);
 }
 
+/**
+ * Counting semaphore P() — "wait": take one of a responder's
+ * MAX_ACTIVE_SOS_PER_RESPONDER slots. A single UPDATE that only succeeds while
+ * a slot is free; Postgres locks the responder row for the statement, so two
+ * admins assigning at the same moment can never both take the last slot.
+ * Returns false when the unit is full (the caller must not proceed).
+ */
+async function acquireResponderSlot(sql: Sql, responderId: string): Promise<boolean> {
+  const taken = await sql<{ id: string }>`
+    update responders set active_sos = active_sos + 1
+    where id = ${responderId} and active_sos < ${MAX_ACTIVE_SOS_PER_RESPONDER}
+    returning id
+  `;
+  return Boolean(taken[0]);
+}
+
+/** Counting semaphore V() — "signal": give a slot back when an alert closes or moves. */
+async function releaseResponderSlot(sql: Sql, responderId: string | null): Promise<void> {
+  if (!responderId) return;
+  await sql`update responders set active_sos = greatest(active_sos - 1, 0) where id = ${responderId}`;
+}
+
+/**
+ * Close an open alert exactly once and release its responder's slot. The
+ * `status not in (…)` guard makes this idempotent: if two people close the same
+ * alert at once, only the first UPDATE matches, so the slot is released once.
+ */
+async function closeSos(
+  sql: Sql,
+  id: string,
+  status: "resolved" | "cancelled",
+  extraWhere: { userId?: string } = {},
+): Promise<boolean> {
+  const owner = extraWhere.userId ?? null;
+  const closed = await sql<{ assigned_to: string | null }>`
+    update sos_alerts set status = ${status}, resolved_at = now()
+    where id = ${id} and status not in ('resolved', 'cancelled')
+      and (${owner}::text is null or user_id = ${owner})
+    returning assigned_to
+  `;
+  if (!closed[0]) return false;
+  // An open alert holds a slot exactly when it has a responder assigned.
+  await releaseResponderSlot(sql, closed[0].assigned_to);
+  return true;
+}
+
 const fixSchema = {
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
@@ -160,14 +207,30 @@ export async function openSosForUser(
   }
   const id = newId();
   const now = new Date().toISOString();
-  await sql`
+  // The check above is not enough on its own: two requests at the same instant
+  // can both find nothing open (check-then-act race). The partial unique index
+  // `sos_alerts_one_open_idx` (migration 0008) makes the database the referee —
+  // the losing insert does nothing, and that request returns the winner's alert.
+  const inserted = await sql<{ id: string }>`
     insert into sos_alerts (
       id, user_id, status, lat, lng, accuracy_m, is_approximate, started_at, received_at, notes
     ) values (
       ${id}, ${userId}, ${"sent"}, ${fix.lat}, ${fix.lng},
       ${fix.acc}, ${fix.approx}, ${now}, ${now}, ${reason ?? null}
     )
+    on conflict (user_id) where status not in ('resolved', 'cancelled') do nothing
+    returning id
   `;
+  if (!inserted[0]) {
+    const winner = await sql<{ id: string }>`
+      select id from sos_alerts
+      where user_id = ${userId} and status not in ('resolved', 'cancelled')
+      order by started_at desc limit 1
+    `;
+    // (If the winner was closed in the meantime, simply try again.)
+    if (winner[0]) return (await fetchSos(winner[0].id))!;
+    return openSosForUser(userId, fix, reason);
+  }
   await sql`
     insert into sos_locations (id, alert_id, lat, lng, accuracy_m)
     values (${newId()}, ${id}, ${fix.lat}, ${fix.lng}, ${fix.acc})
@@ -228,12 +291,7 @@ export const markSosSafe = createServerFn({ method: "POST" })
       select id from sos_alerts where id = ${data.id} and user_id = ${context.userId}
     `;
     if (!own[0]) throw new Error("Not found");
-    const changed = await sql<{ id: string }>`
-      update sos_alerts set status = ${"resolved"}, resolved_at = now()
-      where id = ${data.id} and status not in ('resolved', 'cancelled')
-      returning id
-    `;
-    if (!changed[0]) return fetchSos(data.id);
+    if (!(await closeSos(sql, data.id, "resolved"))) return fetchSos(data.id);
     await addSystemMessage("sos", data.id, "Reporter marked themselves safe.");
     await audit(context.userId, "sos.safe", "sos", data.id);
     return fetchSos(data.id);
@@ -244,9 +302,11 @@ export const cancelSos = createServerFn({ method: "POST" })
   .validator(z.object({ id: z.string() }))
   .handler(async ({ context, data }) => {
     const sql = await getSql();
+    // Students can only cancel before a responder is assigned, so no slot is held.
     await sql`
       update sos_alerts set status = ${"cancelled"}, resolved_at = now()
       where id = ${data.id} and user_id = ${context.userId} and status in ('sent','received')
+        and assigned_to is null
     `;
     return { ok: true };
   });
@@ -309,13 +369,36 @@ export const assignSos = createServerFn({ method: "POST" })
       name: string;
     }>`select name from responders where id = ${data.responderId}`;
     if (!r[0]) throw new Error("Unknown responder");
+    const current = await sql<{ assigned_to: string | null; status: string }>`
+      select assigned_to, status from sos_alerts where id = ${data.id}
+    `;
+    if (!current[0] || current[0].status === "resolved" || current[0].status === "cancelled") {
+      throw new Error("Alert is closed or missing");
+    }
+    const previous = current[0].assigned_to;
+    if (previous === data.responderId) return fetchSos(data.id);
+
+    // P(): reserve a slot on the new unit first; refuse if it is already full.
+    if (!(await acquireResponderSlot(sql, data.responderId))) {
+      throw new Error(
+        `${r[0].name} already has ${MAX_ACTIVE_SOS_PER_RESPONDER} live alerts. Pick another unit or resolve one first.`,
+      );
+    }
+    // Optimistic concurrency: only apply if nobody re-assigned the alert since
+    // we read it (`assigned_to` unchanged). Otherwise undo the reservation.
     const updated = await sql<{ id: string }>`
       update sos_alerts
       set assigned_to = ${data.responderId}, status = ${"assigned"}, assigned_at = now()
       where id = ${data.id} and status not in ('resolved', 'cancelled')
+        and assigned_to is not distinct from ${previous}
       returning id
     `;
-    if (!updated[0]) throw new Error("Alert is closed or missing");
+    if (!updated[0]) {
+      await releaseResponderSlot(sql, data.responderId);
+      throw new Error("This alert just changed. Refresh and try again.");
+    }
+    // V(): moving the alert frees the slot it held on the previous unit.
+    await releaseResponderSlot(sql, previous);
     await addSystemMessage("sos", data.id, `${r[0]?.name ?? "Responder"} assigned.`);
     await audit(context.userId, "sos.assign", "sos", data.id, data.responderId);
     return fetchSos(data.id);
@@ -339,16 +422,24 @@ export const setSosStatus = createServerFn({ method: "POST" })
       throw new Error("This alert is already closed.");
     }
     const sql = await getSql();
+    // Every write re-checks "still open" so a racing close can't be undone.
     if (data.status === "arrived") {
-      await sql`update sos_alerts set status = ${"arrived"}, arrived_at = now() where id = ${data.id}`;
+      await sql`
+        update sos_alerts set status = ${"arrived"}, arrived_at = now()
+        where id = ${data.id} and status not in ('resolved', 'cancelled')
+      `;
       await addSystemMessage("sos", data.id, `${profile.name} marked arrived.`);
     } else if (data.status === "resolved") {
-      await sql`update sos_alerts set status = ${"resolved"}, resolved_at = now() where id = ${data.id}`;
-      await addSystemMessage("sos", data.id, "Alert resolved.");
+      if (await closeSos(sql, data.id, "resolved")) {
+        await addSystemMessage("sos", data.id, "Alert resolved.");
+      }
     } else if (data.status === "cancelled") {
-      await sql`update sos_alerts set status = ${"cancelled"}, resolved_at = now() where id = ${data.id}`;
+      await closeSos(sql, data.id, "cancelled");
     } else {
-      await sql`update sos_alerts set status = ${data.status} where id = ${data.id}`;
+      await sql`
+        update sos_alerts set status = ${data.status}
+        where id = ${data.id} and status not in ('resolved', 'cancelled')
+      `;
     }
     await audit(context.userId, "sos.status", "sos", data.id, data.status);
     return fetchSos(data.id);

@@ -789,3 +789,79 @@ html.theme-transition *::after {
     --glass-blur: 16px;
   }
 }
+
+/*
+ * Sign-in / sign-up pages. One calm teal family instead of teal + indigo +
+ * neon + violet: a deep teal hero, an OPAQUE form sheet (the translucent panel
+ * let the hero bleed through as a lavender band), and a solid CTA whose text
+ * passes WCAG AA in both themes.
+ */
+.auth-shell {
+  --auth-hero:
+    radial-gradient(120% 90% at 100% 0%, rgb(45 212 191 / 0.28), transparent 55%),
+    linear-gradient(160deg, #0a3446 0%, #0c5568 55%, #0f7480 100%);
+  --auth-hero-fg: #ffffff;
+  --auth-hero-muted: rgb(224 247 250 / 0.78);
+  --auth-sheet: #ffffff;
+  --auth-page: #eef3f7;
+  --auth-field: #f5f8fb;
+  --auth-field-border: #d9e1ea;
+  --auth-cta: #0e7490;
+  --auth-cta-hover: #0b6279;
+  --auth-cta-fg: #ffffff;
+  --auth-cta-glow: rgb(14 116 144 / 0.28);
+  --auth-link: #0e7490;
+}
+[data-theme="dark"] .auth-shell {
+  --auth-hero:
+    radial-gradient(120% 90% at 100% 0%, rgb(34 211 238 / 0.16), transparent 55%),
+    linear-gradient(160deg, #061019 0%, #0a2230 55%, #0c3340 100%);
+  --auth-hero-fg: #f1f7fb;
+  --auth-hero-muted: rgb(186 230 240 / 0.7);
+  --auth-sheet: #0b121e;
+  --auth-page: #070c15;
+  --auth-field: #101a29;
+  --auth-field-border: rgb(148 163 184 / 0.18);
+  --auth-cta: #22d3ee;
+  --auth-cta-hover: #67e8f9;
+  --auth-cta-fg: #04222b;
+  --auth-cta-glow: rgb(34 211 238 / 0.25);
+  --auth-link: #67e8f9;
+}
+
+@layer components {
+  .auth-shell .input {
+    background: var(--auth-field);
+    border-color: var(--auth-field-border);
+  }
+  .auth-shell .input:focus {
+    background: var(--auth-sheet);
+  }
+  .btn-auth {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.125rem;
+    border-radius: 14px;
+    background: var(--auth-cta);
+    color: var(--auth-cta-fg);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    box-shadow: 0 8px 20px -8px var(--auth-cta-glow);
+    transition:
+      background 150ms var(--ease-out),
+      transform 150ms var(--ease-out);
+  }
+  .btn-auth:hover:not(:disabled) {
+    background: var(--auth-cta-hover);
+  }
+  .btn-auth:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+  .btn-auth:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+}

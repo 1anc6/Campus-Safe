@@ -43,7 +43,6 @@ campus-safe/
 ├── migrations/        DATABASE  SQL files that create/upgrade the tables
 ├── public/            static files (icons, images)
 ├── scripts/           build / migration / tooling scripts
-├── server/            hosting middleware (install page, share card)
 └── docs/              documentation
 ```
 
@@ -65,7 +64,7 @@ file (git-ignored), then:
 
 ```bash
 node --env-file=.env.local scripts/migrate.mjs
-node --env-file=.env.local scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080
+node --env-file=.env.local scripts/run.mjs vite dev --host 0.0.0.0 --port 8080
 ```
 
 ## Accounts

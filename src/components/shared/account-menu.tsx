@@ -1,27 +1,17 @@
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import { LogOut } from "lucide-react";
 import { authEnabled, signOut } from "@/lib/auth/client";
-import { hasGateSessionMarker } from "@/lib/auth/gate-session-marker";
 import { roleLabel } from "@/lib/roles";
 import type { Profile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const subscribeToNothing = () => () => {};
-const noGateSessionOnServer = () => false;
-
 /**
- * Sign out, then land on the shared login page. Hidden for gate-materialized
- * sessions (opened from Grok), where the next request signs the viewer straight
- * back in. Disabled while in flight; re-enabled if the server refuses.
+ * Sign out, then land on the shared login page. Disabled while in flight;
+ * re-enabled if the server refuses.
  */
 export function SignOutButton({ className, compact }: { className?: string; compact?: boolean }) {
   const [busy, setBusy] = useState(false);
-  const gateSession = useSyncExternalStore(
-    subscribeToNothing,
-    hasGateSessionMarker,
-    noGateSessionOnServer,
-  );
-  if (!authEnabled || gateSession) return null;
+  if (!authEnabled) return null;
   return (
     <button
       type="button"

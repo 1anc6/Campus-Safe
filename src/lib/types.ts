@@ -129,6 +129,8 @@ export type QueueItem = {
   startedAt: string;
   lat: number | null;
   lng: number | null;
+  /** Set when aging has raised this case above its own severity (lib/scheduling.ts). */
+  agedTo?: Severity;
 };
 
 export type Responder = {
@@ -138,6 +140,10 @@ export type Responder = {
   phone: string | null;
   userId: string | null;
   status: "available" | "on_duty" | "off_duty";
+  /** Live SOS alerts this unit holds (semaphore count, max MAX_ACTIVE_SOS_PER_RESPONDER). */
+  activeSos: number;
+  /** When this unit was last given an alert — round-robin tie-break. */
+  lastAssignedAt: string | null;
 };
 
 export type LivePayload = {

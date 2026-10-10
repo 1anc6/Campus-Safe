@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { LoaderCircle, Send } from "lucide-react";
 import { INCIDENT_STATUSES, type IncidentStatus } from "@/lib/campus";
+import { MAX_ACTIVE_SOS_PER_RESPONDER, hasFreeSlot, pickResponder } from "@/lib/scheduling";
 import type { Responder, ThreadMessage } from "@/lib/types";
 import { cn, formatClock } from "@/lib/utils";
 
@@ -128,38 +129,75 @@ export function ResponderPicker({
   current,
   onPick,
   disabled,
+  forSos = false,
 }: {
   responders: Responder[];
   current: string | null;
   onPick: (id: string) => void;
   disabled?: boolean;
+  /**
+   * SOS assignment: show each unit's live load, block full units (counting
+   * semaphore) and mark the load-balanced suggestion (lib/scheduling.ts).
+   */
+  forSos?: boolean;
 }) {
   if (responders.length === 0) return <p className="text-sm text-muted">No responder units yet.</p>;
+  const suggested = forSos && !current ? pickResponder(responders) : null;
   return (
-    <div className="flex flex-wrap gap-2">
-      {responders.map((r) => {
-        const on = r.id === current;
-        return (
-          <button
-            key={r.id}
-            type="button"
-            disabled={disabled}
-            onClick={() => onPick(r.id)}
-            aria-pressed={on}
-            className={cn(
-              "min-h-10 rounded-full px-3 text-xs font-semibold ring-1 transition-colors disabled:opacity-50",
-              on ? "bg-fg text-panel ring-fg" : "ring-line hover:bg-panel-2",
-            )}
-          >
-            {r.name}
-            <span
-              className={cn("ml-1.5 font-normal", on ? "text-panel/70" : UNIT_STATUS[r.status])}
+    <div className="space-y-2">
+      {forSos && !current && (
+        <p className="text-xs text-muted">
+          {suggested ? (
+            <>
+              Suggested: <span className="font-semibold text-fg">{suggested.name}</span> (least
+              busy, then longest since last alert)
+            </>
+          ) : (
+            <>Every unit is full or off duty. Resolve an alert to free a slot.</>
+          )}
+        </p>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {responders.map((r) => {
+          const on = r.id === current;
+          const full = forSos && !on && !hasFreeSlot(r);
+          return (
+            <button
+              key={r.id}
+              type="button"
+              disabled={disabled || full}
+              onClick={() => onPick(r.id)}
+              aria-pressed={on}
+              title={full ? `${r.name} is full or off duty` : undefined}
+              className={cn(
+                "min-h-10 rounded-full px-3 text-xs font-semibold ring-1 transition-colors disabled:opacity-50",
+                on
+                  ? "bg-fg text-panel ring-fg"
+                  : r.id === suggested?.id
+                    ? "ring-2 ring-accent hover:bg-panel-2"
+                    : "ring-line hover:bg-panel-2",
+              )}
             >
-              · {r.unit}
-            </span>
-          </button>
-        );
-      })}
+              {r.name}
+              <span
+                className={cn("ml-1.5 font-normal", on ? "text-panel/70" : UNIT_STATUS[r.status])}
+              >
+                · {r.unit}
+              </span>
+              {forSos && (
+                <span
+                  className={cn(
+                    "ml-1.5 font-normal tabular-nums",
+                    on ? "text-panel/70" : "text-muted",
+                  )}
+                >
+                  {r.activeSos}/{MAX_ACTIVE_SOS_PER_RESPONDER}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

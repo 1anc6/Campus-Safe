@@ -40,24 +40,31 @@ function SosCase() {
     setMessages(d.messages);
   }, [id]);
 
+  // Unit load changes as alerts are assigned/resolved, so refresh it with the alert.
+  const loadResponders = useCallback(
+    () =>
+      listResponders()
+        .then(setResponders)
+        .catch(() => setResponders([])),
+    [],
+  );
+
   useEffect(() => {
     load().catch((e: unknown) => setError(e instanceof Error ? e.message : "Not found"));
-    listResponders()
-      .then(setResponders)
-      .catch(() => setResponders([]));
+    void loadResponders();
     const poll = window.setInterval(() => void load().catch(() => {}), 5000);
     const tick = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
       window.clearInterval(poll);
       window.clearInterval(tick);
     };
-  }, [load]);
+  }, [load, loadResponders]);
 
   async function act(fn: () => Promise<unknown>, success: string) {
     setBusy(true);
     try {
       await fn();
-      await load();
+      await Promise.all([load(), loadResponders()]);
       toast.success(success);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Action failed");
@@ -158,6 +165,7 @@ function SosCase() {
             ) : (
               <>
                 <ResponderPicker
+                  forSos
                   responders={responders}
                   current={alert.assignedTo}
                   disabled={busy}

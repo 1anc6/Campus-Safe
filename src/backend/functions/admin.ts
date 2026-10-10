@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/lib/auth/middleware";
 import { getSql } from "@/backend/db";
-import { CAMPUS, locationById, severityRank, type Severity } from "@/lib/campus";
+import { CAMPUS, locationById, type Severity } from "@/lib/campus";
+import { agedSeverity, compareQueueItems } from "@/lib/scheduling";
 import type { LivePayload, QueueItem, RecentSos, Responder, SosAlert } from "@/lib/types";
 import { iso } from "@/lib/utils";
 import { catName, locName, requireAdmin } from "@/backend/core/helpers";
@@ -340,14 +341,14 @@ export const getLive = createServerFn({ method: "GET" })
       }),
     ];
 
-    queue.sort((a, b) => {
-      const kindRank = (k: QueueItem["kind"]) => (k === "sos" ? 0 : 1);
-      const kr = kindRank(a.kind) - kindRank(b.kind);
-      if (kr) return kr;
-      const sr = severityRank(a.severity) - severityRank(b.severity);
-      if (sr) return sr;
-      return +new Date(a.startedAt) - +new Date(b.startedAt);
-    });
+    // Priority scheduling with aging (SOS first → aged severity → FCFS).
+    // See lib/scheduling.ts for the rules and why aging prevents starvation.
+    const now = Date.now();
+    queue.sort(compareQueueItems(now));
+    for (const item of queue) {
+      const aged = agedSeverity(item.severity, item.startedAt, now);
+      if (item.kind !== "sos" && aged !== item.severity) item.agedTo = aged;
+    }
 
     const sos: SosAlert[] = sosOpen.map((s) => ({
       id: s.id,
@@ -474,14 +475,7 @@ export const getLive = createServerFn({ method: "GET" })
       where started_at >= now() - interval '14 days'
     `;
 
-    const responderRows = await sql<{
-      id: string;
-      name: string;
-      unit: string;
-      phone: string | null;
-      user_id: string | null;
-      status: Responder["status"];
-    }>`select id, name, unit, phone, user_id, status from responders order by unit`;
+    const responders = await loadResponders(sql);
 
     const incidentPins = await sql<{
       id: string;
@@ -525,14 +519,7 @@ export const getLive = createServerFn({ method: "GET" })
       avgResponseMin: avgRows[0]?.mins ?? 0,
       trails,
       recentSos,
-      responders: responderRows.map((r) => ({
-        id: r.id,
-        name: r.name,
-        unit: r.unit,
-        phone: r.phone,
-        userId: r.user_id,
-        status: r.status,
-      })),
+      responders,
     };
   });
 
@@ -621,23 +608,36 @@ export const listResponders = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     await requireAdmin(context.userId);
-    const sql = await getSql();
-    const rows = await sql<{
-      id: string;
-      name: string;
-      unit: string;
-      phone: string | null;
-      user_id: string | null;
-      status: Responder["status"];
-    }>`select id, name, unit, phone, user_id, status from responders order by unit`;
-    return rows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      unit: r.unit,
-      phone: r.phone,
-      userId: r.user_id,
-      status: r.status,
-    }));
+    return loadResponders(await getSql());
   });
+
+/** Responder units with their load (semaphore count) and last assignment time. */
+async function loadResponders(sql: Sql): Promise<Responder[]> {
+  const rows = await sql<{
+    id: string;
+    name: string;
+    unit: string;
+    phone: string | null;
+    user_id: string | null;
+    status: Responder["status"];
+    active_sos: number;
+    last_assigned_at: unknown;
+  }>`
+    select r.id, r.name, r.unit, r.phone, r.user_id, r.status, r.active_sos,
+           (select max(s.assigned_at) from sos_alerts s where s.assigned_to = r.id) as last_assigned_at
+    from responders r
+    order by r.unit
+  `;
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    unit: r.unit,
+    phone: r.phone,
+    userId: r.user_id,
+    status: r.status,
+    activeSos: r.active_sos,
+    lastAssignedAt: r.last_assigned_at ? iso(r.last_assigned_at) : null,
+  }));
+}
 
 export { fetchSos };

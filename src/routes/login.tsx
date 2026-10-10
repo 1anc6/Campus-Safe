@@ -1,5 +1,13 @@
 import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
-import { AlertCircle, Eye, EyeOff, LoaderCircle, UserPlus, Zap } from "lucide-react";
+import {
+  AlertCircle,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { applySessionToken, authClient, authEnabled } from "@/lib/auth/client";
@@ -42,7 +50,7 @@ function signInErrorMessage(error: { status?: number; code?: string; message?: s
   return error.message || "Sign-in failed. Try again.";
 }
 
-/** Embedded previews partition cookies, so the session also rides a bearer token there. */
+/** Inside an iframe cookies are partitioned, so the session also rides a bearer token there. */
 function isEmbedded(): boolean {
   try {
     return window.self !== window.top;
@@ -65,7 +73,7 @@ function Login() {
   /**
    * Resolve the role on the server, refresh guards, then go to the right experience.
    * `fallbackToken`: the session token from sign-in, used only when the browser
-   * refused the Secure session cookie (plain-http LAN address, embedded preview).
+   * refused the Secure session cookie (plain-http LAN address, or inside an iframe).
    */
   async function enterApp(fallbackToken?: string | null) {
     let viewer = await getViewer();
@@ -83,7 +91,7 @@ function Login() {
     await navigate({ href: postLoginDestination(viewer.role, redirectTo), replace: true });
   }
 
-  // A session the server render could not see (embedded preview bearer token).
+  // A session the server render could not see (bearer-token fallback).
   useEffect(() => {
     if (isPending || !user || busy) return;
     void enterApp().catch(() => {});
@@ -197,12 +205,12 @@ function Login() {
             </button>
           </div>
         </div>
-        <button type="submit" disabled={busy || !authEnabled} className="btn-neon w-full">
-          {busy ? <LoaderCircle className="size-4 animate-spin" /> : <Zap className="size-4" />}
-          {busy ? "SIGNING IN…" : "SIGN IN"}
+        <button type="submit" disabled={busy || !authEnabled} className="btn-auth mt-2 w-full">
+          {busy ? <LoaderCircle className="size-4 animate-spin" /> : <LogIn className="size-4" />}
+          {busy ? "Signing in…" : "Sign in"}
         </button>
-        <p className="text-center text-xs text-dim">
-          Forgot your password? Ask a campus administrator to reset your account.
+        <p className="text-center text-xs leading-relaxed text-dim">
+          Forgot your password? Ask a campus administrator to reset it.
         </p>
       </form>
 
@@ -211,18 +219,25 @@ function Login() {
         <p className="mb-3 text-center text-sm text-muted">New to {BRAND.name}?</p>
         <Link to="/signup" search={{ redirect: redirectTo }} className="btn-ghost w-full">
           <UserPlus className="size-4" />
-          CREATE AN ACCOUNT
+          Create an account
         </Link>
       </div>
 
+      <div className="mt-6 flex items-center gap-3 text-xs text-dim">
+        <span className="h-px flex-1 bg-[var(--auth-field-border)]" />
+        or
+        <span className="h-px flex-1 bg-[var(--auth-field-border)]" />
+      </div>
       <Link
         to="/anonymous"
-        className="mt-4 flex min-h-11 items-center justify-center gap-2 rounded-lg text-center text-sm text-violet hover:text-fg lg:mt-6"
+        className="mt-4 flex min-h-12 items-center gap-3 rounded-[14px] border border-[var(--auth-field-border)] bg-[var(--auth-field)] px-4 text-left transition-colors hover:border-[var(--auth-link)]"
       >
-        <EyeOff className="size-4 shrink-0" />
-        <span>
-          File an anonymous report<span className="hidden sm:inline"> — no account needed</span>
+        <EyeOff className="size-[18px] shrink-0 text-[var(--auth-link)]" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-medium text-fg">File an anonymous report</span>
+          <span className="block text-xs text-dim">No account needed</span>
         </span>
+        <ChevronRight className="size-4 shrink-0 text-dim" />
       </Link>
     </AuthLayout>
   );

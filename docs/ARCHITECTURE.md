@@ -94,6 +94,7 @@ campus-safe/
 │   │   ├── types.ts                 Data shapes: Profile, SosAlert, Incident…
 │   │   ├── campus.ts                Campus map, locations, categories, statuses
 │   │   ├── roles.ts                 Which role may open which page
+│   │   ├── scheduling.ts            OS scheduling: priority + aging, responder pick, semaphore limit
 │   │   ├── gps.ts, use-live-location.ts   Phone GPS helpers
 │   │   ├── utils.ts, theme.ts, brand.ts   Small helpers, dark mode, app name
 │   │   └── auth/                    Sign-in plumbing (client.ts = browser side,
@@ -109,11 +110,12 @@ campus-safe/
 │   ├── 0003_student_role.sql        role rename
 │   ├── 0004_graphic_era_campus.sql  campus locations
 │   ├── 0005_student_profile.sql     course, blood group, emergency contact
-│   └── 0006_notifications_and_indexes.sql   bell "seen" state + performance indexes
+│   ├── 0006_notifications_and_indexes.sql   bell "seen" state + performance indexes
+│   ├── 0007_safe_walks_and_campus_alerts.sql  "walk with me" + campus broadcasts
+│   └── 0008_sos_scheduling.sql      one open SOS per student, responder semaphore count
 │
 ├── public/                          Static files served as-is (favicon, icons)
 ├── scripts/                         migrate.mjs (applies migrations), dev/build helpers
-├── server/                          Hosting middleware (PWA install page, share card)
 ├── vite.config.ts                   Build configuration
 └── package.json                     Dependencies and npm commands
 ```
@@ -197,19 +199,35 @@ compiled to WebAssembly, running **in memory** — so the app works with zero se
 
 ## 5. Operating-System concepts in the project
 
+The scheduling rules live in one small, unit-tested file:
+**`src/lib/scheduling.ts`** (tests: `src/lib/scheduling.test.ts`).
+
 | OS concept | Where | How |
 | ---------- | ----- | --- |
-| Priority scheduling | Admin live queue (`backend/functions/admin.ts`) | SOS and P1 first, then by arrival time |
-| Mutual exclusion | `backend/db.ts` | Migrations run one at a time on a single promise chain, like a mutex |
-| Race conditions | `createSos` in `backend/functions/sos.ts` | A double-tap or retry reuses the open SOS instead of creating duplicates |
+| Priority scheduling | `compareQueueItems` in `lib/scheduling.ts`, used by `backend/functions/admin.ts` | Live queue: SOS first, then by severity, ties first-come-first-served |
+| Aging (no starvation) | `agedLevel` in `lib/scheduling.ts` | Every 30 min of waiting raises a case one level, so a P4 can't wait forever behind new P1s; the queue shows "aged P4→P2" |
+| Load balancing + round-robin | `pickResponder` in `lib/scheduling.ts`, shown in the dispatch picker | Suggests the least-busy unit; ties go to the unit that has waited longest since its last alert |
+| Counting semaphore | `acquireResponderSlot` / `releaseResponderSlot` in `backend/functions/sos.ts`, `responders.active_sos` (migration 0008) | Each unit holds at most 2 live SOS. Assign = P() (atomic "+1 only if below 2"), resolve = V() (−1); a CHECK keeps it ≥ 0 |
+| Race conditions (fixed atomically) | `openSosForUser` in `backend/functions/sos.ts` + unique index `sos_alerts_one_open_idx` | Two simultaneous SOS presses can't create two alerts: the database rejects the second insert, which returns the first alert |
+| Atomic compare-and-swap | `escalate` in `backend/functions/walks.ts`; `closeSos` in `sos.ts` | `update … where status = 'active'` — only the first of two racers wins, so a walk escalates once and a slot is released once |
+| Optimistic concurrency | `assignSos` in `backend/functions/sos.ts` | Re-assignment only applies if nobody changed the alert since it was read; otherwise it is undone and the admin is asked to refresh |
+| Mutual exclusion | `backend/db.ts` | Migrations run one at a time on a single promise chain, like a mutex; each runs in a transaction |
+| Watchdog timer | `escalateOverdueWalks` in `backend/functions/walks.ts` | "Walk with me" turns into an SOS if the student doesn't check in on time |
+| Cron / background daemon | `routes/api/cron/walks.ts` | An external scheduler runs the watchdog every minute, even with no app open |
 | Shared memory / caching | Admin counters (`admin.ts`) | All open consoles share one result for 3 s |
 | Resource limits / throttling | `backend/core/rate-limit.ts`, GPS ping throttle | Sliding-window limits; pings < 2 s apart are merged |
-| Timers & interrupts | `components/shared/sos-button.tsx` | 2-second hold uses a real timer, not animation frames |
-| Buffering / spooling | `components/student/sos-flow.tsx` | Offline SOS is queued locally and retried until it lands |
+| Timers & interrupts | `components/shared/sos-button.tsx` | 2-second hold uses a real timer; releasing early cancels it |
+| Buffering / spooling | `components/student/sos-flow.tsx` | Offline SOS is queued locally and retried with exponential backoff (4 s, 8 s, 15 s, 30 s) |
+| Event-driven I/O | `components/admin/admin-shell.tsx` | Refreshes when the tab becomes visible instead of polling constantly |
 | Volatile vs persistent storage | PGLite (RAM) vs Neon (disk) | Why local data resets but production data doesn't |
 | Protection / access control | Roles + server checks | Like OS permission levels; passwords hashed |
-| Process creation | `scripts/with-app-env.mjs` | Starts the dev server as a child process |
+| Process creation & signals | `scripts/run.mjs` | Starts the dev server as a child process, forwards SIGINT/SIGTERM and passes on its exit code |
+| Atomic file write | `scripts/write-atomic.mjs` | Write to a temp file, then `rename()` (atomic) so nobody sees a half-written file |
 | Power management | Wake Lock during SOS | Asks the phone not to sleep while sending |
+
+Algorithms elsewhere: **Haversine** distance, a circular **geofence** and a
+**nearest-neighbour** search in `lib/campus.ts`; a **top-N-per-group** query
+(`row_number() over (partition by …)`) for map trails in `admin.ts`.
 
 ---
 

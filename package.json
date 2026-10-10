@@ -1,5 +1,5 @@
 {
-  "name": "app-builder-workspace",
+  "name": "campus-safe",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -7,17 +7,14 @@
     "nf3": "0.3.17"
   },
   "scripts": {
-    "dev": "node scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080",
-    "dev:local": "node --env-file-if-exists=.env.local.example scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080",
-    "build": "node scripts/with-app-env.mjs vite build && npm run db:migrate",
+    "dev": "node scripts/run.mjs vite dev --host 0.0.0.0 --port 8080",
+    "dev:local": "node --env-file-if-exists=.env.local.example scripts/run.mjs vite dev --host 0.0.0.0 --port 8080",
+    "build": "node scripts/run.mjs vite build && npm run db:migrate",
     "db:migrate": "node scripts/migrate.mjs",
-    "build:dev": "node scripts/with-app-env.mjs vite build --mode development",
-    "preview": "node scripts/with-app-env.mjs vite preview",
-    "preview:restart": "node scripts/preview.mjs restart",
-    "preview:stop": "node scripts/preview.mjs stop",
+    "build:dev": "node scripts/run.mjs vite build --mode development",
+    "preview": "node scripts/run.mjs vite preview",
     "typecheck": "tsc --noEmit",
-    "check:auth": "node scripts/check-auth-invariant.mjs",
-    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/roles.test.ts",
+    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/roles.test.ts src/lib/scheduling.test.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

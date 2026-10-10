@@ -1,8 +1,8 @@
 import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
-import { PreviewHostBridge } from "@/components/shared/preview-host-bridge";
 import { BrandMark } from "@/components/shared/brand";
 import { BRAND } from "@/lib/brand";
+import site from "@/lib/og/site.json";
 import { getViewer } from "@/backend/functions/viewer";
 import { rememberedViewer, rememberViewer } from "@/lib/auth/viewer-cache";
 import { THEME_BOOT_SCRIPT, useTheme } from "@/lib/theme";
@@ -29,12 +29,27 @@ export const Route = createRootRoute({
       { title: BRAND.name },
       { name: "theme-color", content: "#f3f5f8" },
       { name: "description", content: BRAND.description },
+      // Installable web app (Add to Home Screen) on iOS.
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: BRAND.name },
+      // Link preview card (WhatsApp, X, Slack…): src/lib/og/site.json + public/og.jpg.
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: BRAND.name },
+      { property: "og:title", content: site.title },
+      { property: "og:description", content: site.description },
+      { property: "og:image", content: "/og.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: site.title },
+      { name: "twitter:description", content: site.description },
+      { name: "twitter:image", content: "/og.jpg" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icon-180.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -57,7 +72,6 @@ function RootDocument() {
         <HeadContent />
       </head>
       <body className="bg-bg text-fg min-h-dvh">
-        <PreviewHostBridge />
         <AuthProvider>
           <Outlet />
           <Toaster
