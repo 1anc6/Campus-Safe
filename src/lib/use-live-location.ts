@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { distanceM, nearestLocation, CAMPUS } from "./campus";
+import { campusProximity, nearestLocation, type CampusProximity } from "./campus";
 import { gpsBlockedByInsecureOrigin, readLastFix, writeLastFix } from "./gps";
 import type { GpsFix } from "./types";
 
@@ -13,10 +13,9 @@ export type LiveLocation = {
   /** Nearest named campus place when the fix is on or near campus. */
   near: { name: string; distance: number } | null;
   onCampus: boolean;
+  /** Distance zone from campus (on / near / far), when there is a fix. */
+  proximity: CampusProximity | null;
 };
-
-/** How far from the campus centre still counts as "on campus" for the location chip. */
-const CAMPUS_RADIUS_M = 600;
 
 /**
  * Continuously track the device position while mounted (navigator.geolocation
@@ -56,6 +55,7 @@ export function useLiveLocation(): LiveLocation {
     return () => navigator.geolocation.clearWatch(id);
   }, []);
 
-  const onCampus = fix ? distanceM(fix, CAMPUS.center) <= CAMPUS_RADIUS_M : false;
-  return { fix, status, near: fix && onCampus ? nearestLocation(fix) : null, onCampus };
+  const proximity = fix ? campusProximity(fix) : null;
+  const onCampus = proximity?.zone === "on";
+  return { fix, status, near: fix && onCampus ? nearestLocation(fix) : null, onCampus, proximity };
 }

@@ -156,6 +156,30 @@ export function distanceM(
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
+/** Within this distance of the campus centre counts as "on campus". */
+export const CAMPUS_RADIUS_M = 600;
+/** Beyond this, campus security realistically can't reach the student quickly. */
+export const FAR_FROM_CAMPUS_M = 2000;
+
+export type CampusProximity = {
+  /** on: inside campus · near: just outside · far: too far for campus response */
+  zone: "on" | "near" | "far";
+  /** Metres from the campus centre (Haversine). */
+  distance: number;
+};
+
+/** Circular geofence: classify a position by its distance from the campus centre. */
+export function campusProximity(point: { lat: number; lng: number }): CampusProximity {
+  const distance = distanceM(point, CAMPUS.center);
+  const zone = distance <= CAMPUS_RADIUS_M ? "on" : distance <= FAR_FROM_CAMPUS_M ? "near" : "far";
+  return { zone, distance };
+}
+
+/** "850 m" / "12.4 km". */
+export function formatKm(m: number): string {
+  return m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(m < 10_000 ? 1 : 0)} km`;
+}
+
 /** The closest named campus place to a point, with its distance. */
 export function nearestLocation(point: { lat: number; lng: number }) {
   let best: { name: string; distance: number } | null = null;

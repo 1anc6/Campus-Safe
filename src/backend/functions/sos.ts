@@ -118,7 +118,14 @@ async function staffCanAccessSos(profile: Profile, alert: SosAlert): Promise<boo
 const fixSchema = {
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  acc: z.number().min(0).max(100_000).nullable(),
+  // Phones report accuracy as a decimal (e.g. 14.52 m) but `accuracy_m` is an
+  // integer column — unrounded values made every real-phone SOS fail to insert.
+  acc: z
+    .number()
+    .min(0)
+    .max(100_000)
+    .nullable()
+    .transform((v) => (v == null ? null : Math.round(v))),
   approx: z.boolean(),
 };
 

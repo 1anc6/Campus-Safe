@@ -3,6 +3,7 @@ import { useState } from "react";
 import { LiveMap, type MapMarker } from "@/components/shared/live-map";
 import type { LiveLocation } from "@/lib/use-live-location";
 import { cn } from "@/lib/utils";
+import { formatKm } from "@/lib/campus";
 
 const STATUS_COPY: Record<Exclude<LiveLocation["status"], "live">, string> = {
   locating: "Finding your location…",
@@ -31,8 +32,9 @@ export function MyLocationMap({
 }) {
   const [follow, setFollow] = useState(true);
   const [recenter, setRecenter] = useState(0);
-  const { fix, status, near, onCampus } = location;
+  const { fix, status, near, onCampus, proximity } = location;
   const live = status === "live" && fix && !fix.approx;
+  const tooFar = live && proximity?.zone === "far";
 
   const markers: MapMarker[] = fix
     ? [
@@ -63,14 +65,18 @@ export function MyLocationMap({
         <div
           className={cn(
             "pointer-events-auto flex max-w-[78%] items-center gap-2 rounded-full bg-chrome/90 py-2 pl-2.5 pr-3.5 text-xs font-medium shadow-lg ring-1 backdrop-blur",
-            live ? "ring-neon/30" : "ring-warn/30",
+            tooFar ? "ring-sos/40" : live ? "ring-neon/30" : "ring-warn/30",
           )}
           role="status"
         >
           <span
             className={cn(
               "grid size-6 shrink-0 place-items-center rounded-full",
-              live ? "bg-neon-dim text-neon" : "bg-warn/15 text-warn",
+              tooFar
+                ? "bg-sos/15 text-sos"
+                : live
+                  ? "bg-neon-dim text-neon"
+                  : "bg-warn/15 text-warn",
             )}
           >
             {live ? <MapPin className="size-3.5" /> : <MapPinOff className="size-3.5" />}
@@ -78,9 +84,19 @@ export function MyLocationMap({
           <span className="min-w-0 truncate">
             {live ? (
               <>
-                {near ? `Near ${near.name}` : onCampus ? "On campus" : "Off campus"}
-                {fix?.acc != null && (
-                  <span className="text-muted"> · ±{Math.round(fix.acc)} m</span>
+                {near
+                  ? `Near ${near.name}`
+                  : onCampus
+                    ? "On campus"
+                    : proximity?.zone === "far"
+                      ? "Area too far from campus"
+                      : "Just outside campus"}
+                {proximity && !onCampus ? (
+                  <span className="text-muted"> · {formatKm(proximity.distance)} away</span>
+                ) : (
+                  fix?.acc != null && (
+                    <span className="text-muted"> · ±{Math.round(fix.acc)} m</span>
+                  )
                 )}
               </>
             ) : (
@@ -103,6 +119,17 @@ export function MyLocationMap({
           {fix && !follow ? <Navigation className="size-4" /> : <LocateFixed className="size-4" />}
         </button>
       </div>
+
+      {tooFar && (
+        <p className="absolute bottom-3 left-3 right-14 z-[500] rounded-xl bg-chrome/90 px-3 py-2 text-xs ring-1 ring-sos/30 backdrop-blur">
+          <span className="font-semibold text-sos">
+            You&apos;re outside the campus response area.
+          </span>{" "}
+          <span className="text-muted">
+            Campus security can&apos;t reach you quickly here — for emergencies call 112.
+          </span>
+        </p>
+      )}
 
       {!live && HELP_COPY[status] && (
         <p className="absolute bottom-3 left-3 right-14 z-[500] rounded-xl bg-chrome/90 px-3 py-2 text-xs text-muted ring-1 ring-warn/25 backdrop-blur">
