@@ -1,0 +1,20 @@
+node_modules/
+.project_id
+.github_repo
+.env
+.env.*
+
+# Build output & caches (Vercel builds its own)
+.vercel/
+.tanstack/
+dist/
+.output/
+
+# Local working files
+screenshots/
+artifacts/
+attachments/
+
+# App-builder tooling (keep only the env flags file the npm scripts read)
+.grok/*
+!.grok/app-env.json
