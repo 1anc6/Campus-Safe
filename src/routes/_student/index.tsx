@@ -108,8 +108,8 @@ function StudentHome() {
         "md:grid-cols-2 md:[grid-template-areas:'greet_greet'_'map_map'_'quick_quick'_'walk_safety'_'history_history']",
         // Desktop: map on the left, a tidy side column on the right — fits the viewport.
         "xl:h-[calc(100dvh-3.5rem)] xl:grid-cols-[minmax(0,1fr)_minmax(340px,380px)]",
-        "xl:grid-rows-[auto_auto_auto_auto_minmax(0,1fr)]",
-        "xl:[grid-template-areas:'greet_greet'_'map_quick'_'map_walk'_'map_safety'_'map_history']",
+        "xl:grid-rows-[auto_minmax(0,1fr)]",
+        "xl:[grid-template-areas:'greet_greet'_'map_side']",
       )}
     >
       <header className="space-y-3 [grid-area:greet]">
@@ -146,78 +146,81 @@ function StudentHome() {
         />
       </section>
 
-      {/* Quick actions — tablet and desktop (phones have the tab bar). */}
-      <nav
-        className="hidden grid-cols-3 gap-3 [grid-area:quick] md:grid"
-        aria-label="Quick actions"
-      >
-        <Quick to="/report" icon={FileWarning} label="Report" />
-        <Quick to="/anonymous" icon={EyeOff} label="Anonymous" tone="violet" />
-        <Quick to="/reports" icon={FolderOpen} label="My reports" />
-      </nav>
+      {/* Desktop: the right-hand cards scroll as their own column beside the map.
+          Below xl this wrapper is display:contents, so each card keeps its grid area. */}
+      <div className="contents xl:flex xl:min-h-0 xl:flex-col xl:gap-4 xl:overflow-y-auto xl:overscroll-contain xl:pb-2 xl:pr-1 xl:[grid-area:side] xl:[&>*]:shrink-0">
+        {/* Quick actions — tablet and desktop (phones have the tab bar). */}
+        <nav
+          className="hidden grid-cols-3 gap-3 [grid-area:quick] md:grid"
+          aria-label="Quick actions"
+        >
+          <Quick to="/report" icon={FileWarning} label="Report" />
+          <Quick to="/anonymous" icon={EyeOff} label="Anonymous" tone="violet" />
+          <Quick to="/reports" icon={FolderOpen} label="My reports" />
+        </nav>
 
-      <SafeWalkCard className="[grid-area:walk]" />
+        <SafeWalkCard className="[grid-area:walk]" />
 
-      <SafetyCard className="[grid-area:safety]" />
+        <SafetyCard className="[grid-area:safety]" />
 
-      {/* Everything the student has filed, newest first. */}
-      <Panel
-        title="My reports"
-        className="[grid-area:history]"
-        bodyClassName="xl:min-h-0 xl:flex-1 xl:overflow-y-auto"
-        action={<ViewAll />}
-        toolbar={
-          <div className="seg w-full [&>button]:flex-1" role="group" aria-label="Filter reports">
-            {(
-              [
-                ["all", "All"],
-                ["sos", "SOS"],
-                ["incident", "Incidents"],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={historyFilter === id}
-                onClick={() => setHistoryFilter(id)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        }
-      >
-        {history === null ? (
-          <Skeleton rows={3} />
-        ) : history.length === 0 ? (
-          <Empty>
-            {historyFilter === "all"
-              ? "Nothing filed yet. Your SOS alerts and reports will appear here."
-              : "Nothing here yet."}
-          </Empty>
-        ) : (
-          <ul className="space-y-2">
-            {history.slice(0, 12).map((r) => (
-              <li key={`${r.kind}-${r.id}`}>
-                <Link
-                  to={r.kind === "sos" ? "/sos/$id" : "/reports/$id"}
-                  params={{ id: r.id }}
-                  className="flex min-h-14 items-center gap-3 rounded-xl bg-panel-2 p-3 ring-1 ring-line transition-colors hover:ring-line-strong"
+        {/* Everything the student has filed, newest first. */}
+        <Panel
+          title="My reports"
+          className="[grid-area:history]"
+          action={<ViewAll />}
+          toolbar={
+            <div className="seg w-full [&>button]:flex-1" role="group" aria-label="Filter reports">
+              {(
+                [
+                  ["all", "All"],
+                  ["sos", "SOS"],
+                  ["incident", "Incidents"],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  aria-pressed={historyFilter === id}
+                  onClick={() => setHistoryFilter(id)}
                 >
-                  <KindChip kind={r.kind} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">{r.title}</span>
-                    <span className="block truncate text-[11px] text-muted">
-                      {r.sub} · {formatClock(r.at)}
+                  {label}
+                </button>
+              ))}
+            </div>
+          }
+        >
+          {history === null ? (
+            <Skeleton rows={3} />
+          ) : history.length === 0 ? (
+            <Empty>
+              {historyFilter === "all"
+                ? "Nothing filed yet. Your SOS alerts and reports will appear here."
+                : "Nothing here yet."}
+            </Empty>
+          ) : (
+            <ul className="space-y-2">
+              {history.slice(0, 12).map((r) => (
+                <li key={`${r.kind}-${r.id}`}>
+                  <Link
+                    to={r.kind === "sos" ? "/sos/$id" : "/reports/$id"}
+                    params={{ id: r.id }}
+                    className="flex min-h-14 items-center gap-3 rounded-xl bg-panel-2 p-3 ring-1 ring-line transition-colors hover:ring-line-strong"
+                  >
+                    <KindChip kind={r.kind} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium">{r.title}</span>
+                      <span className="block truncate text-[11px] text-muted">
+                        {r.sub} · {formatClock(r.at)}
+                      </span>
                     </span>
-                  </span>
-                  <StatusPill status={r.status} />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Panel>
+                    <StatusPill status={r.status} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
     </div>
   );
 }
