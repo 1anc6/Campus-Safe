@@ -158,8 +158,7 @@ export const assignIncident = createServerFn({ method: "POST" })
       update incidents
       set assigned_to = ${data.responderId},
           status = case when ${data.responderId}::text is not null and status in ('reported', 'under_review')
-                        then 'in_progress' else status end,
-          updated_at = now()
+                        then 'in_progress' else status end
       where id = ${data.id}
       returning id, status
     `;
@@ -286,7 +285,7 @@ export const staffSetIncidentStatus = createServerFn({ method: "POST" })
     await requireAdmin(context.userId);
     const sql = await getSql();
     const updated = await sql<{ id: string }>`
-      update incidents set status = ${data.status}, updated_at = now() where id = ${data.id} returning id
+      update incidents set status = ${data.status} where id = ${data.id} returning id
     `;
     if (!updated[0]) throw new Error("Not found");
     await addSystemMessage("incident", data.id, `Status set to ${data.status.replace("_", " ")}.`);
@@ -306,7 +305,7 @@ export const staffSetAnonymousStatus = createServerFn({ method: "POST" })
     await requireAdmin(context.userId);
     const sql = await getSql();
     const updated = await sql<{ id: string }>`
-      update anonymous_reports set status = ${data.status}, updated_at = now() where id = ${data.id} returning id
+      update anonymous_reports set status = ${data.status} where id = ${data.id} returning id
     `;
     if (!updated[0]) throw new Error("Not found");
     await addSystemMessage("anonymous", data.id, `Status set to ${data.status.replace("_", " ")}.`);

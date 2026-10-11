@@ -112,7 +112,8 @@ campus-safe/
 │   ├── 0005_student_profile.sql     course, blood group, emergency contact
 │   ├── 0006_notifications_and_indexes.sql   bell "seen" state + performance indexes
 │   ├── 0007_safe_walks_and_campus_alerts.sql  "walk with me" + campus broadcasts
-│   └── 0008_sos_scheduling.sql      one open SOS per student, responder semaphore count
+│   ├── 0008_sos_scheduling.sql      one open SOS per student, responder semaphore count
+│   └── 0009_view_trigger_foreign_keys.sql   foreign keys, updated_at trigger, open_cases view
 │
 ├── public/                          Static files served as-is (favicon, icons)
 ├── scripts/                         migrate.mjs (applies migrations), dev/build helpers
@@ -184,6 +185,12 @@ DBMS concepts used:
   severities, blood groups), `UNIQUE` (tracking codes).
 - **Indexes** — including **partial indexes** that only cover open cases
   (`0006_notifications_and_indexes.sql`).
+- **Foreign keys** — reports point at real categories, locations and responders
+  (`0009_view_trigger_foreign_keys.sql`), added `NOT VALID` then validated so old
+  data can never block a deploy.
+- **Trigger** — `set_updated_at()` keeps `updated_at` correct on every change to a report.
+- **View** — `open_cases` combines open incidents and anonymous reports; the admin
+  notification bell reads it like a table.
 - **Transactions** — each migration file is applied atomically.
 - **Queries** — joins, `UNION ALL`, aggregates, correlated sub-queries, a window
   function (`row_number() over (partition by …)`), `generate_series` for charts.

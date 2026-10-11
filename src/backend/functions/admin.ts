@@ -17,7 +17,6 @@ export type AdminCounters = {
   incoming: number;
   inProgress: number;
   resolvedToday: number;
-  criticalOpen: number;
 };
 
 async function loadCounters(sql: Sql): Promise<AdminCounters> {
@@ -51,19 +50,11 @@ async function loadCounters(sql: Sql): Promise<AdminCounters> {
       select id from sos_alerts where status = 'resolved' and coalesce(resolved_at, started_at) >= date_trunc('day', now())
     ) t
   `;
-  const criticalRows = await sql<{ n: number }>`
-    select count(*)::int as n from (
-      select id from incidents where severity = 'P1' and status not in ('resolved','closed')
-      union all
-      select id from anonymous_reports where severity = 'P1' and status not in ('resolved','closed')
-    ) t
-  `;
   return {
     activeSos: activeSosRows[0]?.n ?? 0,
     incoming: incomingRows[0]?.n ?? 0,
     inProgress: inProgRows[0]?.n ?? 0,
     resolvedToday: resolvedRows[0]?.n ?? 0,
-    criticalOpen: criticalRows[0]?.n ?? 0,
   };
 }
 
@@ -88,16 +79,17 @@ function loadCountersCached(sql: Sql): Promise<AdminCounters> {
   return value;
 }
 
-/** Open critical items: live SOS alerts plus open P1 incidents and anonymous reports. */
+/**
+ * Open critical items for the notification bell: live SOS alerts plus open P1
+ * reports. `open_cases` is a VIEW (migration 0009) that already combines open
+ * incidents and anonymous reports, so this query reads it like a table.
+ */
 const CRITICAL_ITEMS = `
   select 'sos' as kind, id, null as category_id, null as location_id, status, started_at as at
     from sos_alerts where status not in ('resolved','cancelled')
   union all
-  select 'incident', id, category_id, location_id, status, created_at
-    from incidents where severity = 'P1' and status not in ('resolved','closed')
-  union all
-  select 'anonymous', id, category_id, location_id, status, created_at
-    from anonymous_reports where severity = 'P1' and status not in ('resolved','closed')
+  select kind, id, category_id, location_id, status, created_at
+    from open_cases where severity = 'P1'
 `;
 
 async function countUnseenCritical(sql: Sql, userId: string): Promise<number> {
