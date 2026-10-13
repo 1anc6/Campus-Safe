@@ -48,6 +48,21 @@ campus-safe/
 
 Full map with every file: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+## Look and feel
+
+Light and dark themes are equal peers; the moon/sun button switches them and the
+choice is remembered on the device.
+
+- **Light:** frosted-glass panels over a soft colour gradient, cyan for actions.
+- **Dark:** warm charcoal greys with a soft warm gradient and a clay accent for
+  actions (no blue tints).
+- In both themes **red means SOS only**, violet marks anonymous flows, and on maps
+  only an SOS pin is ever red.
+
+Colours, fonts and component rules are documented in [DESIGN.md](DESIGN.md); who
+the product is for and what it must never claim is in [PRODUCT.md](PRODUCT.md).
+All colour tokens live in `src/styles.css`.
+
 ## Run it locally
 
 ```bash
