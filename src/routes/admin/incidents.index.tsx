@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Clock, Filter, MapPin, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { AdminPageHeader } from "@/components/admin/admin-shell";
-import { SeverityChip, StatusPill } from "@/components/shared/pills";
+import { StatusPill } from "@/components/shared/pills";
 import { CATEGORIES, INCIDENT_STATUSES, SEVERITIES, type Severity } from "@/lib/campus";
 import { listIncidentsAdmin } from "@/backend/functions/admin";
 import { cn, formatClock } from "@/lib/utils";
@@ -238,7 +238,6 @@ function IncidentsPage() {
                   <ArrowRight className="mt-1 size-4 shrink-0 text-dim group-hover:text-neon" />
                 </div>
                 <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                  <SeverityChip value={inc.severity} />
                   <StatusPill status={inc.status} />
                   <span className="flex items-center gap-1 text-xs text-muted">
                     <MapPin className="size-3" /> {inc.locationName}
@@ -246,7 +245,7 @@ function IncidentsPage() {
                   <span className="flex items-center gap-1 text-xs text-muted">
                     <Clock className="size-3" /> {formatClock(inc.createdAt)}
                   </span>
-                  <span className="text-xs text-dim">{inc.reporterName}</span>
+                  <span className="text-xs text-muted">Reported by {inc.reporterName}</span>
                 </div>
               </div>
             </Link>

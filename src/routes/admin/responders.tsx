@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AdminPageHeader } from "@/components/admin/admin-shell";
 import { listResponders } from "@/backend/functions/admin";
 import type { Responder } from "@/lib/types";
+import { isPlaceholderPhone } from "@/lib/campus";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/responders")({ component: RespondersPage });
@@ -69,6 +70,11 @@ function RespondersPage() {
                 className="inline-flex min-h-10 items-center gap-1.5 text-xs text-muted hover:text-neon"
               >
                 <Phone className="size-3.5" /> {u.phone}
+                {isPlaceholderPhone(u.phone) && (
+                  <span className="rounded bg-warn/15 px-1 py-px text-[10px] font-semibold text-warn">
+                    Placeholder
+                  </span>
+                )}
               </a>
             )}
           </li>

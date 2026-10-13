@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { EyeOff, ListChecks, Siren, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { BrandMark } from "@/components/shared/brand";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
@@ -48,7 +49,7 @@ export function AuthLayout({
             <BrandMark />
           </span>
           <p className="font-display text-[26px] font-bold tracking-tight">{BRAND.name}</p>
-          <p className="text-xs text-[var(--auth-hero-muted)]">Help on campus, one tap away</p>
+          <p className="text-xs text-[var(--auth-hero-muted)]">Help on campus, one hold away</p>
         </div>
       </header>
 
@@ -65,7 +66,7 @@ export function AuthLayout({
             <BrandMark size="lg" />
             <div>
               <p className="font-display text-3xl font-bold">{BRAND.name}</p>
-              <p className="font-mono text-xs tracking-wider text-dim">CAMPUS SAFETY PLATFORM</p>
+              <p className="font-mono text-xs tracking-wider text-muted">CAMPUS SAFETY PLATFORM</p>
             </div>
           </div>
           <h2 className="mb-4 font-display text-5xl font-bold leading-tight">
@@ -77,11 +78,17 @@ export function AuthLayout({
             Raise an SOS, report incidents, follow every case — and run campus response from one
             console.
           </p>
-          <div className="grid max-w-md grid-cols-3 gap-4">
-            <Stat value="24/7" label="Monitoring" tone="text-[var(--auth-link)]" />
-            <Stat value="100%" label="Anonymous option" tone="text-[var(--auth-link)]" />
-            <Stat value="SOS" label="Hold for help" tone="text-sos" />
-          </div>
+          <ul className="max-w-md space-y-4">
+            <Feature icon={Siren} tone="text-sos" title="Hold for help">
+              Your SOS reaches campus command with your live location.
+            </Feature>
+            <Feature icon={EyeOff} tone="text-[var(--auth-link)]" title="Report anonymously">
+              No account, just a tracking code to follow what happens.
+            </Feature>
+            <Feature icon={ListChecks} tone="text-[var(--auth-link)]" title="See every step">
+              Follow each case from reported to resolved.
+            </Feature>
+          </ul>
         </section>
 
         <section className="-mt-7 flex-1 rounded-t-[28px] bg-[var(--auth-sheet)] px-5 pb-[max(1.5rem,var(--safe-bottom))] pt-8 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[28px] lg:border lg:border-[var(--auth-field-border)] lg:p-8 lg:shadow-[0_24px_60px_-24px_rgb(10_52_70/0.35)]">
@@ -92,11 +99,26 @@ export function AuthLayout({
   );
 }
 
-function Stat({ value, label, tone }: { value: string; label: string; tone: string }) {
+function Feature({
+  icon: Icon,
+  tone,
+  title,
+  children,
+}: {
+  icon: LucideIcon;
+  tone: string;
+  title: string;
+  children: ReactNode;
+}) {
   return (
-    <div className="card p-4 text-center">
-      <p className={`font-display text-2xl font-bold ${tone}`}>{value}</p>
-      <p className="mt-1 text-xs text-dim">{label}</p>
-    </div>
+    <li className="flex items-start gap-3.5">
+      <span className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--auth-sheet)] ring-1 ring-[var(--auth-field-border)]">
+        <Icon className={`size-[18px] ${tone}`} />
+      </span>
+      <span>
+        <span className="block font-display text-base font-semibold">{title}</span>
+        <span className="block text-sm text-muted">{children}</span>
+      </span>
+    </li>
   );
 }

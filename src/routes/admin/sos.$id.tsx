@@ -121,7 +121,20 @@ function SosCase() {
           <div className="h-72 overflow-hidden rounded-2xl ring-1 ring-line sm:h-96">
             <LiveMap
               markers={
-                pos ? [{ id: alert.id, ...pos, kind: "sos", label: alert.reporterName }] : []
+                pos
+                  ? [
+                      {
+                        id: alert.id,
+                        ...pos,
+                        kind: "sos",
+                        label: alert.isApproximate
+                          ? `${alert.reporterName} (approximate — no GPS)`
+                          : alert.reporterName,
+                        approx: alert.isApproximate,
+                        accuracyM: alert.accuracyM,
+                      },
+                    ]
+                  : []
               }
               trail={trail}
               focus={pos}

@@ -3,7 +3,7 @@ import { requireRole } from "@/lib/auth/guards";
 import { LiveMap } from "@/components/shared/live-map";
 import { StatusStepper } from "@/components/shared/status-stepper";
 import { SOS_STEPS } from "@/lib/campus";
-import { getFix, gpsBlockedByInsecureOrigin, readLastFix } from "@/lib/gps";
+import { getFix, GOOD_FIX_M, gpsBlockedByInsecureOrigin } from "@/lib/gps";
 import { getSos, markSosSafe, pingSosLocation } from "@/backend/functions/sos";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 import type { SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
@@ -14,6 +14,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const PING_EVERY_MS = 7000;
 const HEARTBEAT_MS = 20000;
 const FALLBACK_EVERY_MS = 30000;
+/**
+ * A reading this many times less accurate than the last one sent is a coarse
+ * Wi-Fi/cell estimate, not movement: skip it while the good fix is still fresh.
+ */
+const WORSE_FACTOR = 2;
+const GOOD_FIX_FRESH_MS = 60_000;
 
 type Sharing = "starting" | "live" | "approx" | "blocked" | "insecure";
 
@@ -31,6 +37,8 @@ function Active() {
   const watchRef = useRef<number | null>(null);
   const lastPing = useRef(0);
   const lastFallback = useRef(0);
+  /** When the last real (non-approximate) reading was accepted. */
+  const lastRealAt = useRef(0);
   const lastFix = useRef<{ lat: number; lng: number; acc: number | null; approx: boolean } | null>(
     null,
   );
@@ -62,6 +70,12 @@ function Active() {
       .then((a) => {
         if (!live || !a) return;
         if (a.status === "resolved" || a.status === "cancelled") return;
+        // Start from the fix the alert was sent with, so the phone's first coarse
+        // reading after opening this screen can't replace it.
+        if (a.lat != null && a.lng != null && !a.isApproximate) {
+          lastFix.current = { lat: a.lat, lng: a.lng, acc: a.accuracyM, approx: false };
+          lastRealAt.current = Date.now();
+        }
         navigator.wakeLock
           ?.request("screen")
           .then((s) => {
@@ -84,24 +98,38 @@ function Active() {
             (p) => {
               setSharing("live");
               setAccuracy(p.coords.accuracy);
-              if (Date.now() - lastPing.current < PING_EVERY_MS) return;
-              send({
+              const fix = {
                 lat: p.coords.latitude,
                 lng: p.coords.longitude,
                 acc: p.coords.accuracy,
                 approx: false,
-              });
+              };
+              const prev = lastFix.current;
+              const prevFresh = Date.now() - lastRealAt.current < GOOD_FIX_FRESH_MS;
+              const muchWorse =
+                prev != null &&
+                !prev.approx &&
+                prev.acc != null &&
+                fix.acc > Math.max(GOOD_FIX_M, prev.acc * WORSE_FACTOR);
+              if (muchWorse && prevFresh) return;
+              // Send at once when accuracy clearly improved (e.g. GPS just locked);
+              // otherwise at most every PING_EVERY_MS.
+              const improved =
+                prev != null && (prev.approx || (prev.acc ?? Infinity) > fix.acc * WORSE_FACTOR);
+              lastRealAt.current = Date.now();
+              if (!improved && Date.now() - lastPing.current < PING_EVERY_MS) return;
+              send(fix);
             },
             (err) => {
               setSharing(err.code === err.PERMISSION_DENIED ? "blocked" : "approx");
               // Rate-limit fallback pings: error callbacks can fire repeatedly.
               if (Date.now() - lastFallback.current < FALLBACK_EVERY_MS) return;
               lastFallback.current = Date.now();
+              // Never replace a real position command already has with a guess;
+              // the heartbeat keeps re-sending the last real fix instead.
               const hasPosition = alertRef.current?.lat != null && !alertRef.current.isApproximate;
-              // Never replace a real position with the campus-centre guess; only a
-              // stored real fix from this device is better than what command has.
-              if (hasPosition && !readLastFix()) return;
-              void getFix().then((f) => send({ lat: f.lat, lng: f.lng, acc: f.acc, approx: true }));
+              if (hasPosition || (lastFix.current && !lastFix.current.approx)) return;
+              void getFix(4000).then((f) => send(f));
             },
             { enableHighAccuracy: true, maximumAge: 4000, timeout: 15000 },
           );
@@ -176,8 +204,7 @@ function Active() {
         </Link>
       </div>
       <header className="px-5 pt-2 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sos">Live SOS</p>
-        <h1 className="mt-2 font-display text-3xl font-semibold">
+        <h1 className="font-display text-3xl font-semibold">
           {!closed
             ? "Help is on the way"
             : alert.status === "cancelled"

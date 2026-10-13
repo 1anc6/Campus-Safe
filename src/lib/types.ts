@@ -160,7 +160,7 @@ export type LivePayload = {
   daily: { day: string; count: number; isToday: boolean }[];
   hotspots: { locationId: string; name: string; count: number }[];
   categories: { categoryId: string; name: string; count: number }[];
-  avgResponseMin: number;
+  avgResponseMin: number | null;
   responders: Responder[];
   /** Recent GPS trail (oldest → newest) for each open SOS alert. */
   trails: { alertId: string; points: { lat: number; lng: number }[] }[];

@@ -155,6 +155,7 @@ insert into incident_categories (id, name, icon) values
 on conflict (id) do nothing;
 
 insert into responders (id, name, unit, phone, status) values
+  -- PLACEHOLDER phone numbers below (see RESPONDER_UNITS in src/lib/campus.ts).
   ('sec-a', 'Kavya Nair', 'Campus Security A', '+91 80 4450 1101', 'available'),
   ('med-1', 'Dr. Arjun Mehta', 'Medical Unit 1', '+91 80 4450 1188', 'available'),
   ('night', 'Night Patrol', 'Night Patrol', '+91 80 4450 1199', 'on_duty'),

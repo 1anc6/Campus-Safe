@@ -71,15 +71,14 @@ function AnonymousPage() {
   return (
     <AdaptiveShell anon width="wide">
       <header className="mb-6">
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-violet">
-          <EyeOff className="size-3.5" /> Anonymous report
-        </p>
-        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight md:text-3xl">
-          Your identity is not saved.
+        <h1 className="flex items-center gap-2.5 font-display text-2xl font-semibold tracking-tight md:text-3xl">
+          <EyeOff className="size-6 shrink-0 text-violet" aria-hidden="true" />
+          Anonymous report
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-muted">
-          Tell campus command what happened without revealing who you are. You'll get a private code
-          to follow the case.
+          <strong className="font-semibold text-fg">Your identity is not saved.</strong> Tell campus
+          command what happened without revealing who you are. You'll get a private code to follow
+          the case.
         </p>
       </header>
 

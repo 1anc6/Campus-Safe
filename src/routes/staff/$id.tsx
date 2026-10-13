@@ -120,7 +120,20 @@ function AssignedAlert() {
   const stepIndex = STEPS.findIndex((s) => s.id === alert.status);
 
   const markers: MapMarker[] = [
-    ...(pos ? [{ id: alert.id, ...pos, kind: "sos" as const, label: alert.reporterName }] : []),
+    ...(pos
+      ? [
+          {
+            id: alert.id,
+            ...pos,
+            kind: "sos" as const,
+            label: alert.isApproximate
+              ? `${alert.reporterName} (approximate — no GPS)`
+              : alert.reporterName,
+            approx: alert.isApproximate,
+            accuracyM: alert.accuracyM,
+          },
+        ]
+      : []),
     ...(myFix
       ? [{ id: "me", lat: myFix.lat, lng: myFix.lng, kind: "unit" as const, label: "You" }]
       : []),

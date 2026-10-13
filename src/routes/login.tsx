@@ -1,13 +1,5 @@
 import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
-import {
-  AlertCircle,
-  ChevronRight,
-  Eye,
-  EyeOff,
-  LoaderCircle,
-  LogIn,
-  UserPlus,
-} from "lucide-react";
+import { AlertCircle, ChevronRight, Eye, EyeOff, LoaderCircle, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { applySessionToken, authClient, authEnabled } from "@/lib/auth/client";
@@ -152,6 +144,7 @@ function Login() {
 
       {error && (
         <div
+          id="login-error"
           role="alert"
           className="mb-4 flex items-start gap-2 rounded-lg bg-sos/10 p-3 text-sm text-sos ring-1 ring-sos/40"
         >
@@ -177,6 +170,7 @@ function Login() {
             placeholder="you@campus.edu"
             className="input"
             aria-invalid={Boolean(error)}
+            aria-describedby={error ? "login-error" : undefined}
           />
         </div>
         <div>
@@ -193,6 +187,7 @@ function Login() {
               placeholder="Enter your password"
               className="input pr-12"
               aria-invalid={Boolean(error)}
+              aria-describedby={error ? "login-error" : undefined}
             />
             <button
               type="button"
@@ -209,35 +204,38 @@ function Login() {
           {busy ? <LoaderCircle className="size-4 animate-spin" /> : <LogIn className="size-4" />}
           {busy ? "Signing in…" : "Sign in"}
         </button>
-        <p className="text-center text-xs leading-relaxed text-dim">
+        <p className="text-center text-xs leading-relaxed text-muted">
           Forgot your password? Ask a campus administrator to reset it.
         </p>
       </form>
 
       {/* Phones reach sign-up from the header pill. */}
-      <div className="mt-6 hidden border-t border-line pt-6 lg:block">
-        <p className="mb-3 text-center text-sm text-muted">New to {BRAND.name}?</p>
-        <Link to="/signup" search={{ redirect: redirectTo }} className="btn-ghost w-full">
-          <UserPlus className="size-4" />
+      <p className="mt-5 hidden text-center text-sm text-muted lg:block">
+        New to {BRAND.name}?{" "}
+        <Link
+          to="/signup"
+          search={{ redirect: redirectTo }}
+          className="font-semibold text-[var(--auth-link)] underline-offset-4 hover:underline"
+        >
           Create an account
         </Link>
-      </div>
+      </p>
 
-      <div className="mt-6 flex items-center gap-3 text-xs text-dim">
+      <div className="mt-6 flex items-center gap-3 text-xs text-muted">
         <span className="h-px flex-1 bg-[var(--auth-field-border)]" />
         or
         <span className="h-px flex-1 bg-[var(--auth-field-border)]" />
       </div>
       <Link
         to="/anonymous"
-        className="mt-4 flex min-h-12 items-center gap-3 rounded-[14px] border border-[var(--auth-field-border)] bg-[var(--auth-field)] px-4 text-left transition-colors hover:border-[var(--auth-link)]"
+        className="group mt-4 flex min-h-14 items-center gap-3 rounded-[14px] border border-[var(--auth-field-border)] bg-[var(--auth-field)] px-4 text-left transition-colors hover:border-[var(--auth-link)]"
       >
         <EyeOff className="size-[18px] shrink-0 text-[var(--auth-link)]" />
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-medium text-fg">File an anonymous report</span>
-          <span className="block text-xs text-dim">No account needed</span>
+          <span className="block text-xs text-muted">No account needed</span>
         </span>
-        <ChevronRight className="size-4 shrink-0 text-dim" />
+        <ChevronRight className="size-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
       </Link>
     </AuthLayout>
   );

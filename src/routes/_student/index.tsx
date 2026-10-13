@@ -18,7 +18,7 @@ import { profileCompleteness, useProfilePanel } from "@/components/student/profi
 import { SafeWalkCard } from "@/components/student/safe-walk";
 import { useSosFlow } from "@/components/student/sos-flow";
 import { useViewer } from "@/lib/auth/use-viewer";
-import { CAMPUS, SECURITY_LINE } from "@/lib/campus";
+import { CAMPUS, isPlaceholderPhone, SECURITY_LINE } from "@/lib/campus";
 import { listMyIncidents } from "@/backend/functions/reports";
 import { listMySos } from "@/backend/functions/sos";
 import type { Incident, SosAlert } from "@/lib/types";
@@ -311,7 +311,12 @@ function SafetyCard({ className }: { className?: string }) {
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-medium">Call {SECURITY_LINE.label}</span>
           <span className="block font-mono text-[11px] text-muted">
-            {SECURITY_LINE.phone} · 24/7
+            {SECURITY_LINE.phone}
+            {isPlaceholderPhone(SECURITY_LINE.phone) && (
+              <span className="ml-1.5 rounded bg-warn/15 px-1 py-px font-sans text-[10px] font-semibold text-warn">
+                Placeholder number
+              </span>
+            )}
           </span>
         </span>
         <ChevronRight className="size-4 text-dim" />

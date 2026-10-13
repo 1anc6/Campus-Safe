@@ -109,6 +109,11 @@ export const LOCATIONS = [
   { id: "parking", name: "Parking", zone: "Entry", lat: 30.2684, lng: 77.99718 },
 ] as const;
 
+/**
+ * PLACEHOLDER phone numbers: not real campus lines. Replace them here (and in
+ * migrations/0002_schema.sql for the seeded responders) with the numbers campus
+ * security supplies. Until then the UI labels them "placeholder" wherever shown.
+ */
 export const RESPONDER_UNITS = [
   { id: "sec-a", name: "Kavya Nair", unit: "Campus Security A", phone: "+91 80 4450 1101" },
   { id: "med-1", name: "Dr. Arjun Mehta", unit: "Medical Unit 1", phone: "+91 80 4450 1188" },
@@ -124,6 +129,13 @@ export const SECURITY_LINE = {
   label: "Campus Security",
   phone: RESPONDER_UNITS[0].phone,
 } as const;
+
+const PLACEHOLDER_PHONES = new Set<string>(RESPONDER_UNITS.map((u) => u.phone));
+
+/** True for the demo numbers above, so screens can say they are not real lines. */
+export function isPlaceholderPhone(phone: string | null | undefined): boolean {
+  return phone != null && PLACEHOLDER_PHONES.has(phone);
+}
 
 export function locationById(id: string | null | undefined) {
   return LOCATIONS.find((l) => l.id === id) ?? null;

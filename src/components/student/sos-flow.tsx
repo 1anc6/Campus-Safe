@@ -14,7 +14,13 @@ import { toast } from "sonner";
 import { SosButton } from "@/components/shared/sos-button";
 import { createSos } from "@/backend/functions/sos";
 import { campusProximity, formatKm, SECURITY_LINE } from "@/lib/campus";
-import { clearPendingSos, getFix, readLastFix, readPendingSos, writePendingSos } from "@/lib/gps";
+import {
+  clearPendingSos,
+  readLastFix,
+  readPendingSos,
+  startFixCollector,
+  writePendingSos,
+} from "@/lib/gps";
 import type { GpsFix } from "@/lib/types";
 import type { LiveLocation } from "@/lib/use-live-location";
 
@@ -38,6 +44,8 @@ export function useSosFlow(): SosFlow {
 
 /** Retry delays (exponential backoff, capped): 4 s, 8 s, 15 s, then every 30 s. */
 const BACKOFF_MS = [4000, 8000, 15000, 30000];
+/** After the countdown, how long to keep waiting for an accurate GPS fix before sending anyway. */
+const EXTRA_FIX_WAIT_MS = 4000;
 /** An undelivered SOS older than this is not sent silently on reopening the app. */
 const STALE_PENDING_MS = 30 * 60_000;
 
@@ -92,6 +100,8 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
   const [delivery, setDelivery] = useState<Delivery | null>(null);
   const [buttonKey, setButtonKey] = useState(0);
   const liveLocation = useRef<LiveLocation | null>(null);
+  /** Collects GPS readings from the moment the hold completes, keeping the most accurate. */
+  const collector = useRef<ReturnType<typeof startFixCollector> | null>(null);
   /** The single retry timer — never more than one retry loop at a time. */
   const retryTimer = useRef<number | undefined>(undefined);
   const attemptsRef = useRef(0);
@@ -172,10 +182,12 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
     } catch {
       /* wake lock unsupported — continue */
     }
-    // Use the live fix the map is already tracking; fall back to a one-off read.
-    const loc = liveLocation.current;
-    const current: GpsFix =
-      loc?.status === "live" && loc.fix && !loc.fix.approx ? loc.fix : await getFix();
+    // The collector has been reading GPS since the countdown began (seeded with the
+    // map's live fix); wait a little longer only if it has nothing accurate yet.
+    const fixes = collector.current ?? startFixCollector(liveFix(liveLocation.current));
+    collector.current = null;
+    const current: GpsFix = await fixes.wait(EXTRA_FIX_WAIT_MS);
+    fixes.stop();
     // Store first, then send: if anything goes wrong the alert is not lost.
     writePendingSos({ ...current, ts: Date.now() });
     attemptsRef.current = 0;
@@ -198,9 +210,20 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
   }, [overlay, count, send]);
 
   const arm = useCallback(() => {
+    collector.current?.stop();
+    collector.current = startFixCollector(liveFix(liveLocation.current));
     setCount(5);
     setOverlay("countdown");
   }, []);
+
+  const disarm = useCallback(() => {
+    collector.current?.stop();
+    collector.current = null;
+    setOverlay(null);
+    setButtonKey((k) => k + 1);
+  }, []);
+
+  useEffect(() => () => collector.current?.stop(), []);
 
   const shareLiveLocation = useCallback((location: LiveLocation | null) => {
     liveLocation.current = location;
@@ -239,9 +262,7 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
         >
           {overlay === "countdown" ? (
             <div className="flex w-full max-w-xs flex-col items-center text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sos">
-                Sending SOS in
-              </p>
+              <p className="text-base font-semibold text-sos">Sending SOS in</p>
               <p
                 className="mt-2 font-display text-8xl font-bold tabular-nums leading-none"
                 aria-live="assertive"
@@ -263,10 +284,7 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 autoFocus
-                onClick={() => {
-                  setOverlay(null);
-                  setButtonKey((k) => k + 1);
-                }}
+                onClick={disarm}
                 className="mt-8 min-h-14 w-full rounded-xl bg-fg text-base font-bold text-panel"
               >
                 CANCEL
@@ -283,6 +301,11 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
       )}
     </SosFlowContext.Provider>
   );
+}
+
+/** The map's live fix, when it is a real GPS reading. */
+function liveFix(location: LiveLocation | null): GpsFix | null {
+  return location?.status === "live" && location.fix && !location.fix.approx ? location.fix : null;
 }
 
 function readLastFixSafe(): GpsFix | null {

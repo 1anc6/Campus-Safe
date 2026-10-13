@@ -115,7 +115,6 @@ function ReportForm() {
   return (
     <>
       <PageHeading
-        eyebrow="Report"
         title="Report an incident"
         subtitle="Campus command reviews every report. Track status changes and replies under My reports."
       />

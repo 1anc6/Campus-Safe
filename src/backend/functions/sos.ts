@@ -198,10 +198,11 @@ export async function openSosForUser(
     order by started_at desc limit 1
   `;
   if (open[0]) {
+    // A repeat press may carry a guess; never let it replace a real GPS position.
     await sql`
       update sos_alerts set lat = ${fix.lat}, lng = ${fix.lng}, accuracy_m = ${fix.acc},
         is_approximate = ${fix.approx}
-      where id = ${open[0].id}
+      where id = ${open[0].id} and (${!fix.approx} or is_approximate or lat is null)
     `;
     return (await fetchSos(open[0].id))!;
   }
@@ -259,11 +260,19 @@ export const pingSosLocation = createServerFn({ method: "POST" })
   .validator(z.object({ id: z.string().max(64), ...fixSchema }))
   .handler(async ({ context, data }) => {
     const sql = await getSql();
-    const own = await sql<{ id: string; status: string }>`
-      select id, status from sos_alerts where id = ${data.id} and user_id = ${context.userId}
+    const own = await sql<{
+      id: string;
+      status: string;
+      is_approximate: boolean;
+      lat: number | null;
+    }>`
+      select id, status, is_approximate, lat from sos_alerts
+      where id = ${data.id} and user_id = ${context.userId}
     `;
     if (!own[0]) throw new Error("Not found");
     if (own[0].status === "resolved" || own[0].status === "cancelled") return { ok: true };
+    // An approximate guess (no GPS) must never replace a real position command already has.
+    if (data.approx && own[0].lat != null && !own[0].is_approximate) return { ok: true };
     const last = await sql<{ recent: boolean; n: number }>`
       select coalesce(max(recorded_at) > now() - ${`${MIN_PING_GAP_MS} milliseconds`}::interval, false) as recent,
              count(*)::int as n

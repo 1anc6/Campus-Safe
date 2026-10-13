@@ -43,7 +43,11 @@ function AnalyticsPage() {
     <div className="space-y-5 p-4 sm:p-5 lg:p-6">
       <AdminPageHeader
         title="Analytics"
-        subtitle={`Average SOS response ${live?.avgResponseMin ?? 0} min over 14 days`}
+        subtitle={
+          live?.avgResponseMin == null
+            ? "No SOS responses in the last 14 days"
+            : `Average SOS response ${live.avgResponseMin} min over 14 days`
+        }
         actions={
           <div className="seg" role="group" aria-label="Range">
             {(["today", "week", "month"] as const).map((r) => (

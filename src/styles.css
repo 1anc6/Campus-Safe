@@ -18,7 +18,8 @@
   --color-line-strong: #cbd3df;
   --color-fg: #1b2430;
   --color-muted: #5e6b7e;
-  --color-dim: #77849a;
+  /* Darkened from #77849a so small dim text passes WCAG AA on white and glass. */
+  --color-dim: #66738a;
   /* Accent for text/icons (readable on white) vs the brand fill colour. */
   --color-neon: #00849a;
   --color-neon-dim: rgb(0 207 232 / 0.13);
@@ -95,7 +96,7 @@
   --color-line-strong: rgb(148 163 184 / 0.24);
   --color-fg: #e8eef7;
   --color-muted: #8a94a6;
-  --color-dim: #6b768a;
+  --color-dim: #808ba0;
   --color-neon: #35e0ff;
   --color-neon-dim: rgb(53 224 255 / 0.14);
   --color-accent: #35e0ff;
@@ -191,6 +192,17 @@ html.anon[data-theme="dark"] {
   textarea,
   select {
     font: inherit;
+    caret-color: var(--color-neon);
+  }
+
+  ::selection {
+    background: var(--color-neon-dim);
+  }
+
+  /* One visible keyboard focus ring across the app (mouse clicks stay ring-free). */
+  :where(a, button, [role="button"], [role="switch"], [role="tab"], summary, select):focus-visible {
+    outline: 2px solid var(--color-neon);
+    outline-offset: 2px;
   }
 }
 
@@ -811,6 +823,8 @@ html.theme-transition *::after {
   --auth-cta-fg: #ffffff;
   --auth-cta-glow: rgb(14 116 144 / 0.28);
   --auth-link: #0e7490;
+  --auth-placeholder: #66738a;
+  --auth-selection: rgb(14 116 144 / 0.2);
 }
 [data-theme="dark"] .auth-shell {
   --auth-hero:
@@ -827,6 +841,8 @@ html.theme-transition *::after {
   --auth-cta-fg: #04222b;
   --auth-cta-glow: rgb(34 211 238 / 0.25);
   --auth-link: #67e8f9;
+  --auth-placeholder: #8a94a6;
+  --auth-selection: rgb(103 232 249 / 0.25);
 }
 
 @layer components {
@@ -836,6 +852,24 @@ html.theme-transition *::after {
   }
   .auth-shell .input:focus {
     background: var(--auth-sheet);
+  }
+  .auth-shell .input {
+    caret-color: var(--auth-link);
+  }
+  /* Placeholders pass AA on the field fill (the shared dim grey does not). */
+  .auth-shell .input::placeholder {
+    color: var(--auth-placeholder);
+  }
+  .auth-shell ::selection {
+    background: var(--auth-selection);
+  }
+  /* Keyboard focus: one visible ring for links, buttons and the theme switch. */
+  .auth-shell :is(a, button):focus-visible {
+    outline: 2px solid var(--auth-link);
+    outline-offset: 2px;
+  }
+  .auth-shell header :is(a, button):focus-visible {
+    outline-color: var(--auth-hero-fg);
   }
   .btn-auth {
     display: inline-flex;
@@ -863,5 +897,117 @@ html.theme-transition *::after {
   .btn-auth:disabled {
     opacity: 0.6;
     cursor: wait;
+  }
+}
+
+/* ============ Live activity timeline (admin dashboard) ============ */
+.activity-marker {
+  background: var(--color-panel);
+  color: var(--color-muted);
+  --tw-ring-color: var(--color-line-strong);
+  transform: scale(0.4);
+  opacity: 0;
+  animation: activity-pop 420ms var(--ease-smooth-out) var(--reveal-delay, 0ms) forwards;
+}
+.activity-marker[data-kind="sos"] {
+  color: var(--color-sos);
+  --tw-ring-color: color-mix(in srgb, var(--color-sos) 35%, transparent);
+}
+.activity-marker[data-kind="anonymous"] {
+  color: var(--color-violet);
+  --tw-ring-color: color-mix(in srgb, var(--color-violet) 35%, transparent);
+}
+.activity-marker[data-kind="incident"],
+.activity-marker[data-kind="broadcast"] {
+  color: var(--color-neon);
+  --tw-ring-color: color-mix(in srgb, var(--color-neon) 30%, transparent);
+}
+.activity-marker[data-tone="danger"] {
+  background: color-mix(in srgb, var(--color-sos) 12%, var(--color-panel));
+  color: var(--color-sos);
+}
+.activity-marker[data-tone="success"] {
+  background: color-mix(in srgb, var(--color-ok) 12%, var(--color-panel));
+  color: var(--color-ok);
+  --tw-ring-color: color-mix(in srgb, var(--color-ok) 35%, transparent);
+}
+
+/* The connector draws downward from each marker to the next one. */
+.activity-line {
+  position: absolute;
+  left: 21px;
+  top: 40px;
+  bottom: -8px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--color-line-strong);
+  transform-origin: top;
+  transform: scaleY(0);
+  animation: activity-draw 380ms var(--ease-smooth-out) calc(var(--reveal-delay, 0ms) + 120ms)
+    forwards;
+}
+
+/* New updates slide in at the top, out of a soft blur. */
+.activity-row.is-new > :is(a, div) {
+  animation: activity-enter 520ms var(--ease-smooth-out) both;
+}
+.activity-row.is-new > :is(a, div)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-neon-dim);
+  animation: activity-flash 2.4s var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+[data-activity-row]:focus-visible {
+  outline: 2px solid var(--color-neon);
+  outline-offset: -2px;
+}
+
+.activity-scroller.has-more {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent);
+}
+
+@keyframes activity-pop {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes activity-draw {
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes activity-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes activity-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-marker,
+  .activity-line {
+    animation: none;
+    transform: none;
+    opacity: 1;
   }
 }

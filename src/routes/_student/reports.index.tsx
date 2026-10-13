@@ -80,7 +80,6 @@ function MyReports() {
   return (
     <>
       <PageHeading
-        eyebrow="History"
         title="My reports"
         subtitle="Every SOS and incident you've filed, with live status."
       />

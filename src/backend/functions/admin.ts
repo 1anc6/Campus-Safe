@@ -508,7 +508,7 @@ export const getLive = createServerFn({ method: "GET" })
         name: catName(c.category_id),
         count: c.n,
       })),
-      avgResponseMin: avgRows[0]?.mins ?? 0,
+      avgResponseMin: avgRows[0]?.mins ?? null,
       trails,
       recentSos,
       responders,
@@ -633,3 +633,206 @@ async function loadResponders(sql: Sql): Promise<Responder[]> {
 }
 
 export { fetchSos };
+
+export type ActivityEvent = {
+  id: string;
+  at: string;
+  kind: "sos" | "incident" | "anonymous" | "broadcast";
+  tone: "danger" | "success" | "neutral";
+  actor: string | null;
+  title: string;
+  meta: string | null;
+  /** Case page to open, when there is one. */
+  href: string | null;
+};
+
+/** "a theft report" / "an accident report" ("Other" becomes plain "a report"). */
+function reportPhrase(category: string | null): string {
+  if (!category || category === "Other") return "a report";
+  const word = category.toLowerCase();
+  return `${/^[aeiou]/.test(word) ? "an" : "a"} ${word} report`;
+}
+
+const STATUS_WORDS: Record<string, string> = {
+  reported: "Reported",
+  under_review: "Under review",
+  in_progress: "In progress",
+  resolved: "Resolved",
+  closed: "Closed",
+  assigned: "Responder assigned",
+  arrived: "Arrived",
+  cancelled: "Cancelled",
+};
+
+/**
+ * Live activity feed for the command dashboard: the last 7 days of SOS alerts,
+ * reports, assignments, status changes and broadcasts, newest first. Anonymous
+ * reports never carry a reporter, only what was reported and where.
+ */
+export const getActivity = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }): Promise<ActivityEvent[]> => {
+    await requireAdmin(context.userId);
+    const sql = await getSql();
+    const rows = await sql<{
+      id: string;
+      at: unknown;
+      source: string;
+      subject_id: string;
+      detail: string | null;
+      actor: string | null;
+      category_id: string | null;
+      location_id: string | null;
+      severity: string | null;
+      responder: string | null;
+      alert_title: string | null;
+    }>`
+      select * from (
+        select 'sos-open-' || s.id as id, s.started_at as at, 'sos.create' as source,
+               s.id as subject_id, s.notes as detail, p.name as actor,
+               null as category_id, null as location_id, null as severity,
+               null as responder, null as alert_title
+        from sos_alerts s left join profiles p on p.user_id = s.user_id
+        union all
+        select 'sos-close-' || s.id, s.resolved_at, 'sos.' || s.status, s.id, null, p.name,
+               null, null, null, null, null
+        from sos_alerts s left join profiles p on p.user_id = s.user_id
+        where s.resolved_at is not null and s.status in ('resolved', 'cancelled')
+        union all
+        select 'inc-' || i.id, i.created_at, 'incident.create', i.id, null,
+               case when i.user_id = 'seed-campus' then 'Campus archive' else p.name end,
+               i.category_id, i.location_id, i.severity, null, null
+        from incidents i left join profiles p on p.user_id = i.user_id
+        union all
+        select 'anon-' || a.id, a.created_at, 'anonymous.create', a.id, null, null,
+               a.category_id, a.location_id, a.severity, null, null
+        from anonymous_reports a
+        union all
+        select 'audit-' || l.id, l.created_at, l.action, l.subject_id, l.detail, p.name,
+               coalesce(i.category_id, a.category_id), coalesce(i.location_id, a.location_id),
+               null, r.name, ca.title
+        from audit_log l
+        left join profiles p on p.user_id = l.actor_id
+        left join incidents i on l.subject_kind = 'incident' and i.id = l.subject_id
+        left join anonymous_reports a on l.subject_kind = 'anonymous' and a.id = l.subject_id
+        left join responders r on l.action in ('sos.assign', 'incident.assign') and r.id = l.detail
+        left join campus_alerts ca on l.subject_kind = 'alert' and ca.id = l.subject_id
+        where l.action in ('sos.assign', 'sos.status', 'incident.assign', 'incident.status',
+                           'anonymous.status', 'alert.create', 'alert.end')
+      ) feed
+      where at >= now() - interval '7 days'
+      order by at desc
+      limit 60
+    `;
+
+    const events: ActivityEvent[] = [];
+    for (const r of rows) {
+      const place = r.location_id ? locName(r.location_id) : null;
+      const what = r.category_id ? catName(r.category_id) : null;
+      const base = { id: r.id, at: iso(r.at) };
+      switch (r.source) {
+        case "sos.create":
+          events.push({
+            ...base,
+            kind: "sos",
+            tone: "danger",
+            actor: r.actor ?? "A student",
+            title: r.detail ? "triggered an automatic SOS" : "raised an SOS",
+            meta: r.detail,
+            href: `/admin/sos/${r.subject_id}`,
+          });
+          break;
+        case "sos.resolved":
+        case "sos.cancelled":
+          events.push({
+            ...base,
+            kind: "sos",
+            tone: r.source === "sos.resolved" ? "success" : "neutral",
+            actor: null,
+            title: `SOS from ${r.actor ?? "a student"} ${r.source === "sos.resolved" ? "resolved" : "cancelled"}`,
+            meta: null,
+            href: `/admin/sos/${r.subject_id}`,
+          });
+          break;
+        case "sos.assign":
+        case "incident.assign":
+          if (!r.responder) break;
+          events.push({
+            ...base,
+            kind: r.source === "sos.assign" ? "sos" : "incident",
+            tone: "neutral",
+            actor: r.actor,
+            title: `assigned ${r.responder}`,
+            meta:
+              r.source === "sos.assign" ? "SOS alert" : [what, place].filter(Boolean).join(" · "),
+            href:
+              r.source === "sos.assign"
+                ? `/admin/sos/${r.subject_id}`
+                : `/admin/incidents/${r.subject_id}`,
+          });
+          break;
+        case "sos.status":
+          if (r.detail !== "arrived") break; // resolve/cancel come from the alert row itself
+          events.push({
+            ...base,
+            kind: "sos",
+            tone: "neutral",
+            actor: r.actor,
+            title: "arrived at an SOS",
+            meta: null,
+            href: `/admin/sos/${r.subject_id}`,
+          });
+          break;
+        case "incident.create":
+          events.push({
+            ...base,
+            kind: "incident",
+            tone: r.severity === "P1" ? "danger" : "neutral",
+            actor: r.actor ?? "A student",
+            title: `filed ${reportPhrase(what)}`,
+            meta: [r.severity, place].filter(Boolean).join(" · "),
+            href: `/admin/incidents/${r.subject_id}`,
+          });
+          break;
+        case "anonymous.create":
+          events.push({
+            ...base,
+            kind: "anonymous",
+            tone: r.severity === "P1" ? "danger" : "neutral",
+            actor: null,
+            title: what
+              ? `Anonymous ${what.toLowerCase()} report received`
+              : "Anonymous report received",
+            meta: [r.severity, place].filter(Boolean).join(" · "),
+            href: null,
+          });
+          break;
+        case "incident.status":
+        case "anonymous.status":
+          events.push({
+            ...base,
+            kind: r.source === "incident.status" ? "incident" : "anonymous",
+            tone: r.detail === "resolved" || r.detail === "closed" ? "success" : "neutral",
+            actor: r.actor,
+            title: `moved ${reportPhrase(what)} to ${(STATUS_WORDS[r.detail ?? ""] ?? r.detail ?? "").toLowerCase()}`,
+            meta: place,
+            href: r.source === "incident.status" ? `/admin/incidents/${r.subject_id}` : null,
+          });
+          break;
+        case "alert.create":
+        case "alert.end":
+          events.push({
+            ...base,
+            kind: "broadcast",
+            tone: "neutral",
+            actor: r.actor,
+            title:
+              r.source === "alert.create" ? "sent a campus broadcast" : "ended a campus broadcast",
+            meta: r.alert_title,
+            href: "/admin/alerts",
+          });
+          break;
+      }
+    }
+    return events;
+  });

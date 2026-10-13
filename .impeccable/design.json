@@ -1,0 +1,835 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T15:22:06+00:00",
+  "title": "Design System: CampusSafe",
+  "extensions": {
+    "colorMeta": {
+      "neon": {
+        "role": "primary",
+        "displayName": "Signal Teal",
+        "darkValue": "#35e0ff",
+        "tonalRamp": [
+          "oklch(15% 0.053 215)",
+          "oklch(26% 0.072 215)",
+          "oklch(38% 0.092 215)",
+          "oklch(49% 0.100 215)",
+          "oklch(61% 0.100 215)",
+          "oklch(72% 0.092 215)",
+          "oklch(84% 0.072 215)",
+          "oklch(95% 0.053 215)"
+        ],
+        "canonical": "oklch(56.4% 0.100 215)"
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Bright Cyan",
+        "darkValue": "#35e0ff",
+        "tonalRamp": [
+          "oklch(15% 0.065 210)",
+          "oklch(26% 0.090 210)",
+          "oklch(38% 0.117 210)",
+          "oklch(49% 0.135 210)",
+          "oklch(61% 0.135 210)",
+          "oklch(72% 0.117 210)",
+          "oklch(84% 0.090 210)",
+          "oklch(95% 0.065 210)"
+        ],
+        "canonical": "oklch(78.3% 0.135 210)"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep Ink",
+        "darkValue": "#062a33",
+        "tonalRamp": [
+          "oklch(15% 0.034 218)",
+          "oklch(26% 0.042 218)",
+          "oklch(38% 0.043 218)",
+          "oklch(49% 0.043 218)",
+          "oklch(61% 0.043 218)",
+          "oklch(72% 0.043 218)",
+          "oklch(84% 0.042 218)",
+          "oklch(95% 0.034 218)"
+        ],
+        "canonical": "oklch(26.5% 0.043 218)"
+      },
+      "sos": {
+        "role": "secondary",
+        "displayName": "Alarm Red",
+        "darkValue": "#ff3b4e",
+        "tonalRamp": [
+          "oklch(15% 0.089 20)",
+          "oklch(26% 0.126 20)",
+          "oklch(38% 0.168 20)",
+          "oklch(49% 0.205 20)",
+          "oklch(61% 0.205 20)",
+          "oklch(72% 0.168 20)",
+          "oklch(84% 0.126 20)",
+          "oklch(95% 0.089 20)"
+        ],
+        "canonical": "oklch(59.9% 0.206 20)"
+      },
+      "sos-fill": {
+        "role": "secondary",
+        "displayName": "Alarm Red Fill",
+        "darkValue": "#ff3b4e",
+        "tonalRamp": [
+          "oklch(15% 0.089 20)",
+          "oklch(26% 0.126 20)",
+          "oklch(38% 0.168 20)",
+          "oklch(49% 0.205 20)",
+          "oklch(61% 0.205 20)",
+          "oklch(72% 0.168 20)",
+          "oklch(84% 0.126 20)",
+          "oklch(95% 0.089 20)"
+        ]
+      },
+      "violet": {
+        "role": "tertiary",
+        "displayName": "Anonymous Violet",
+        "darkValue": "#8b7cff",
+        "tonalRamp": [
+          "oklch(15% 0.083 286)",
+          "oklch(26% 0.118 286)",
+          "oklch(38% 0.156 286)",
+          "oklch(49% 0.190 286)",
+          "oklch(61% 0.190 286)",
+          "oklch(72% 0.156 286)",
+          "oklch(84% 0.118 286)",
+          "oklch(95% 0.083 286)"
+        ],
+        "canonical": "oklch(54.2% 0.190 286)"
+      },
+      "ok": {
+        "role": "status",
+        "displayName": "Resolved Green",
+        "darkValue": "#2fe6a8",
+        "tonalRamp": [
+          "oklch(15% 0.054 175)",
+          "oklch(26% 0.073 175)",
+          "oklch(38% 0.093 175)",
+          "oklch(49% 0.102 175)",
+          "oklch(61% 0.102 175)",
+          "oklch(72% 0.093 175)",
+          "oklch(84% 0.073 175)",
+          "oklch(95% 0.054 175)"
+        ],
+        "canonical": "oklch(54.2% 0.102 175)"
+      },
+      "warn": {
+        "role": "status",
+        "displayName": "Caution Amber",
+        "darkValue": "#ffb020",
+        "tonalRamp": [
+          "oklch(15% 0.062 66)",
+          "oklch(26% 0.086 66)",
+          "oklch(38% 0.111 66)",
+          "oklch(49% 0.127 66)",
+          "oklch(61% 0.127 66)",
+          "oklch(72% 0.111 66)",
+          "oklch(84% 0.086 66)",
+          "oklch(95% 0.062 66)"
+        ],
+        "canonical": "oklch(56.8% 0.127 66)"
+      },
+      "high": {
+        "role": "status",
+        "displayName": "Escalation Orange",
+        "darkValue": "#ff7a45",
+        "tonalRamp": [
+          "oklch(15% 0.078 38)",
+          "oklch(26% 0.110 38)",
+          "oklch(38% 0.145 38)",
+          "oklch(49% 0.174 38)",
+          "oklch(61% 0.174 38)",
+          "oklch(72% 0.145 38)",
+          "oklch(84% 0.110 38)",
+          "oklch(95% 0.078 38)"
+        ],
+        "canonical": "oklch(55.3% 0.174 38)"
+      },
+      "p1": {
+        "role": "status",
+        "displayName": "Severity P1",
+        "darkValue": "#ff3b4e",
+        "tonalRamp": [
+          "oklch(15% 0.089 20)",
+          "oklch(26% 0.126 20)",
+          "oklch(38% 0.168 20)",
+          "oklch(49% 0.205 20)",
+          "oklch(61% 0.205 20)",
+          "oklch(72% 0.168 20)",
+          "oklch(84% 0.126 20)",
+          "oklch(95% 0.089 20)"
+        ],
+        "canonical": "oklch(59.9% 0.206 20)"
+      },
+      "p2": {
+        "role": "status",
+        "displayName": "Severity P2",
+        "darkValue": "#ff7a45",
+        "tonalRamp": [
+          "oklch(15% 0.078 38)",
+          "oklch(26% 0.110 38)",
+          "oklch(38% 0.145 38)",
+          "oklch(49% 0.174 38)",
+          "oklch(61% 0.174 38)",
+          "oklch(72% 0.145 38)",
+          "oklch(84% 0.110 38)",
+          "oklch(95% 0.078 38)"
+        ],
+        "canonical": "oklch(55.3% 0.174 38)"
+      },
+      "p3": {
+        "role": "status",
+        "displayName": "Severity P3",
+        "darkValue": "#ffb020",
+        "tonalRamp": [
+          "oklch(15% 0.062 66)",
+          "oklch(26% 0.086 66)",
+          "oklch(38% 0.111 66)",
+          "oklch(49% 0.127 66)",
+          "oklch(61% 0.127 66)",
+          "oklch(72% 0.111 66)",
+          "oklch(84% 0.086 66)",
+          "oklch(95% 0.062 66)"
+        ],
+        "canonical": "oklch(56.8% 0.127 66)"
+      },
+      "p4": {
+        "role": "status",
+        "displayName": "Severity P4",
+        "darkValue": "#2fe6a8",
+        "tonalRamp": [
+          "oklch(15% 0.054 175)",
+          "oklch(26% 0.073 175)",
+          "oklch(38% 0.093 175)",
+          "oklch(49% 0.102 175)",
+          "oklch(61% 0.102 175)",
+          "oklch(72% 0.093 175)",
+          "oklch(84% 0.073 175)",
+          "oklch(95% 0.054 175)"
+        ],
+        "canonical": "oklch(54.2% 0.102 175)"
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "darkValue": "#070b14",
+        "tonalRamp": [
+          "oklch(15% 0.005 258)",
+          "oklch(26% 0.005 258)",
+          "oklch(38% 0.005 258)",
+          "oklch(49% 0.005 258)",
+          "oklch(61% 0.005 258)",
+          "oklch(72% 0.005 258)",
+          "oklch(84% 0.005 258)",
+          "oklch(95% 0.005 258)"
+        ],
+        "canonical": "oklch(96.9% 0.005 258)"
+      },
+      "chrome": {
+        "role": "neutral",
+        "displayName": "Chrome",
+        "darkValue": "#0b0f17",
+        "tonalRamp": [
+          "oklch(15% 0.000 258)",
+          "oklch(26% 0.000 258)",
+          "oklch(38% 0.000 258)",
+          "oklch(49% 0.000 258)",
+          "oklch(61% 0.000 258)",
+          "oklch(72% 0.000 258)",
+          "oklch(84% 0.000 258)",
+          "oklch(95% 0.000 258)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "darkValue": "rgb(17 24 42 / 0.78)",
+        "tonalRamp": [
+          "oklch(15% 0.010 258)",
+          "oklch(26% 0.010 258)",
+          "oklch(38% 0.010 258)",
+          "oklch(49% 0.010 258)",
+          "oklch(61% 0.010 258)",
+          "oklch(72% 0.010 258)",
+          "oklch(84% 0.010 258)",
+          "oklch(95% 0.010 258)"
+        ]
+      },
+      "panel-2": {
+        "role": "neutral",
+        "displayName": "Panel 2",
+        "darkValue": "rgb(255 255 255 / 0.05)",
+        "tonalRamp": [
+          "oklch(15% 0.010 258)",
+          "oklch(26% 0.010 258)",
+          "oklch(38% 0.010 258)",
+          "oklch(49% 0.010 258)",
+          "oklch(61% 0.010 258)",
+          "oklch(72% 0.010 258)",
+          "oklch(84% 0.010 258)",
+          "oklch(95% 0.010 258)"
+        ]
+      },
+      "panel-3": {
+        "role": "neutral",
+        "displayName": "Panel 3",
+        "darkValue": "rgb(255 255 255 / 0.08)",
+        "tonalRamp": [
+          "oklch(15% 0.010 258)",
+          "oklch(26% 0.010 258)",
+          "oklch(38% 0.010 258)",
+          "oklch(49% 0.010 258)",
+          "oklch(61% 0.010 258)",
+          "oklch(72% 0.010 258)",
+          "oklch(84% 0.010 258)",
+          "oklch(95% 0.010 258)"
+        ]
+      },
+      "glass": {
+        "role": "neutral",
+        "displayName": "Glass",
+        "darkValue": "rgb(22 30 50 / 0.42)",
+        "tonalRamp": [
+          "oklch(15% 0.010 258)",
+          "oklch(26% 0.010 258)",
+          "oklch(38% 0.010 258)",
+          "oklch(49% 0.010 258)",
+          "oklch(61% 0.010 258)",
+          "oklch(72% 0.010 258)",
+          "oklch(84% 0.010 258)",
+          "oklch(95% 0.010 258)"
+        ]
+      },
+      "glass-strong": {
+        "role": "neutral",
+        "displayName": "Glass Strong",
+        "darkValue": "rgb(14 20 36 / 0.66)",
+        "tonalRamp": [
+          "oklch(15% 0.010 258)",
+          "oklch(26% 0.010 258)",
+          "oklch(38% 0.010 258)",
+          "oklch(49% 0.010 258)",
+          "oklch(61% 0.010 258)",
+          "oklch(72% 0.010 258)",
+          "oklch(84% 0.010 258)",
+          "oklch(95% 0.010 258)"
+        ]
+      },
+      "glass-soft": {
+        "role": "neutral",
+        "displayName": "Glass Soft",
+        "darkValue": "rgb(255 255 255 / 0.045)",
+        "tonalRamp": [
+          "oklch(15% 0.010 258)",
+          "oklch(26% 0.010 258)",
+          "oklch(38% 0.010 258)",
+          "oklch(49% 0.010 258)",
+          "oklch(61% 0.010 258)",
+          "oklch(72% 0.010 258)",
+          "oklch(84% 0.010 258)",
+          "oklch(95% 0.010 258)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "darkValue": "rgb(148 163 184 / 0.14)",
+        "tonalRamp": [
+          "oklch(15% 0.012 260)",
+          "oklch(26% 0.012 260)",
+          "oklch(38% 0.012 260)",
+          "oklch(49% 0.012 260)",
+          "oklch(61% 0.012 260)",
+          "oklch(72% 0.012 260)",
+          "oklch(84% 0.012 260)",
+          "oklch(95% 0.012 260)"
+        ],
+        "canonical": "oklch(92.6% 0.012 260)"
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "darkValue": "rgb(148 163 184 / 0.24)",
+        "tonalRamp": [
+          "oklch(15% 0.019 258)",
+          "oklch(26% 0.019 258)",
+          "oklch(38% 0.019 258)",
+          "oklch(49% 0.019 258)",
+          "oklch(61% 0.019 258)",
+          "oklch(72% 0.019 258)",
+          "oklch(84% 0.019 258)",
+          "oklch(95% 0.019 258)"
+        ],
+        "canonical": "oklch(86.4% 0.019 258)"
+      },
+      "fg": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "darkValue": "#e8eef7",
+        "tonalRamp": [
+          "oklch(15% 0.026 256)",
+          "oklch(26% 0.026 256)",
+          "oklch(38% 0.026 256)",
+          "oklch(49% 0.026 256)",
+          "oklch(61% 0.026 256)",
+          "oklch(72% 0.026 256)",
+          "oklch(84% 0.026 256)",
+          "oklch(95% 0.026 256)"
+        ],
+        "canonical": "oklch(25.7% 0.026 256)"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "darkValue": "#8a94a6",
+        "tonalRamp": [
+          "oklch(15% 0.031 258)",
+          "oklch(26% 0.034 258)",
+          "oklch(38% 0.034 258)",
+          "oklch(49% 0.034 258)",
+          "oklch(61% 0.034 258)",
+          "oklch(72% 0.034 258)",
+          "oklch(84% 0.034 258)",
+          "oklch(95% 0.031 258)"
+        ],
+        "canonical": "oklch(52.4% 0.034 258)"
+      },
+      "dim": {
+        "role": "neutral",
+        "displayName": "Dim Slate",
+        "darkValue": "#808ba0",
+        "tonalRamp": [
+          "oklch(15% 0.033 262)",
+          "oklch(26% 0.039 262)",
+          "oklch(38% 0.039 262)",
+          "oklch(49% 0.039 262)",
+          "oklch(61% 0.039 262)",
+          "oklch(72% 0.039 262)",
+          "oklch(84% 0.039 262)",
+          "oklch(95% 0.033 262)"
+        ],
+        "canonical": "oklch(55.3% 0.039 262)"
+      },
+      "auth-hero-deep": {
+        "role": "auth",
+        "displayName": "Auth Hero Deep Teal",
+        "darkValue": "#061019",
+        "tonalRamp": [
+          "oklch(15% 0.040 225)",
+          "oklch(26% 0.051 225)",
+          "oklch(38% 0.060 225)",
+          "oklch(49% 0.060 225)",
+          "oklch(61% 0.060 225)",
+          "oklch(72% 0.060 225)",
+          "oklch(84% 0.051 225)",
+          "oklch(95% 0.040 225)"
+        ]
+      },
+      "auth-sheet": {
+        "role": "auth",
+        "displayName": "Auth Sheet",
+        "darkValue": "#0b121e",
+        "tonalRamp": [
+          "oklch(15% 0.000 240)",
+          "oklch(26% 0.000 240)",
+          "oklch(38% 0.000 240)",
+          "oklch(49% 0.000 240)",
+          "oklch(61% 0.000 240)",
+          "oklch(72% 0.000 240)",
+          "oklch(84% 0.000 240)",
+          "oklch(95% 0.000 240)"
+        ]
+      },
+      "auth-page": {
+        "role": "auth",
+        "displayName": "Auth Page",
+        "darkValue": "#070c15",
+        "tonalRamp": [
+          "oklch(15% 0.008 240)",
+          "oklch(26% 0.008 240)",
+          "oklch(38% 0.008 240)",
+          "oklch(49% 0.008 240)",
+          "oklch(61% 0.008 240)",
+          "oklch(72% 0.008 240)",
+          "oklch(84% 0.008 240)",
+          "oklch(95% 0.008 240)"
+        ]
+      },
+      "auth-field": {
+        "role": "auth",
+        "displayName": "Auth Field",
+        "darkValue": "#101a29",
+        "tonalRamp": [
+          "oklch(15% 0.006 240)",
+          "oklch(26% 0.006 240)",
+          "oklch(38% 0.006 240)",
+          "oklch(49% 0.006 240)",
+          "oklch(61% 0.006 240)",
+          "oklch(72% 0.006 240)",
+          "oklch(84% 0.006 240)",
+          "oklch(95% 0.006 240)"
+        ]
+      },
+      "auth-field-border": {
+        "role": "auth",
+        "displayName": "Auth Field Border",
+        "darkValue": "rgb(148 163 184 / 0.18)",
+        "tonalRamp": [
+          "oklch(15% 0.015 250)",
+          "oklch(26% 0.015 250)",
+          "oklch(38% 0.015 250)",
+          "oklch(49% 0.015 250)",
+          "oklch(61% 0.015 250)",
+          "oklch(72% 0.015 250)",
+          "oklch(84% 0.015 250)",
+          "oklch(95% 0.015 250)"
+        ]
+      },
+      "auth-cta": {
+        "role": "auth",
+        "displayName": "Auth Teal CTA",
+        "darkValue": "#22d3ee",
+        "tonalRamp": [
+          "oklch(15% 0.051 223)",
+          "oklch(26% 0.069 223)",
+          "oklch(38% 0.087 223)",
+          "oklch(49% 0.094 223)",
+          "oklch(61% 0.094 223)",
+          "oklch(72% 0.087 223)",
+          "oklch(84% 0.069 223)",
+          "oklch(95% 0.051 223)"
+        ],
+        "canonical": "oklch(52.0% 0.094 223)"
+      },
+      "auth-cta-hover": {
+        "role": "auth",
+        "displayName": "Auth Teal CTA Hover",
+        "darkValue": "#67e8f9",
+        "tonalRamp": [
+          "oklch(15% 0.051 223)",
+          "oklch(26% 0.069 223)",
+          "oklch(38% 0.087 223)",
+          "oklch(49% 0.094 223)",
+          "oklch(61% 0.094 223)",
+          "oklch(72% 0.087 223)",
+          "oklch(84% 0.069 223)",
+          "oklch(95% 0.051 223)"
+        ]
+      },
+      "auth-placeholder": {
+        "role": "auth",
+        "displayName": "Auth Placeholder",
+        "darkValue": "#8a94a6",
+        "tonalRamp": [
+          "oklch(15% 0.033 262)",
+          "oklch(26% 0.039 262)",
+          "oklch(38% 0.039 262)",
+          "oklch(49% 0.039 262)",
+          "oklch(61% 0.039 262)",
+          "oklch(72% 0.039 262)",
+          "oklch(84% 0.039 262)",
+          "oklch(95% 0.033 262)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "SOS countdown numeral; the SOS button label uses the same face at 1.75rem."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "One page heading per screen; 1.875rem from md."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Dashboard card and panel titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Rows, descriptions, form copy; inputs are 1rem below 768px."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, chip and segmented text; in-panel section headings at 11px uppercase."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Machine values: tracking codes, relative times, counts, table headers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "glass-panel",
+        "value": "var(--glass-highlight), 0 0 0 1px var(--glass-edge), var(--glass-shadow)",
+        "purpose": "Every card and panel, with backdrop-filter blur(22px) saturate(1.6); 16px blur under 768px."
+      },
+      {
+        "name": "glass-highlight-light",
+        "value": "inset 0 1px 0 rgb(255 255 255 / 0.9)",
+        "purpose": "Lit top edge (dark: alpha 0.07)."
+      },
+      {
+        "name": "glass-shadow-light",
+        "value": "0 10px 30px -12px rgb(30 41 72 / 0.18), 0 2px 6px -2px rgb(30 41 72 / 0.06)",
+        "purpose": "Soft drop under glass, light theme."
+      },
+      {
+        "name": "glass-shadow-dark",
+        "value": "0 16px 40px -16px rgb(0 0 0 / 0.55), 0 2px 8px -2px rgb(0 0 0 / 0.3)",
+        "purpose": "Soft drop under glass, dark theme."
+      },
+      {
+        "name": "glass-bar",
+        "value": "glass-panel stack with backdrop-filter blur(28px) saturate(1.8) over --glass-strong",
+        "purpose": "Sidebars, top bars, tab bar."
+      },
+      {
+        "name": "neon-glow",
+        "value": "0 0 0 1px var(--color-accent), 0 4px 16px var(--neon-glow)",
+        "purpose": "Primary button only; 0 6px 24px on hover."
+      },
+      {
+        "name": "sos-glow",
+        "value": "0 0 40px var(--sos-glow)",
+        "purpose": "SOS button only; pulses between 28px and 56px."
+      },
+      {
+        "name": "auth-cta",
+        "value": "0 8px 20px -8px var(--auth-cta-glow)",
+        "purpose": "Auth submit button."
+      },
+      {
+        "name": "card-shadow",
+        "value": "0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.04)",
+        "purpose": "Leaflet controls and tooltips (none in dark)."
+      },
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid var(--color-neon); outline-offset: 2px",
+        "purpose": "Global :focus-visible ring for links, buttons, switches, tabs, summary and select; auth screens use --auth-link."
+      },
+      {
+        "name": "input-focus",
+        "value": "0 0 0 3px var(--color-neon-dim)",
+        "purpose": "Input focus halo, paired with a neon border."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-smooth-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Exponential ease-out for reveals, tile lift, segmented control, page enter, activity feed."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Exponential ease-out for button state changes, pulses, theme switch."
+      },
+      {
+        "name": "state-change",
+        "value": "150ms",
+        "purpose": "Button hover, input focus, press."
+      },
+      {
+        "name": "tile-lift",
+        "value": "220ms, translateY(-2px); press scale(0.985)",
+        "purpose": "Clickable glass tiles on hover-capable devices."
+      },
+      {
+        "name": "page-transition",
+        "value": "out 140ms fade and rise 4px; in 260ms fade from 10px below",
+        "purpose": "View Transitions cross-fade; navigation chrome stays still."
+      },
+      {
+        "name": "activity-draw",
+        "value": "marker pop 420ms, connector draw 380ms (+120ms), staggered by --reveal-delay; new row 520ms slide out of a 6px blur",
+        "purpose": "The dashboard's one authored motion moment."
+      },
+      {
+        "name": "sos-pulse",
+        "value": "2.4s infinite",
+        "purpose": "Idle SOS button glow."
+      },
+      {
+        "name": "marker-ping",
+        "value": "1.6s infinite",
+        "purpose": "Live alert map marker."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation and transition durations 0.01ms; activity and skeleton animations removed, final state shown",
+        "purpose": "prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "<768px",
+        "purpose": "Lighter glass blur (16px), 16px input text, bottom tab bar."
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px",
+        "purpose": "Auth two-column layout."
+      },
+      {
+        "name": "2xl",
+        "value": "1536px",
+        "purpose": "Student rail widens from 76px to 240px."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action on a surface: bright cyan fill, dark ink text, neon glow.",
+      "html": "<button class=\"ds-btn-neon\">Start walk</button>",
+      "css": ".ds-btn-neon { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.625rem 1.125rem; border: none; border-radius: 14px; background: var(--color-accent, #00cfe8); color: var(--color-ink, #062a33); font: 700 0.8125rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.02em; box-shadow: 0 0 0 1px var(--color-accent, #00cfe8), 0 4px 16px var(--neon-glow, rgb(0 207 232 / 0.28)); cursor: pointer; transition: filter 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-neon:hover { filter: brightness(1.08); box-shadow: 0 0 0 1px var(--color-accent, #00cfe8), 0 6px 24px var(--neon-glow, rgb(0 207 232 / 0.28)); } .ds-btn-neon:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; } .ds-btn-neon:disabled { opacity: 0.55; cursor: wait; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary actions: faint glass fill with a hairline.",
+      "html": "<button class=\"ds-btn-ghost\">SOS map</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.625rem 1.125rem; border-radius: 14px; border: 1px solid var(--color-line, #e2e7ef); background: var(--glass-soft, rgb(255 255 255 / 0.5)); color: var(--color-fg, #1b2430); font: 500 0.8125rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-ghost:hover { background: var(--color-panel-2, rgb(255 255 255 / 0.55)); border-color: var(--color-line-strong, #cbd3df); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; }"
+    },
+    {
+      "name": "Auth Button",
+      "kind": "button",
+      "refersTo": "button-auth",
+      "description": "Submit on sign-in and sign-up: solid teal on an opaque sheet, AA text in both themes.",
+      "html": "<button class=\"ds-btn-auth\">Sign in</button>",
+      "css": ".ds-btn-auth { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3rem; padding: 0.75rem 1.125rem; border: none; border-radius: 14px; background: var(--auth-cta, #0e7490); color: var(--auth-cta-fg, #ffffff); font: 600 0.9375rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; box-shadow: 0 8px 20px -8px var(--auth-cta-glow, rgb(14 116 144 / 0.28)); cursor: pointer; transition: background 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-auth:hover { background: var(--auth-cta-hover, #0b6279); } .ds-btn-auth:active { transform: scale(0.99); } .ds-btn-auth:focus-visible { outline: 2px solid var(--auth-link, #0e7490); outline-offset: 2px; }"
+    },
+    {
+      "name": "SOS Button",
+      "kind": "custom",
+      "refersTo": "button-sos",
+      "description": "Hold-to-send SOS: red sphere in a conic progress ring, pulsing glow when idle.",
+      "html": "<div class=\"ds-sos-wrap\"><div class=\"ds-sos-ring\" style=\"--p:35\"></div><button class=\"ds-sos-btn\">SOS</button></div>",
+      "css": ".ds-sos-wrap { position: relative; width: 200px; height: 200px; display: grid; place-items: center; } .ds-sos-ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--sos-fill, #ff4357) calc(var(--p) * 1%), var(--color-line, #e2e7ef) 0); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 0); mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 0); } .ds-sos-btn { position: relative; width: 176px; height: 176px; border-radius: 50%; border: none; color: #fff; font: 700 1.75rem/1 'Space Grotesk', Inter, sans-serif; letter-spacing: 0.08em; background: radial-gradient(circle at 35% 30%, #ff7a86, var(--sos-fill, #ff4357) 60%); box-shadow: 0 0 40px var(--sos-glow, rgb(255 67 87 / 0.35)); cursor: pointer; transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1); animation: ds-sos-pulse 2.4s cubic-bezier(0.23, 1, 0.32, 1) infinite; } .ds-sos-btn:active { transform: scale(0.96); } .ds-sos-btn:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; } @keyframes ds-sos-pulse { 0%, 100% { box-shadow: 0 0 28px var(--sos-glow, rgb(255 67 87 / 0.35)); } 50% { box-shadow: 0 0 56px var(--sos-glow, rgb(255 67 87 / 0.35)), 0 0 0 6px rgb(255 67 87 / 0.08); } } @media (prefers-reduced-motion: reduce) { .ds-sos-btn { animation: none; } }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Glass-soft field with a teal focus border and halo.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-in\">Destination</label><input id=\"ds-in\" class=\"ds-input\" placeholder=\"Where to? e.g. Boys Hostel\">",
+      "css": ".ds-field-label { display: block; margin-bottom: 0.375rem; font: 500 0.75rem/1.33 Inter, ui-sans-serif, system-ui, sans-serif; color: var(--color-muted, #5e6b7e); } .ds-input { width: 100%; min-height: 2.75rem; padding: 0.625rem 0.875rem; border-radius: 14px; border: 1px solid var(--color-line, #e2e7ef); background: var(--glass-soft, rgb(255 255 255 / 0.5)); color: var(--color-fg, #1b2430); font: 400 0.875rem/1.4 Inter, ui-sans-serif, system-ui, sans-serif; caret-color: var(--color-neon, #00849a); outline: none; transition: border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-input::placeholder { color: var(--color-dim, #66738a); } .ds-input:focus, .ds-input:focus-visible { background: var(--color-panel, rgb(255 255 255 / 0.8)); border-color: var(--color-neon, #00849a); box-shadow: 0 0 0 3px var(--color-neon-dim, rgb(0 207 232 / 0.13)); }"
+    },
+    {
+      "name": "Glass Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The one panel material: frosted glass with a fixed header row over a scrolling body.",
+      "html": "<section class=\"ds-card\"><header class=\"ds-card-head\"><h2>Live queue</h2><span class=\"ds-badge\">8</span></header><div class=\"ds-card-body\">Suspicious · Central Library</div></section>",
+      "css": ".ds-card { background: var(--glass, rgb(255 255 255 / 0.55)); -webkit-backdrop-filter: blur(var(--glass-blur, 22px)) saturate(1.6); backdrop-filter: blur(var(--glass-blur, 22px)) saturate(1.6); border: 1px solid var(--glass-border, rgb(255 255 255 / 0.75)); box-shadow: var(--glass-highlight, inset 0 1px 0 rgb(255 255 255 / 0.9)), 0 0 0 1px var(--glass-edge, rgb(15 23 42 / 0.07)), var(--glass-shadow, 0 10px 30px -12px rgb(30 41 72 / 0.18)); border-radius: 22px; color: var(--color-fg, #1b2430); font: 400 0.875rem/1.43 Inter, ui-sans-serif, system-ui, sans-serif; overflow: hidden; } .ds-card-head { display: flex; align-items: center; gap: 0.5rem; min-height: 3.5rem; padding: 0.5rem 1rem; border-bottom: 1px solid var(--color-line, #e2e7ef); } .ds-card-head h2 { margin: 0; font: 600 0.875rem/1.43 'Space Grotesk', Inter, sans-serif; } .ds-badge { border-radius: 9999px; padding: 0.125rem 0.5rem; background: var(--color-panel-2, rgb(255 255 255 / 0.55)); box-shadow: 0 0 0 1px var(--color-line, #e2e7ef); font: 400 11px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--color-muted, #5e6b7e); } .ds-card-body { padding: 1rem; }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "nav",
+      "refersTo": "segmented",
+      "description": "Every filter and range switch; the pressed option inverts to ink.",
+      "html": "<div class=\"ds-seg\" role=\"group\"><button aria-pressed=\"true\">All</button><button aria-pressed=\"false\">SOS</button><button aria-pressed=\"false\">Incidents</button></div>",
+      "css": ".ds-seg { display: inline-flex; gap: 2px; padding: 4px; background: var(--glass-soft, rgb(255 255 255 / 0.5)); border: 1px solid var(--color-line, #e2e7ef); border-radius: 14px; } .ds-seg > button { padding: 6px 14px; border: none; border-radius: 10px; background: transparent; color: var(--color-muted, #5e6b7e); font: 500 0.75rem/1.33 Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background-color 200ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms cubic-bezier(0.22, 1, 0.36, 1); } .ds-seg > button:hover { color: var(--color-fg, #1b2430); } .ds-seg > button[aria-pressed=\"true\"] { background: var(--color-fg, #1b2430); color: var(--color-panel, #ffffff); font-weight: 600; } .ds-seg > button:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; }"
+    },
+    {
+      "name": "Severity and Kind Chips",
+      "kind": "chip",
+      "refersTo": "chip-p1",
+      "description": "Pill chips: signal colour text on a 15% tint of itself; always labelled.",
+      "html": "<span class=\"ds-chip ds-p1\">P1</span> <span class=\"ds-chip ds-p2\">P2</span> <span class=\"ds-chip ds-p3\">P3</span> <span class=\"ds-chip ds-p4\">P4</span> <span class=\"ds-kind ds-anon\">ANON</span> <span class=\"ds-kind ds-sos\">SOS</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; border-radius: 9999px; padding: 4px 10px; font: 600 0.75rem/1.33 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.025em; } .ds-p1 { color: var(--color-p1, #e0354a); background: color-mix(in srgb, var(--color-p1, #e0354a) 15%, transparent); } .ds-p2 { color: var(--color-p2, #c2410c); background: color-mix(in srgb, var(--color-p2, #c2410c) 15%, transparent); } .ds-p3 { color: var(--color-p3, #a86500); background: color-mix(in srgb, var(--color-p3, #a86500) 15%, transparent); } .ds-p4 { color: var(--color-p4, #00826c); background: color-mix(in srgb, var(--color-p4, #00826c) 15%, transparent); } .ds-kind { display: inline-flex; width: 44px; justify-content: center; border-radius: 9999px; padding: 2px 0; font: 700 10px/1.4 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.05em; } .ds-anon { color: var(--color-violet, #6a55d6); background: color-mix(in srgb, var(--color-violet, #6a55d6) 15%, transparent); } .ds-sos { color: var(--color-sos, #e0354a); background: color-mix(in srgb, var(--color-sos, #e0354a) 15%, transparent); }"
+    },
+    {
+      "name": "Glass Tab Bar",
+      "kind": "nav",
+      "refersTo": "nav-bar",
+      "description": "Floating phone navigation; the active item sits in a cyan tint.",
+      "html": "<nav class=\"ds-tabbar\"><a class=\"ds-tab is-active\" href=\"#\">Home</a><a class=\"ds-tab\" href=\"#\">Report</a><a class=\"ds-tab\" href=\"#\">Anonymous</a><a class=\"ds-tab\" href=\"#\">My Reports</a></nav>",
+      "css": ".ds-tabbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 6px; border-radius: 28px; background: var(--glass-strong, rgb(255 255 255 / 0.72)); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8); border: 1px solid var(--glass-border, rgb(255 255 255 / 0.75)); box-shadow: var(--glass-highlight, inset 0 1px 0 rgb(255 255 255 / 0.9)), 0 0 0 1px var(--glass-edge, rgb(15 23 42 / 0.07)), var(--glass-shadow, 0 10px 30px -12px rgb(30 41 72 / 0.18)); } .ds-tab { display: grid; place-items: center; min-height: 44px; border-radius: 18px; color: var(--color-muted, #5e6b7e); font: 500 11px/1.2 Inter, ui-sans-serif, system-ui, sans-serif; text-decoration: none; transition: background-color 200ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms cubic-bezier(0.22, 1, 0.36, 1); } .ds-tab:hover { color: var(--color-fg, #1b2430); } .ds-tab.is-active { background: color-mix(in srgb, var(--color-accent, #00cfe8) 15%, transparent); color: var(--color-fg, #1b2430); box-shadow: inset 0 0 0 1px var(--color-neon-dim, rgb(0 207 232 / 0.13)); } .ds-tab:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Calm Glass Console",
+    "overview": "CampusSafe is a safety loop for one campus, used by a scared student on a phone, a command operator at a desk and a responder in the field. The visual world is liquid glass over an aurora: a fixed, softly coloured gradient field sits behind every page, and every panel, bar and sheet is frosted glass that lets that light through. The result reads calm and technical rather than alarming, so the one thing that is allowed to be loud, the red SOS, is unmistakable.\n\nColour is semantic before it is decorative. Cyan (neon/accent) is \"act\" and \"you\"; red is SOS and P1; violet is anonymity, and the anonymous flow flips the whole accent to violet; green, amber and orange carry status and severity. Everything else is a cool slate neutral. Density varies by role: the student app is roomy and phone-first with a centred SOS in the tab bar; the admin console is a dense multi-panel dashboard of framed glass cards with fixed headers and scrolling bodies; the responder app sits between the two.\n\nLight is the default theme and dark is a full peer (`data-theme=\"dark\"`), not an afterthought: every token is redefined for dark, and the map tiles switch to a night rendering of the same provider.",
+    "keyCharacteristics": [
+      "Frosted glass panels (22px corners, lit top edge, hairline, soft drop) over a fixed aurora.",
+      "Semantic colour: cyan act, red SOS, violet anonymous, green/amber/orange status.",
+      "Space Grotesk headings, Inter body, JetBrains Mono for codes, times and counts.",
+      "Pill chips and tinted tiles carry severity and kind; never colour alone.",
+      "One authored motion moment per surface; everything else is quiet, exponential ease-out."
+    ],
+    "rules": [
+      {
+        "name": "The Dim Floor Rule",
+        "body": "`dim` is the lightest text colour in the system and it is set to pass WCAG AA for small text on white and on glass (`#66738a` light, `#808ba0` dark). Do not introduce a lighter grey for text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink-On-Cyan Rule",
+        "body": "Text on Bright Cyan, Caution Amber or Resolved Green fills is `ink` (`#062a33`) in both themes, never white.",
+        "section": "colors"
+      },
+      {
+        "name": "The Anonymous Flip Rule",
+        "body": "Anonymity is shown by swapping the accent, not by adding a new one: `html.anon` rebinds neon, accent, neon-dim and neon-glow to violet, and every component follows.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Kicker Rule",
+        "body": "Page headings stand alone. Do not put an eyebrow or kicker label above an `h1` or `h2`; context goes in a line below the heading (for example \"Live · updated 3s ago\").",
+        "section": "typography"
+      },
+      {
+        "name": "The Mono Means Machine Rule",
+        "body": "JetBrains Mono is for values a system produced (codes, times, counts, IDs), never for prose or headings.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Material Rule",
+        "body": "A surface is either glass (`.card`/`.glass`) or glass bar (`.glass-bar`). Do not invent a third panel recipe or a heavier shadow for emphasis; emphasis comes from colour and content.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Glow Is Earned Rule",
+        "body": "Coloured glows belong only to the primary action and the SOS. Cards, chips and rows never glow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** build every panel from the one glass material (`.card`/`.glass`, 22px) and every navigation bar from `.glass-bar`.",
+      "**Do** carry severity and kind with pill chips and tinted tiles, always with a text label (P1, SOS, ANON, Resolved), never colour alone.",
+      "**Do** rely on the global keyboard focus ring (2px Signal Teal outline, 2px offset) and the themed selection tint and caret; on auth screens use the `--auth-*` ring, caret, placeholder and selection.",
+      "**Do** use the `--auth-*` token set, the opaque sheet and the solid teal CTA on sign-in and sign-up screens.",
+      "**Do** give each surface at most one authored motion moment (the activity feed's draw-down on the dashboard), using exponential ease-out (`cubic-bezier(0.22, 1, 0.36, 1)` or `cubic-bezier(0.23, 1, 0.32, 1)`), with a reduced-motion fallback that shows the final state.",
+      "**Do** port third-party (21st.dev) components to CSS motion and project tokens before they ship.",
+      "**Do** keep Dim Slate as the lightest text colour and Deep Ink as the text on bright fills.",
+      "**Do** redefine any new token for dark under `:root[data-theme=\"dark\"]`."
+    ],
+    "donts": [
+      "**Don't** put eyebrow or kicker labels above page headings.",
+      "**Don't** use coloured side stripes (left-border accents) on list rows or cards to show severity or status; use chips and tiles.",
+      "**Don't** show availability, coverage, response-time or adoption claims the product cannot back up (no \"24/7 monitoring\", no user counts, no endorsement).",
+      "**Don't** import a third-party component together with its own design system, animation library or palette.",
+      "**Don't** animate continuously anything that is not live state; looping motion is reserved for the SOS button, live map markers and small live-status dots.",
+      "**Don't** put white text on Bright Cyan, Caution Amber or Resolved Green fills.",
+      "**Don't** use the translucent glass panel behind auth forms.",
+      "**Don't** use a grey lighter than Dim Slate for any text, including placeholders."
+    ]
+  }
+}

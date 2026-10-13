@@ -21,7 +21,13 @@ import { DashCard as Card } from "@/components/admin/dash-card";
 import { CategoryDonut, DailyBars, HotspotBars } from "@/components/shared/charts";
 import { KindChip, SeverityChip, StatusPill } from "@/components/shared/pills";
 import { INCIDENT_STATUSES, SOS_STEPS } from "@/lib/campus";
-import { getLive, listAnonymousAdmin } from "@/backend/functions/admin";
+import {
+  getActivity,
+  getLive,
+  listAnonymousAdmin,
+  type ActivityEvent,
+} from "@/backend/functions/admin";
+import { ActivityTimeline } from "@/components/admin/activity-timeline";
 import {
   getIncident,
   postThread,
@@ -46,15 +52,9 @@ const KIND_FILTERS: { id: KindFilter; label: string }[] = [
   { id: "anonymous", label: "Anonymous" },
 ];
 
-const SEVERITY_BAR: Record<QueueItem["severity"], string> = {
-  P1: "bg-sos",
-  P2: "bg-high",
-  P3: "bg-warn",
-  P4: "bg-ok",
-};
-
 function Command() {
   const [live, setLive] = useState<LivePayload | null>(null);
+  const [activity, setActivity] = useState<ActivityEvent[] | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [selected, setSelected] = useState<QueueItem | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -84,6 +84,10 @@ function Command() {
   }, []);
 
   const refresh = useCallback(async () => {
+    // The feed is secondary: a failed fetch must never block the live queue.
+    void getActivity()
+      .then(setActivity)
+      .catch(() => {});
     try {
       const d = await getLive();
       setLive(d);
@@ -97,10 +101,11 @@ function Command() {
         if (first) setSelected(first);
       }
       prevSos.current = ids;
-      // Keep the selection in sync with fresh queue data (status changes).
+      // Keep the selection in sync with fresh queue data (status changes). A case
+      // that left the queue (resolved elsewhere) gives way to the next one.
       setSelected((cur) =>
         cur
-          ? (d.queue.find((q) => q.kind === cur.kind && q.id === cur.id) ?? cur)
+          ? (d.queue.find((q) => q.kind === cur.kind && q.id === cur.id) ?? d.queue[0] ?? null)
           : (d.queue[0] ?? null),
       );
     } catch {
@@ -170,7 +175,11 @@ function Command() {
           tone="ok"
           label="Resolved today"
           value={c?.resolvedToday}
-          hint={live ? `${live.avgResponseMin}m avg SOS response` : "—"}
+          hint={
+            live?.avgResponseMin == null
+              ? "No SOS responses yet"
+              : `${live.avgResponseMin} min avg SOS response`
+          }
         />
       </div>
 
@@ -210,17 +219,10 @@ function Command() {
                     onClick={() => setSelected(q)}
                     aria-pressed={on}
                     className={cn(
-                      "relative flex w-full items-center gap-3 overflow-hidden rounded-xl py-3 pl-4 pr-3 text-left ring-1 transition-colors",
+                      "relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left ring-1 transition-colors",
                       on ? "bg-panel-2 ring-neon/40" : "ring-transparent hover:bg-panel-2/60",
                     )}
                   >
-                    <span
-                      className={cn(
-                        "absolute inset-y-2 left-1.5 w-1 rounded-full",
-                        SEVERITY_BAR[q.severity],
-                      )}
-                      aria-hidden="true"
-                    />
                     <KindChip kind={q.kind} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{q.title}</p>
@@ -267,8 +269,18 @@ function Command() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card
+          title="Live activity"
+          className="md:col-span-2 xl:col-span-1 xl:row-span-2"
+          bodyClassName="p-0 overflow-hidden"
+        >
+          {/* On wide screens the feed fills the two chart rows beside it instead of stretching them. */}
+          <div className="relative h-[440px] xl:h-full xl:min-h-[440px]">
+            <ActivityTimeline events={activity} now={now} className="absolute inset-0" />
+          </div>
+        </Card>
+        <Card
           title="Volume"
-          className="md:col-span-2 xl:col-span-1"
+          className="md:col-span-2"
           actions={
             <div className="seg [&>button]:px-2.5 [&>button]:py-1" role="group" aria-label="Range">
               {(["today", "week", "month"] as const).map((r) => (

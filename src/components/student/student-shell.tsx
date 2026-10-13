@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { EyeOff, FileWarning, FolderOpen, Home, Phone } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { useViewer } from "@/lib/auth/use-viewer";
-import { SECURITY_LINE } from "@/lib/campus";
+import { isPlaceholderPhone, SECURITY_LINE } from "@/lib/campus";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "@/components/shared/account-menu";
 import { Wordmark } from "@/components/shared/brand";
@@ -115,7 +115,7 @@ export function StudentShell({
                 <div className="space-y-1.5 p-3">
                   <a
                     href={`tel:${SECURITY_LINE.phone.replaceAll(" ", "")}`}
-                    title={`Call ${SECURITY_LINE.label}: ${SECURITY_LINE.phone}`}
+                    title={`Call ${SECURITY_LINE.label}: ${SECURITY_LINE.phone}${isPlaceholderPhone(SECURITY_LINE.phone) ? " (placeholder number)" : ""}`}
                     aria-label={`Call ${SECURITY_LINE.label}, ${SECURITY_LINE.phone}`}
                     className="flex min-h-11 items-center justify-center gap-3 rounded-2xl bg-sos/10 ring-1 ring-sos/20 transition-colors hover:bg-sos/15 2xl:justify-start 2xl:px-3.5 2xl:py-3"
                   >
@@ -127,6 +127,11 @@ export function StudentShell({
                       <span className="block font-mono text-[11px] text-muted">
                         {SECURITY_LINE.phone}
                       </span>
+                      {isPlaceholderPhone(SECURITY_LINE.phone) && (
+                        <span className="block text-[10px] font-semibold text-warn">
+                          Placeholder number
+                        </span>
+                      )}
                     </span>
                   </a>
                   <span className="block 2xl:hidden">
@@ -301,32 +306,10 @@ export function AdaptiveShell({
 }
 
 /** Page title row used inside the student shell. */
-export function PageHeading({
-  eyebrow,
-  title,
-  subtitle,
-  tone = "muted",
-}: {
-  eyebrow?: string;
-  title: string;
-  subtitle?: ReactNode;
-  tone?: "muted" | "violet";
-}) {
+export function PageHeading({ title, subtitle }: { title: string; subtitle?: ReactNode }) {
   return (
     <header className="mb-6">
-      {eyebrow && (
-        <p
-          className={cn(
-            "text-xs font-semibold uppercase tracking-[0.18em]",
-            tone === "violet" ? "text-violet" : "text-muted",
-          )}
-        >
-          {eyebrow}
-        </p>
-      )}
-      <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight md:text-3xl">
-        {title}
-      </h1>
+      <h1 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
       {subtitle && <div className="mt-2 text-sm text-muted">{subtitle}</div>}
     </header>
   );

@@ -1,7 +1,8 @@
 import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
-import { AlertCircle, Eye, EyeOff, LoaderCircle, UserPlus } from "lucide-react";
+import { AlertCircle, Check, Eye, EyeOff, LoaderCircle, UserPlus, X } from "lucide-react";
 import { useState } from "react";
 import { AuthLayout } from "@/components/auth/auth-layout";
+import { PasswordStrength } from "@/components/auth/password-strength";
 import { applySessionToken, authClient, authEnabled } from "@/lib/auth/client";
 import { postLoginDestination } from "@/lib/roles";
 import { getViewer } from "@/backend/functions/viewer";
@@ -67,6 +68,7 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const mismatch = confirm.length > 0 && confirm !== password;
 
   /** Same hand-off as `/login`: resolve the role on the server, then route. */
   async function enterApp(fallbackToken?: string | null) {
@@ -194,8 +196,9 @@ function Signup() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
+              placeholder="Create a password"
               className="input pr-12"
+              aria-describedby="signup-password-hint"
             />
             <button
               type="button"
@@ -207,6 +210,12 @@ function Signup() {
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           </div>
+          <PasswordStrength
+            id="signup-password-hint"
+            value={password}
+            minLength={MIN_PASSWORD_LENGTH}
+            className="mt-3"
+          />
         </div>
         <div>
           <label htmlFor="signup-confirm" className="field-label">
@@ -220,7 +229,19 @@ function Signup() {
             onChange={(e) => setConfirm(e.target.value)}
             placeholder="Re-enter your password"
             className="input"
+            aria-invalid={mismatch}
+            aria-describedby={confirm ? "signup-confirm-status" : undefined}
           />
+          {confirm && (
+            <p
+              id="signup-confirm-status"
+              aria-live="polite"
+              className={`mt-1.5 flex items-center gap-1.5 text-xs ${mismatch ? "text-sos" : "text-ok"}`}
+            >
+              {mismatch ? <X className="size-3.5" /> : <Check className="size-3.5" />}
+              {mismatch ? "Passwords don't match yet" : "Passwords match"}
+            </p>
+          )}
         </div>
         <button type="submit" disabled={busy || !authEnabled} className="btn-auth mt-2 w-full">
           {busy ? (
@@ -233,12 +254,12 @@ function Signup() {
       </form>
 
       {/* Phones reach sign-in from the header pill. */}
-      <p className="mt-6 hidden border-t border-line pt-6 text-center text-sm text-muted lg:block">
+      <p className="mt-5 hidden text-center text-sm text-muted lg:block">
         Already have an account?{" "}
         <Link
           to="/login"
           search={{ redirect: redirectTo }}
-          className="font-medium text-neon hover:text-fg"
+          className="font-semibold text-[var(--auth-link)] underline-offset-4 hover:underline"
         >
           Sign in
         </Link>
