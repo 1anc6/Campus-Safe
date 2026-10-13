@@ -485,7 +485,7 @@ function Section({
     <section id={id} className="scroll-mt-4 space-y-3">
       <h3
         className={cn(
-          "flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em]",
+          "flex items-center gap-2 text-xs font-semibold uppercase tracking-wider",
           tone === "sos" ? "text-sos" : "text-muted",
         )}
       >

@@ -332,7 +332,7 @@ export function SafeWalkCard({ className }: { className?: string }) {
             </div>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-neon">
+            <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neon">
               <span className="relative flex size-2">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" />
                 <span className="relative inline-flex size-2 rounded-full bg-accent" />

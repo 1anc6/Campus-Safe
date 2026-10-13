@@ -94,7 +94,7 @@ function AlertCard({ alert, now }: { alert: SosAlert; now: number }) {
     >
       <Link to="/staff/$id" params={{ id: alert.id }} className="block flex-1 p-4">
         <div className="flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-sos">
+          <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-sos">
             <span className="relative flex size-2">
               {urgent && (
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-sos opacity-60" />

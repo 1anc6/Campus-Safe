@@ -250,7 +250,7 @@ function AssignedAlert() {
 
           {/* Student */}
           <section className="card p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
               Student
             </h2>
             <div className="mt-3 flex items-center gap-3">

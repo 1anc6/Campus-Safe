@@ -15,7 +15,7 @@ export function MedicalCard({ info, className }: { info: MedicalInfo | null; cla
   }
   return (
     <div className={cn("space-y-3 rounded-xl bg-sos/5 p-3 ring-1 ring-sos/25", className)}>
-      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-sos">
+      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sos">
         <HeartPulse className="size-4" /> Medical ID
       </p>
       <div className="flex flex-wrap items-center gap-2">

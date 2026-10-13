@@ -12,7 +12,7 @@ export function BootScreen() {
         <span className="animate-pulse">
           <BrandMark size="lg" />
         </span>
-        <p className="font-display text-sm tracking-[0.2em] text-muted">
+        <p className="font-display text-sm tracking-wider text-muted">
           {BRAND.name.toUpperCase()}
         </p>
         <span className="sr-only">Loading</span>

@@ -42,7 +42,7 @@ function TrackPage() {
 
   return (
     <AdaptiveShell anon>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet">
+      <p className="text-xs font-semibold uppercase tracking-wider text-violet">
         Anonymous track
       </p>
       <p className="mt-2 break-all font-mono text-xl font-semibold tracking-wide text-neon">
