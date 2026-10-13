@@ -48,26 +48,26 @@ const CHART_COLORS = {
     violet: "#6A55D6",
   },
   dark: {
-    axis: "#8A94A6",
-    grid: "rgba(148,163,184,.12)",
-    track: "rgba(255,255,255,.05)",
-    cursor: "rgba(53,224,255,.06)",
-    accent: "#35E0FF",
-    accent2: "#8B7CFF",
-    categorical: ["#35E0FF", "#8B7CFF", "#FFB020", "#2FE6A8", "#FF7A45", "#8A94A6"],
-    severity: { P1: "#FF3B4E", P2: "#FF7A45", P3: "#FFB020", P4: "#2FE6A8" } as Record<
+    axis: "#9A968C",
+    grid: "rgba(232,224,210,.1)",
+    track: "rgba(255,248,240,.05)",
+    cursor: "rgba(217,119,87,.08)",
+    accent: "#E8936F",
+    accent2: "#A594F9",
+    categorical: ["#E8936F", "#A594F9", "#E9B45A", "#6BC99A", "#7FB4D9", "#9A968C"],
+    severity: { P1: "#F2555C", P2: "#EE8650", P3: "#E9B45A", P4: "#6BC99A" } as Record<
       string,
       string
     >,
     status: {
-      reported: "#35E0FF",
-      under_review: "#8B7CFF",
-      in_progress: "#FFB020",
-      resolved: "#2FE6A8",
-      closed: "#8A94A6",
+      reported: "#E8936F",
+      under_review: "#A594F9",
+      in_progress: "#E9B45A",
+      resolved: "#6BC99A",
+      closed: "#9A968C",
     } as Record<string, string>,
-    sos: "#FF3B4E",
-    violet: "#8B7CFF",
+    sos: "#F2555C",
+    violet: "#A594F9",
   },
 };
 

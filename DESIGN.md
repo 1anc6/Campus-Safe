@@ -166,6 +166,8 @@ Colour is semantic before it is decorative. Cyan (neon/accent) is "act" and "you
 
 Light is the default theme and dark is a full peer (`data-theme="dark"`), not an afterthought: every token is redefined for dark, and the map tiles switch to a night rendering of the same provider.
 
+**Dark is warm charcoal, not navy.** Dark mode uses neutral greys with a faint warm cast (bg `#1f1e1d`, chrome `#1a1918`, panels `#302f2c` at 80%, text `#f2efe8`, muted `#b3afa5`), a soft warm gradient behind the glass (clay, sand and a trace of violet over `#24221f → #1c1b19`), and a **clay** accent instead of cyan: `accent` `#d97757` for fills with dark-brown ink (`#2a1a12`) on them, `neon` `#e8936f` for text, icons, links and focus. SOS stays a clear red (`#f2555c`), anonymous stays violet (`#a594f9`), and status/severity colours are softened (ok `#6bc99a`, warn `#e9b45a`, high `#ee8650`). Never reintroduce blue-tinted surfaces or cyan glow in dark.
+
 **Key Characteristics:**
 - Frosted glass panels (22px corners, lit top edge, hairline, soft drop) over a fixed aurora.
 - Semantic colour: cyan act, red SOS, violet anonymous, green/amber/orange status.
@@ -178,11 +180,11 @@ Light is the default theme and dark is a full peer (`data-theme="dark"`), not an
 A cool slate neutral field with one cyan action colour and a tightly bound set of semantic signal colours; text colours are tuned for WCAG AA, bright brand fills are kept for surfaces.
 
 ### Primary
-- **Signal Teal** (neon): the readable accent for text, icons, links, focus rings, caret and selection tint. In dark it brightens to `#35e0ff`. Under `html.anon` it becomes violet (`#6a55d6` light, `#8b7cff` dark).
+- **Signal Teal** (neon): the readable accent for text, icons, links, focus rings, caret and selection tint. In dark it becomes clay (`#e8936f` text, `#d97757` fill). Under `html.anon` it becomes violet (`#6a55d6` light, `#b3a6fb` text / `#a594f9` fill dark).
 - **Bright Cyan** (accent): the fill colour for the primary button, active tab tint, "you are here" marker and progress bars. Text on it is always **Deep Ink** (ink), never white.
 
 ### Secondary
-- **Alarm Red** (sos, sos-fill): SOS and P1 only. `sos` is the readable red for text and chips; `sos-fill` (`#ff4357` light, `#ff3b4e` dark) is the radial-gradient fill of the SOS button and the pulsing alert marker.
+- **Alarm Red** (sos, sos-fill): SOS and P1 only. `sos` is the readable red for text and chips; `sos-fill` (`#ff4357` light, `#f2555c` dark) is the radial-gradient fill of the SOS button and the pulsing alert marker.
 
 ### Tertiary
 - **Anonymous Violet** (violet): anonymous reports, "under review" and "received" status, and the whole accent when the anonymous flow is active.
@@ -198,10 +200,10 @@ A cool slate neutral field with one cyan action colour and a tightly bound set o
 - **Slate Ink** (fg): body and heading text. **Slate** (muted): secondary text and labels. **Dim Slate** (dim): timestamps, placeholders, tertiary text.
 
 ### Auth palette
-The sign-in and sign-up screens use their own `--auth-*` family scoped to `.auth-shell`: a deep teal hero gradient (from `#0a3446`), an **opaque** form sheet (auth-sheet; `#0b121e` in dark), a solid teal CTA (auth-cta, `#22d3ee` with dark-ink text in dark), its own field fill and border, link colour, placeholder (auth-placeholder) and selection tint. The glass panel is deliberately not used here: a translucent sheet let the hero bleed through.
+The sign-in and sign-up screens use their own `--auth-*` family scoped to `.auth-shell`: a deep teal hero gradient (from `#0a3446`; warm charcoal-to-umber with a clay glow in dark), an **opaque** form sheet (auth-sheet; `#262523` in dark), a solid teal CTA (auth-cta; clay `#d97757` with dark-brown text in dark), its own field fill and border, link colour, placeholder (auth-placeholder) and selection tint. The glass panel is deliberately not used here: a translucent sheet let the hero bleed through.
 
 ### Named Rules
-**The Dim Floor Rule.** `dim` is the lightest text colour in the system and it is set to pass WCAG AA for small text on white and on glass (`#66738a` light, `#808ba0` dark). Do not introduce a lighter grey for text.
+**The Dim Floor Rule.** `dim` is the lightest text colour in the system and it is set to pass WCAG AA for small text on white and on glass (`#66738a` light, `#9a968c` dark). Do not introduce a lighter grey for text.
 
 **The Ink-On-Cyan Rule.** Text on Bright Cyan, Caution Amber or Resolved Green fills is `ink` (`#062a33`) in both themes, never white.
 
@@ -267,7 +269,7 @@ Tactile, confident and few.
 - **Shape:** gently rounded (14px), minimum 44px tall.
 - **Primary (`.btn-neon`):** Bright Cyan fill, Deep Ink text, 13px bold with slight tracking, neon glow. Hover brightens (filter 1.08) and widens the glow. Disabled drops to 55% opacity with a wait cursor.
 - **Ghost (`.btn-ghost`):** Glass Soft fill, hairline border, Slate Ink text, 13px medium. Hover moves to Panel 2 with a stronger hairline.
-- **Auth (`.btn-auth`):** solid teal (auth-cta), white text (dark ink in dark), 48px tall, 15px semibold, a soft lift shadow; presses to scale 0.99.
+- **Auth (`.btn-auth`):** solid teal (auth-cta), white text (clay with dark-brown text in dark), 48px tall, 15px semibold, a soft lift shadow; presses to scale 0.99.
 - **Focus:** the global ring (2px Signal Teal outline, 2px offset), keyboard only.
 
 ### SOS Button (signature)
@@ -305,7 +307,9 @@ A 14px rounded Glass Soft track with 4px padding; options are 12px medium Slate 
 - **You are here:** cyan dot, 3px white ring, breathing halo.
 - **Resolved:** solid green dot, no animation.
 - **Approximate:** dashed hollow ring in the signal colour, no animation.
-Map tiles are OpenStreetMap, softened in light and night-inverted in dark.
+Map tiles are OpenStreetMap, softened in light and night-inverted with a slight warm sepia in dark. Non-SOS pins (incidents, units, "you are here") use `--map-pin`: the accent in light, sand `#e6d3ad` in dark, so no pin can ever be mistaken for SOS red.
+
+**The Pin Rule.** On any map, only SOS is red. If an accent colour drifts toward red or orange, map pins must take a separate, clearly non-red token.
 
 ### Activity Timeline (signature)
 The admin dashboard's live feed, grouped by day. Each row has a 28px round marker tinted by kind (SOS red, anonymous violet, incident and broadcast cyan, resolved green) and a 2px connector line. On load, markers pop in and the connector draws downward row by row with a staggered delay; this is the dashboard's one authored motion moment. New rows slide in at the top out of a 6px blur with a brief neon-dim flash and are announced to screen readers. The scroller feathers its bottom edge while more rows wait below. Ported from a 21st.dev Timeline to CSS keyframes and project tokens.

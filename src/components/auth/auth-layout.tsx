@@ -38,7 +38,7 @@ export function AuthLayout({
             <Link
               to={switchTo}
               search={{ redirect }}
-              className="inline-flex min-h-9 items-center rounded-full bg-white px-4 text-xs font-semibold text-[#0a3446] shadow-sm transition-colors hover:bg-white/90"
+              className="inline-flex min-h-9 items-center rounded-full bg-white px-4 text-xs font-semibold text-[#0a3446] dark:text-[#2a1a12] shadow-sm transition-colors hover:bg-white/90"
             >
               {switchLabel}
             </Link>
@@ -58,7 +58,7 @@ export function AuthLayout({
         <ThemeToggle className="bg-panel" />
       </div>
       <div className="pointer-events-none fixed left-20 top-16 hidden size-96 rounded-full bg-[var(--auth-cta)] opacity-[0.12] blur-3xl lg:block" />
-      <div className="pointer-events-none fixed bottom-16 right-20 hidden size-96 rounded-full bg-[#0f7480] opacity-[0.12] blur-3xl lg:block" />
+      <div className="pointer-events-none fixed bottom-16 right-20 hidden size-96 rounded-full bg-[#0f7480] dark:bg-[#c9a678] opacity-[0.12] blur-3xl lg:block" />
 
       <div className="relative z-10 flex flex-1 flex-col lg:grid lg:w-full lg:max-w-5xl lg:flex-none lg:grid-cols-2 lg:items-center lg:gap-10">
         <section className="hidden lg:block" aria-hidden="true">
@@ -91,7 +91,7 @@ export function AuthLayout({
           </ul>
         </section>
 
-        <section className="-mt-7 flex-1 rounded-t-[28px] bg-[var(--auth-sheet)] px-5 pb-[max(1.5rem,var(--safe-bottom))] pt-8 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[28px] lg:border lg:border-[var(--auth-field-border)] lg:p-8 lg:shadow-[0_24px_60px_-24px_rgb(10_52_70/0.35)]">
+        <section className="-mt-7 flex-1 rounded-t-[28px] bg-[var(--auth-sheet)] px-5 pb-[max(1.5rem,var(--safe-bottom))] pt-8 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[28px] lg:border lg:border-[var(--auth-field-border)] lg:p-8 lg:shadow-[0_24px_60px_-24px_rgb(10_52_70/0.35)] dark:lg:shadow-[0_24px_60px_-24px_rgb(0_0_0/0.6)]">
           <div className="mx-auto w-full max-w-md">{children}</div>
         </section>
       </div>

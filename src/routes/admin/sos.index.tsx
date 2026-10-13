@@ -28,7 +28,7 @@ const STALE_MS = 60_000;
 
 const LEGEND = [
   { label: "SOS", dot: "bg-sos" },
-  { label: "Incident", dot: "bg-neon" },
+  { label: "Incident", dot: "bg-[var(--map-pin)]" },
   { label: "Anonymous", dot: "bg-violet" },
 ];
 

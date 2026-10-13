@@ -7,7 +7,7 @@
       "neon": {
         "role": "primary",
         "displayName": "Signal Teal",
-        "darkValue": "#35e0ff",
+        "darkValue": "#e8936f",
         "tonalRamp": [
           "oklch(15% 0.053 215)",
           "oklch(26% 0.072 215)",
@@ -23,7 +23,7 @@
       "accent": {
         "role": "primary",
         "displayName": "Bright Cyan",
-        "darkValue": "#35e0ff",
+        "darkValue": "#d97757",
         "tonalRamp": [
           "oklch(15% 0.065 210)",
           "oklch(26% 0.090 210)",
@@ -39,7 +39,7 @@
       "ink": {
         "role": "neutral",
         "displayName": "Deep Ink",
-        "darkValue": "#062a33",
+        "darkValue": "#2a1a12",
         "tonalRamp": [
           "oklch(15% 0.034 218)",
           "oklch(26% 0.042 218)",
@@ -55,7 +55,7 @@
       "sos": {
         "role": "secondary",
         "displayName": "Alarm Red",
-        "darkValue": "#ff3b4e",
+        "darkValue": "#f2555c",
         "tonalRamp": [
           "oklch(15% 0.089 20)",
           "oklch(26% 0.126 20)",
@@ -71,7 +71,7 @@
       "sos-fill": {
         "role": "secondary",
         "displayName": "Alarm Red Fill",
-        "darkValue": "#ff3b4e",
+        "darkValue": "#f2555c",
         "tonalRamp": [
           "oklch(15% 0.089 20)",
           "oklch(26% 0.126 20)",
@@ -86,7 +86,7 @@
       "violet": {
         "role": "tertiary",
         "displayName": "Anonymous Violet",
-        "darkValue": "#8b7cff",
+        "darkValue": "#a594f9",
         "tonalRamp": [
           "oklch(15% 0.083 286)",
           "oklch(26% 0.118 286)",
@@ -102,7 +102,7 @@
       "ok": {
         "role": "status",
         "displayName": "Resolved Green",
-        "darkValue": "#2fe6a8",
+        "darkValue": "#6bc99a",
         "tonalRamp": [
           "oklch(15% 0.054 175)",
           "oklch(26% 0.073 175)",
@@ -118,7 +118,7 @@
       "warn": {
         "role": "status",
         "displayName": "Caution Amber",
-        "darkValue": "#ffb020",
+        "darkValue": "#e9b45a",
         "tonalRamp": [
           "oklch(15% 0.062 66)",
           "oklch(26% 0.086 66)",
@@ -134,7 +134,7 @@
       "high": {
         "role": "status",
         "displayName": "Escalation Orange",
-        "darkValue": "#ff7a45",
+        "darkValue": "#ee8650",
         "tonalRamp": [
           "oklch(15% 0.078 38)",
           "oklch(26% 0.110 38)",
@@ -150,7 +150,7 @@
       "p1": {
         "role": "status",
         "displayName": "Severity P1",
-        "darkValue": "#ff3b4e",
+        "darkValue": "#f2555c",
         "tonalRamp": [
           "oklch(15% 0.089 20)",
           "oklch(26% 0.126 20)",
@@ -166,7 +166,7 @@
       "p2": {
         "role": "status",
         "displayName": "Severity P2",
-        "darkValue": "#ff7a45",
+        "darkValue": "#ee8650",
         "tonalRamp": [
           "oklch(15% 0.078 38)",
           "oklch(26% 0.110 38)",
@@ -182,7 +182,7 @@
       "p3": {
         "role": "status",
         "displayName": "Severity P3",
-        "darkValue": "#ffb020",
+        "darkValue": "#e9b45a",
         "tonalRamp": [
           "oklch(15% 0.062 66)",
           "oklch(26% 0.086 66)",
@@ -198,7 +198,7 @@
       "p4": {
         "role": "status",
         "displayName": "Severity P4",
-        "darkValue": "#2fe6a8",
+        "darkValue": "#6bc99a",
         "tonalRamp": [
           "oklch(15% 0.054 175)",
           "oklch(26% 0.073 175)",
@@ -214,7 +214,7 @@
       "bg": {
         "role": "neutral",
         "displayName": "Mist",
-        "darkValue": "#070b14",
+        "darkValue": "#1f1e1d",
         "tonalRamp": [
           "oklch(15% 0.005 258)",
           "oklch(26% 0.005 258)",
@@ -230,7 +230,7 @@
       "chrome": {
         "role": "neutral",
         "displayName": "Chrome",
-        "darkValue": "#0b0f17",
+        "darkValue": "#1a1918",
         "tonalRamp": [
           "oklch(15% 0.000 258)",
           "oklch(26% 0.000 258)",
@@ -245,7 +245,7 @@
       "panel": {
         "role": "neutral",
         "displayName": "Panel",
-        "darkValue": "rgb(17 24 42 / 0.78)",
+        "darkValue": "rgb(48 47 44 / 0.8)",
         "tonalRamp": [
           "oklch(15% 0.010 258)",
           "oklch(26% 0.010 258)",
@@ -260,7 +260,7 @@
       "panel-2": {
         "role": "neutral",
         "displayName": "Panel 2",
-        "darkValue": "rgb(255 255 255 / 0.05)",
+        "darkValue": "rgb(255 248 240 / 0.05)",
         "tonalRamp": [
           "oklch(15% 0.010 258)",
           "oklch(26% 0.010 258)",
@@ -275,7 +275,7 @@
       "panel-3": {
         "role": "neutral",
         "displayName": "Panel 3",
-        "darkValue": "rgb(255 255 255 / 0.08)",
+        "darkValue": "rgb(255 248 240 / 0.08)",
         "tonalRamp": [
           "oklch(15% 0.010 258)",
           "oklch(26% 0.010 258)",
@@ -290,7 +290,7 @@
       "glass": {
         "role": "neutral",
         "displayName": "Glass",
-        "darkValue": "rgb(22 30 50 / 0.42)",
+        "darkValue": "rgb(52 50 46 / 0.5)",
         "tonalRamp": [
           "oklch(15% 0.010 258)",
           "oklch(26% 0.010 258)",
@@ -305,7 +305,7 @@
       "glass-strong": {
         "role": "neutral",
         "displayName": "Glass Strong",
-        "darkValue": "rgb(14 20 36 / 0.66)",
+        "darkValue": "rgb(36 35 33 / 0.78)",
         "tonalRamp": [
           "oklch(15% 0.010 258)",
           "oklch(26% 0.010 258)",
@@ -320,7 +320,7 @@
       "glass-soft": {
         "role": "neutral",
         "displayName": "Glass Soft",
-        "darkValue": "rgb(255 255 255 / 0.045)",
+        "darkValue": "rgb(255 248 240 / 0.045)",
         "tonalRamp": [
           "oklch(15% 0.010 258)",
           "oklch(26% 0.010 258)",
@@ -335,7 +335,7 @@
       "line": {
         "role": "neutral",
         "displayName": "Hairline",
-        "darkValue": "rgb(148 163 184 / 0.14)",
+        "darkValue": "rgb(232 224 210 / 0.1)",
         "tonalRamp": [
           "oklch(15% 0.012 260)",
           "oklch(26% 0.012 260)",
@@ -351,7 +351,7 @@
       "line-strong": {
         "role": "neutral",
         "displayName": "Strong Hairline",
-        "darkValue": "rgb(148 163 184 / 0.24)",
+        "darkValue": "rgb(232 224 210 / 0.18)",
         "tonalRamp": [
           "oklch(15% 0.019 258)",
           "oklch(26% 0.019 258)",
@@ -367,7 +367,7 @@
       "fg": {
         "role": "neutral",
         "displayName": "Slate Ink",
-        "darkValue": "#e8eef7",
+        "darkValue": "#f2efe8",
         "tonalRamp": [
           "oklch(15% 0.026 256)",
           "oklch(26% 0.026 256)",
@@ -383,7 +383,7 @@
       "muted": {
         "role": "neutral",
         "displayName": "Slate",
-        "darkValue": "#8a94a6",
+        "darkValue": "#b3afa5",
         "tonalRamp": [
           "oklch(15% 0.031 258)",
           "oklch(26% 0.034 258)",
@@ -399,7 +399,7 @@
       "dim": {
         "role": "neutral",
         "displayName": "Dim Slate",
-        "darkValue": "#808ba0",
+        "darkValue": "#9a968c",
         "tonalRamp": [
           "oklch(15% 0.033 262)",
           "oklch(26% 0.039 262)",
@@ -415,7 +415,7 @@
       "auth-hero-deep": {
         "role": "auth",
         "displayName": "Auth Hero Deep Teal",
-        "darkValue": "#061019",
+        "darkValue": "#1a1918",
         "tonalRamp": [
           "oklch(15% 0.040 225)",
           "oklch(26% 0.051 225)",
@@ -430,7 +430,7 @@
       "auth-sheet": {
         "role": "auth",
         "displayName": "Auth Sheet",
-        "darkValue": "#0b121e",
+        "darkValue": "#262523",
         "tonalRamp": [
           "oklch(15% 0.000 240)",
           "oklch(26% 0.000 240)",
@@ -445,7 +445,7 @@
       "auth-page": {
         "role": "auth",
         "displayName": "Auth Page",
-        "darkValue": "#070c15",
+        "darkValue": "#1c1b1a",
         "tonalRamp": [
           "oklch(15% 0.008 240)",
           "oklch(26% 0.008 240)",
@@ -460,7 +460,7 @@
       "auth-field": {
         "role": "auth",
         "displayName": "Auth Field",
-        "darkValue": "#101a29",
+        "darkValue": "#2f2e2b",
         "tonalRamp": [
           "oklch(15% 0.006 240)",
           "oklch(26% 0.006 240)",
@@ -475,7 +475,7 @@
       "auth-field-border": {
         "role": "auth",
         "displayName": "Auth Field Border",
-        "darkValue": "rgb(148 163 184 / 0.18)",
+        "darkValue": "rgb(232 224 210 / 0.14)",
         "tonalRamp": [
           "oklch(15% 0.015 250)",
           "oklch(26% 0.015 250)",
@@ -490,7 +490,7 @@
       "auth-cta": {
         "role": "auth",
         "displayName": "Auth Teal CTA",
-        "darkValue": "#22d3ee",
+        "darkValue": "#d97757",
         "tonalRamp": [
           "oklch(15% 0.051 223)",
           "oklch(26% 0.069 223)",
@@ -506,7 +506,7 @@
       "auth-cta-hover": {
         "role": "auth",
         "displayName": "Auth Teal CTA Hover",
-        "darkValue": "#67e8f9",
+        "darkValue": "#e48a6b",
         "tonalRamp": [
           "oklch(15% 0.051 223)",
           "oklch(26% 0.069 223)",
@@ -521,7 +521,7 @@
       "auth-placeholder": {
         "role": "auth",
         "displayName": "Auth Placeholder",
-        "darkValue": "#8a94a6",
+        "darkValue": "#9a968c",
         "tonalRamp": [
           "oklch(15% 0.033 262)",
           "oklch(26% 0.039 262)",
@@ -532,6 +532,11 @@
           "oklch(84% 0.039 262)",
           "oklch(95% 0.033 262)"
         ]
+      },
+      "map-pin": {
+        "value": "var(--color-accent)",
+        "darkValue": "#e6d3ad",
+        "role": "Non-SOS map pins; never red"
       }
     },
     "typographyMeta": {

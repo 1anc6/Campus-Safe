@@ -17,7 +17,12 @@ export type MapMarker = {
 
 type LatLng = { lat: number; lng: number };
 
-const TRAIL_COLOR: Record<string, string> = { sos: "#FF3B4E", default: "#35E0FF" };
+/** Map line colours follow the active theme's tokens (read when drawing). */
+function themeColor(name: string, fallback: string): string {
+  if (typeof document === "undefined") return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
 
 export function LiveMap({
   markers,
@@ -112,11 +117,14 @@ export function LiveMap({
       ...(trail && trail.length > 1 ? [{ id: "trail", points: trail, highlight: false }] : []),
       ...(trails ?? []).filter((t) => t.points.length > 1),
     ];
+    const sosColor = themeColor("--sos-fill", "#FF3B4E");
+    const accentColor = themeColor("--map-pin", "#35E0FF");
+    const okColor = themeColor("--color-ok", "#2FE6A8");
     for (const p of paths) {
       L.polyline(
         p.points.map((pt) => [pt.lat, pt.lng] as [number, number]),
         {
-          color: p.highlight ? TRAIL_COLOR.sos : TRAIL_COLOR.default,
+          color: p.highlight ? sosColor : accentColor,
           weight: p.highlight ? 4 : 3,
           opacity: p.highlight ? 0.95 : 0.7,
           dashArray: p.highlight ? undefined : "4 6",
@@ -128,7 +136,7 @@ export function LiveMap({
       if (m.accuracyM && m.accuracyM > 0 && m.accuracyM < 2000) {
         L.circle([m.lat, m.lng], {
           radius: m.accuracyM,
-          color: m.kind === "sos" ? "#FF3B4E" : m.kind === "resolved" ? "#2FE6A8" : "#35E0FF",
+          color: m.kind === "sos" ? sosColor : m.kind === "resolved" ? okColor : accentColor,
           weight: 1,
           opacity: 0.6,
           fillOpacity: m.approx ? 0.05 : 0.08,
