@@ -7,6 +7,7 @@ import {
   Megaphone,
   Menu,
   Radio,
+  Search,
   Truck,
   Users,
   X,
@@ -18,6 +19,7 @@ import { useViewer } from "@/lib/auth/use-viewer";
 import { cn } from "@/lib/utils";
 import { IdentityCard, SignOutButton } from "@/components/shared/account-menu";
 import { NotificationBell } from "@/components/admin/notification-bell";
+import { AdminCommandPalette, PaletteShortcutKeys } from "@/components/admin/command-palette";
 import { Wordmark } from "@/components/shared/brand";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
@@ -54,6 +56,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const viewer = useViewer();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const [counters, setCounters] = useState<(AdminCounters & { unseenCritical: number }) | null>(
     null,
   );
@@ -245,6 +248,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
               )}
             </div>
             <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setPaletteOpen(true)}
+                aria-label="Search pages, cases and actions"
+                aria-keyshortcuts="Control+K Meta+K"
+                className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-2xl px-2.5 text-muted transition-colors hover:bg-panel-2 hover:text-fg"
+              >
+                <Search className="size-[18px]" aria-hidden="true" />
+                <PaletteShortcutKeys className="hidden xl:flex" />
+              </button>
               <ThemeToggle className="rounded-2xl ring-0 hover:bg-panel-2" />
               <NotificationBell
                 unseen={counters?.unseenCritical ?? 0}
@@ -264,6 +277,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <main className="flex min-w-0 flex-1 flex-col pb-safe">{children}</main>
       </div>
+      <AdminCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   );
 }
