@@ -204,7 +204,7 @@ compiled to WebAssembly, running **in memory** — so the app works with zero se
 
 ---
 
-## 5. Operating-System concepts in the project
+## 5. Operating-System concepts used in the project
 
 The scheduling rules live in one small, unit-tested file:
 **`src/lib/scheduling.ts`** (tests: `src/lib/scheduling.test.ts`).
