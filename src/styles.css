@@ -80,14 +80,25 @@
   --neu-surface: #e4ecf7;
   --neu-convex: linear-gradient(145deg, #edf3fb, #d9e3f0);
   --neu-concave: linear-gradient(145deg, #d9e3f0, #edf3fb);
-  /* The two lights. */
-  --neu-dark: rgb(146 168 202 / 0.55);
-  --neu-light: rgb(255 255 255 / 0.92);
-  --neu-raised: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light);
-  --neu-raised-sm: 5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light);
-  --neu-raised-xs: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
-  --neu-inset: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light);
-  --neu-inset-sm: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+  /*
+   * The two lights. A wide, soft highlight up-left does most of the shaping; the
+   * shadow down-right stays faint and tight, plus a small contact shadow, so a
+   * raised edge reads as a gentle swell rather than a dark rim.
+   */
+  --neu-light: rgb(255 255 255 / 0.95);
+  --neu-dark: rgb(13 39 80 / 0.1);
+  --neu-contact: rgb(13 39 80 / 0.05);
+  --neu-light-in: rgb(255 255 255 / 0.7);
+  --neu-dark-in: rgb(13 39 80 / 0.13);
+  --neu-raised:
+    -12px -12px 30px var(--neu-light), 10px 10px 26px var(--neu-dark),
+    2px 3px 8px var(--neu-contact);
+  --neu-raised-sm:
+    -7px -7px 18px var(--neu-light), 6px 6px 16px var(--neu-dark), 1px 2px 5px var(--neu-contact);
+  --neu-raised-xs:
+    -4px -4px 10px var(--neu-light), 3px 3px 8px var(--neu-dark), 1px 1px 3px var(--neu-contact);
+  --neu-inset: inset -6px -6px 14px var(--neu-light-in), inset 6px 6px 14px var(--neu-dark-in);
+  --neu-inset-sm: inset -3px -3px 8px var(--neu-light-in), inset 3px 3px 8px var(--neu-dark-in);
   /* Track under progress rings and toggles. */
   --neu-track: rgb(146 168 202 / 0.32);
   /* Blue accent fill and its coloured lift. */
@@ -143,8 +154,12 @@
   --neu-surface: #252c38;
   --neu-convex: linear-gradient(145deg, #2a323f, #212732);
   --neu-concave: linear-gradient(145deg, #212732, #2a323f);
-  --neu-dark: rgb(6 9 15 / 0.72);
-  --neu-light: rgb(66 79 102 / 0.55);
+  /* At night the highlight is a whisper; depth comes from the shadow side. */
+  --neu-light: rgb(255 255 255 / 0.035);
+  --neu-dark: rgb(0 0 0 / 0.42);
+  --neu-contact: rgb(0 0 0 / 0.22);
+  --neu-light-in: rgb(255 255 255 / 0.04);
+  --neu-dark-in: rgb(0 0 0 / 0.38);
   --neu-track: rgb(8 11 18 / 0.38);
   --accent-fill: linear-gradient(145deg, #3d78e8, #2d65d4);
   --accent-lift: 6px 6px 14px rgb(8 11 18 / 0.6), -4px -4px 10px var(--neu-light);
@@ -901,7 +916,8 @@ html.theme-transition *::after {
 /* Phones: tighter shadows so raised panels do not bleed into the gutters. */
 @media (max-width: 767px) {
   :root {
-    --neu-raised: 7px 7px 16px var(--neu-dark), -7px -7px 16px var(--neu-light);
+    --neu-raised:
+      -8px -8px 20px var(--neu-light), 7px 7px 18px var(--neu-dark), 2px 2px 6px var(--neu-contact);
   }
 }
 

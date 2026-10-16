@@ -151,7 +151,7 @@ function StudentHome() {
 
       {/* Desktop: the right-hand cards scroll as their own column beside the map.
           Below xl this wrapper is display:contents, so each card keeps its grid area. */}
-      <div className="contents xl:flex xl:min-h-0 xl:flex-col xl:gap-4 xl:overflow-y-auto xl:overscroll-contain xl:pb-2 xl:pr-1 xl:[grid-area:side] xl:[&>*]:shrink-0">
+      <div className="contents xl:flex xl:min-h-0 xl:flex-col xl:gap-4 xl:-mb-6 xl:-ml-4 xl:-mr-8 xl:-mt-3 xl:overflow-y-auto xl:overscroll-contain xl:pb-6 xl:pl-4 xl:pr-8 xl:pt-3 xl:[scrollbar-width:none] xl:[&::-webkit-scrollbar]:hidden xl:[grid-area:side] xl:[&>*]:shrink-0">
         {/* Quick actions — tablet and desktop (phones have the tab bar). */}
         <nav
           className="hidden grid-cols-3 gap-3 [grid-area:quick] md:grid"

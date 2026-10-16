@@ -280,11 +280,14 @@ Depth is the whole material. There is no translucency, no blur, and no border-de
 
 ### Shadow Vocabulary
 
-- **Raised** (`box-shadow: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light)`; 7px / 16px on phones): cards, panels, navigation bars, the auth sheet, the big SOS dish.
-- **Raised small** (`5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light)`): small tiles, the convex control fill, map zoom control, hover state of raised-xs controls.
-- **Raised xs** (`3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light)`): ghost buttons, the segmented track, unchosen choice tiles, tooltips.
-- **Inset** (`inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light)`): deep wells.
-- **Inset small** (`inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light)`): every pressed state (chosen segment, chosen tile, active nav item, selected queue row, `:active` buttons), text fields, read-only value wells, and the rail SOS dish.
+Every elevation follows one recipe: a wide, soft highlight up-left does most of the shaping, a faint and tighter shadow down-right, and a small contact shadow underneath, so a raised edge reads as a gentle swell, never a dark rim. Light theme: highlight `rgb(255 255 255 / 0.95)`, shadow `rgb(13 39 80 / 0.10)`, contact `rgb(13 39 80 / 0.05)`. Dark theme: the highlight drops to a whisper (`rgb(255 255 255 / 0.035)`) so no grey halo forms, and depth comes from the shadow side (`rgb(0 0 0 / 0.42)`, contact `0.22`).
+
+- **Raised** (`-12px -12px 30px` highlight, `10px 10px 26px` shadow, `2px 3px 8px` contact; `-8/7px` on phones): cards, panels, navigation bars, the auth sheet, the big SOS dish.
+- **Raised small** (`-7px -7px 18px`, `6px 6px 16px`, `1px 2px 5px`): small tiles, the map zoom control, hover state of raised-xs controls.
+- **Raised xs** (`-4px -4px 10px`, `3px 3px 8px`, `1px 1px 3px`): ghost buttons, the segmented track, unchosen choice tiles, tooltips.
+- **Inset** (`inset -6px -6px 14px` highlight at 0.7, `inset 6px 6px 14px` shadow at 0.13): deep wells.
+- **Inset small** (`inset -3px -3px 8px`, `inset 3px 3px 8px`): every pressed state (chosen segment, chosen tile, active nav item, selected queue row, `:active` buttons), text fields, read-only value wells, and the rail SOS dish.
+- **Scroll areas never clip shadows.** A scrolling column of raised cards gets padding wide enough for the shadow (pulled back with negative margins so it still aligns); a clipped shadow shows as a hard rectangle.
 - **Accent lift** (`inset 1px 1px 0 rgb(255 255 255 / 0.22), 6px 6px 14px rgb(45 106 222 / 0.32), -5px -5px 12px var(--neu-light)`): the primary and auth buttons only. In dark the coloured shadow becomes a deep neutral (`rgb(8 11 18 / 0.6)`).
 - **SOS sphere** (`inset 2px 3px 6px rgb(255 255 255 / 0.28), inset -4px -6px 12px rgb(120 0 20 / 0.22), 6px 8px 18px var(--sos-glow)`, idle pulse to 34px plus a 7px faint red halo): the SOS button and nothing else. The rail size keeps a still, tight 2px 3px 6px lift.
 
