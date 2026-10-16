@@ -26,48 +26,48 @@ import { cn } from "@/lib/utils";
 /** Chart colours per theme (SVG attributes can't read CSS variables). */
 const CHART_COLORS = {
   light: {
-    axis: "#5E6B7E",
-    grid: "rgba(27,36,48,.09)",
-    track: "rgba(148,163,184,.16)",
-    cursor: "rgba(0,207,232,.08)",
-    accent: "#00A9C2",
-    accent2: "#6A55D6",
-    categorical: ["#00A9C2", "#6A55D6", "#D98A00", "#00826C", "#C2410C", "#77849A"],
-    severity: { P1: "#E0354A", P2: "#C2410C", P3: "#D98A00", P4: "#00826C" } as Record<
+    axis: "#4F5F79",
+    grid: "rgba(31,44,68,.08)",
+    track: "rgba(146,168,202,.22)",
+    cursor: "rgba(45,106,222,.08)",
+    accent: "#2D6ADE",
+    accent2: "#7A5AF0",
+    categorical: ["#2D6ADE", "#7A5AF0", "#D98A00", "#00826C", "#C2410C", "#7A8AA3"],
+    severity: { P1: "#D42C43", P2: "#C2410C", P3: "#D98A00", P4: "#00826C" } as Record<
       string,
       string
     >,
     status: {
-      reported: "#00A9C2",
-      under_review: "#6A55D6",
+      reported: "#2D6ADE",
+      under_review: "#7A5AF0",
       in_progress: "#D98A00",
       resolved: "#00826C",
-      closed: "#77849A",
+      closed: "#7A8AA3",
     } as Record<string, string>,
-    sos: "#E0354A",
-    violet: "#6A55D6",
+    sos: "#D42C43",
+    violet: "#7A5AF0",
   },
   dark: {
-    axis: "#9A968C",
-    grid: "rgba(232,224,210,.1)",
-    track: "rgba(255,248,240,.05)",
-    cursor: "rgba(217,119,87,.08)",
-    accent: "#E8936F",
-    accent2: "#A594F9",
-    categorical: ["#E8936F", "#A594F9", "#E9B45A", "#6BC99A", "#7FB4D9", "#9A968C"],
-    severity: { P1: "#F2555C", P2: "#EE8650", P3: "#E9B45A", P4: "#6BC99A" } as Record<
+    axis: "#95A1B5",
+    grid: "rgba(150,170,205,.1)",
+    track: "rgba(6,9,15,.35)",
+    cursor: "rgba(111,155,255,.08)",
+    accent: "#6F9BFF",
+    accent2: "#AB9DFF",
+    categorical: ["#6F9BFF", "#AB9DFF", "#F0B75E", "#5FD3A5", "#F68D5A", "#95A1B5"],
+    severity: { P1: "#FF6B78", P2: "#F68D5A", P3: "#F0B75E", P4: "#5FD3A5" } as Record<
       string,
       string
     >,
     status: {
-      reported: "#E8936F",
-      under_review: "#A594F9",
-      in_progress: "#E9B45A",
-      resolved: "#6BC99A",
-      closed: "#9A968C",
+      reported: "#6F9BFF",
+      under_review: "#AB9DFF",
+      in_progress: "#F0B75E",
+      resolved: "#5FD3A5",
+      closed: "#95A1B5",
     } as Record<string, string>,
-    sos: "#F2555C",
-    violet: "#A594F9",
+    sos: "#FF6B78",
+    violet: "#AB9DFF",
   },
 };
 
@@ -148,8 +148,8 @@ export function DailyBars({ data }: { data: { day: string; count: number; isToda
           margin={{ top: 8, right: 4, left: 0, bottom: 0 }}
         >
           <defs>
-            <FadeGradient id={`${id}-bar`} color={c.accent} from={0.85} to={0.18} />
-            <FadeGradient id={`${id}-today`} color={c.accent2} from={1} to={0.35} />
+            <FadeGradient id={`${id}-bar`} color={c.accent} from={0.45} to={0.12} />
+            <FadeGradient id={`${id}-today`} color={c.accent} from={1} to={0.6} />
           </defs>
           <CartesianGrid stroke={c.grid} strokeDasharray="3 6" vertical={false} />
           <XAxis
@@ -169,11 +169,7 @@ export function DailyBars({ data }: { data: { day: string; count: number; isToda
           <Tooltip content={<GlassTooltip />} cursor={{ fill: c.cursor, radius: 10 } as never} />
           <Bar dataKey="count" name="Reports" radius={[10, 10, 4, 4]} {...ANIM}>
             {data.map((d) => (
-              <Cell
-                key={d.day}
-                fill={d.isToday ? `url(#${id}-today)` : `url(#${id}-bar)`}
-                style={d.isToday ? { filter: `drop-shadow(0 0 10px ${c.accent2}66)` } : undefined}
-              />
+              <Cell key={d.day} fill={d.isToday ? `url(#${id}-today)` : `url(#${id}-bar)`} />
             ))}
           </Bar>
         </BarChart>
@@ -323,7 +319,7 @@ function ValueLegend({ items }: { items: { label: string; value: number; color: 
         <li key={i.label} className="flex min-w-0 items-center gap-2">
           <span
             className="size-2.5 shrink-0 rounded-full"
-            style={{ background: i.color, boxShadow: `0 0 8px ${i.color}55` }}
+            style={{ background: i.color }}
             aria-hidden="true"
           />
           <span className="truncate text-muted">{i.label}</span>

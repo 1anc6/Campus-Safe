@@ -92,9 +92,7 @@ export function StudentShell({
                         title={t.label}
                         className={cn(
                           "flex min-h-11 items-center justify-center gap-3 rounded-2xl text-sm font-medium transition-[background-color,color,box-shadow] duration-200 2xl:justify-start 2xl:px-3.5",
-                          on
-                            ? "bg-accent/15 text-fg shadow-[inset_0_0_0_1px_var(--color-neon-dim)]"
-                            : "text-muted hover:bg-panel-2 hover:text-fg",
+                          on ? "neu-pressed text-fg" : "text-muted hover:bg-panel-2 hover:text-fg",
                         )}
                       >
                         <t.icon
@@ -196,7 +194,7 @@ export function StudentShell({
                 ))}
                 {/* SOS rides up out of the bar so it is the biggest target on screen. */}
                 <li className="relative flex justify-center">
-                  <span className="glass-bar absolute -top-9 rounded-full p-1">
+                  <span className="absolute -top-9 rounded-full bg-[var(--neu-surface)] p-1.5">
                     <SosTrigger size="md" />
                   </span>
                 </li>
@@ -226,7 +224,7 @@ function TabLink({ tab, on }: { tab: (typeof TABS)[number]; on: boolean }) {
         <span
           className={cn(
             "grid h-8 w-12 place-items-center rounded-full transition-[background-color,transform] duration-300 ease-[var(--ease-smooth-out)]",
-            on ? "scale-100 bg-accent/15" : "scale-95",
+            on ? "neu-pressed scale-100" : "scale-95",
           )}
         >
           <tab.icon className="size-[19px]" />

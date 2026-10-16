@@ -2,42 +2,49 @@
 @import "tw-animate-css";
 
 /*
- * Theme tokens. LIGHT is the default; dark values apply under
- * <html data-theme="dark"> (set before first paint by the boot script in
- * __root.tsx, toggled by src/lib/theme.ts). Text-on-white colours are tuned
- * for WCAG contrast; bright brand colours are kept for fills.
+ * Theme tokens: soft UI (neumorphism). LIGHT is the default; dark values apply
+ * under <html data-theme="dark"> (set before first paint by the boot script in
+ * __root.tsx, toggled by src/lib/theme.ts).
+ *
+ * Every surface is cut from the same material as the page: panels share the
+ * background colour and get their shape only from a pair of shadows, a cool
+ * one to the bottom-right and a light one to the top-left (light from the top
+ * left). Raised = sits on the page; inset = pressed into it. Text colours are
+ * tuned for WCAG AA on the surface colour.
  */
 @theme {
-  --color-bg: #f3f5f8;
-  --color-chrome: #ffffff;
-  /* Panels are translucent so the aurora glows through (liquid glass). */
-  --color-panel: rgb(255 255 255 / 0.8);
-  --color-panel-2: rgb(255 255 255 / 0.55);
-  --color-panel-3: rgb(226 232 240 / 0.6);
-  --color-line: #e2e7ef;
-  --color-line-strong: #cbd3df;
-  --color-fg: #1b2430;
-  --color-muted: #5e6b7e;
-  /* Darkened from #77849a so small dim text passes WCAG AA on white and glass. */
-  --color-dim: #66738a;
-  /* Accent for text/icons (readable on white) vs the brand fill colour. */
-  --color-neon: #00849a;
-  --color-neon-dim: rgb(0 207 232 / 0.13);
-  --color-accent: #00cfe8;
-  /* Text on bright fills (accent, ok, warn) in both themes. */
-  --color-ink: #062a33;
-  --color-violet: #6a55d6;
-  --color-sos: #e0354a;
-  --color-ok: #00826c;
-  --color-warn: #a86500;
-  --color-high: #c2410c;
-  --color-p1: #e0354a;
-  --color-p2: #c2410c;
-  --color-p3: #a86500;
-  --color-p4: #00826c;
+  --color-bg: #e4ecf7;
+  /* Opaque surfaces that float above everything (popovers, sheets, toasts). */
+  --color-chrome: #e9f0fa;
+  --color-panel: #e4ecf7;
+  --color-panel-2: rgb(150 172 206 / 0.16);
+  --color-panel-3: rgb(150 172 206 / 0.26);
+  --color-line: rgb(132 156 194 / 0.24);
+  --color-line-strong: rgb(116 140 180 / 0.42);
+  --color-fg: #1f2c44;
+  --color-muted: #4f5f79;
+  --color-dim: #586885;
+  /* Accent for text/icons (readable on the surface) vs the blue fill. */
+  --color-neon: #1f5bc7;
+  --color-neon-dim: rgb(45 106 222 / 0.14);
+  --color-accent: #2d6ade;
+  /* Text on the blue accent fill. */
+  --color-on-accent: #ffffff;
+  /* Text on solid status fills (ok, warn): white on the deep light-theme fills,
+     dark ink on the bright dark-theme fills (both clear 4.5:1). */
+  --color-ink: #ffffff;
+  --color-violet: #5b46c9;
+  --color-sos: #c42239;
+  --color-ok: #00775f;
+  --color-warn: #965800;
+  --color-high: #b43b0a;
+  --color-p1: #c42239;
+  --color-p2: #b43b0a;
+  --color-p3: #965800;
+  --color-p4: #00775f;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", "Inter", ui-sans-serif, sans-serif;
+  --font-display: "Manrope", "Inter", ui-sans-serif, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 
   --radius-xs: 4px;
@@ -56,103 +63,111 @@
 
 :root {
   color-scheme: light;
-  --neon-glow: rgb(0 207 232 / 0.28);
-  --sos-glow: rgb(255 67 87 / 0.35);
-  --sos-fill: #ff4357;
-  --card-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.04);
-  --scrollbar: rgb(27 36 48 / 0.18);
+  --neon-glow: rgb(45 106 222 / 0.32);
+  --sos-glow: rgb(212 44 67 / 0.32);
+  --sos-fill: #e02f47;
+  --sos-fill-hi: #ff7f8c;
+  --scrollbar: rgb(79 95 121 / 0.22);
   /* Non-SOS map pins (incidents, units, "you are here"): must never read as SOS red. */
   --map-pin: var(--color-accent);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
-  /* ---- Liquid glass ---- */
-  /* Ambient "aurora" behind every page: soft colour glows the glass refracts. */
-  --aurora:
-    radial-gradient(60vmax 50vmax at 8% 0%, rgb(0 207 232 / 0.22), transparent 60%),
-    radial-gradient(55vmax 45vmax at 100% 10%, rgb(139 124 255 / 0.2), transparent 60%),
-    radial-gradient(60vmax 55vmax at 85% 100%, rgb(56 189 248 / 0.16), transparent 60%),
-    radial-gradient(50vmax 40vmax at 0% 95%, rgb(255 67 87 / 0.08), transparent 60%),
-    linear-gradient(180deg, #eef3f9 0%, #e7edf6 100%);
-  /* Frosted panel fill, its brighter variant (bars, sheets) and a faint fill for rows/inputs. */
-  --glass: rgb(255 255 255 / 0.55);
-  --glass-strong: rgb(255 255 255 / 0.72);
-  --glass-soft: rgb(255 255 255 / 0.5);
-  /* Light catches the top edge; a hairline keeps panels distinct. */
-  --glass-border: rgb(255 255 255 / 0.75);
-  --glass-edge: rgb(15 23 42 / 0.07);
-  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.9);
-  --glass-shadow: 0 10px 30px -12px rgb(30 41 72 / 0.18), 0 2px 6px -2px rgb(30 41 72 / 0.06);
-  --glass-blur: 22px;
+  /* ---- Soft UI material ---- */
+  /* The page: one quiet wash of the surface colour (no glows, nothing to refract). */
+  --aurora: linear-gradient(160deg, #eaf1fa 0%, #e4ecf7 45%, #dce6f3 100%);
+  /* Surface fills: flat for panels, convex for controls that can be pressed. */
+  --neu-surface: #e4ecf7;
+  --neu-convex: linear-gradient(145deg, #edf3fb, #d9e3f0);
+  --neu-concave: linear-gradient(145deg, #d9e3f0, #edf3fb);
+  /* The two lights. */
+  --neu-dark: rgb(146 168 202 / 0.55);
+  --neu-light: rgb(255 255 255 / 0.92);
+  --neu-raised: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light);
+  --neu-raised-sm: 5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light);
+  --neu-raised-xs: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+  --neu-inset: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light);
+  --neu-inset-sm: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+  /* Track under progress rings and toggles. */
+  --neu-track: rgb(146 168 202 / 0.32);
+  /* Blue accent fill and its coloured lift. */
+  --accent-fill: linear-gradient(145deg, #3a77ea, #2a62d4);
+  --accent-lift: 6px 6px 14px rgb(45 106 222 / 0.32), -5px -5px 12px var(--neu-light);
+
+  /* Legacy names kept for components that still reference them. */
+  --glass: var(--neu-surface);
+  --glass-strong: var(--color-chrome);
+  --glass-soft: var(--neu-surface);
+  --card-shadow: var(--neu-raised-sm);
 }
 
 :root[data-theme="dark"] {
   /*
-   * Warm charcoal dark mode (night reading, low glare): neutral greys with a
-   * faint warm cast, a clay accent for actions, and a soft warm gradient behind
-   * the glass. SOS keeps a clear red and anonymous flows keep violet.
+   * Dark soft UI: the same raised and pressed shapes cut from a deep slate-blue,
+   * lit by a faint blue-grey highlight instead of white. SOS keeps a clear red
+   * and anonymous flows keep violet.
    */
   color-scheme: dark;
-  --color-bg: #1f1e1d;
-  --color-chrome: #1a1918;
-  --color-panel: rgb(48 47 44 / 0.8);
-  --color-panel-2: rgb(255 248 240 / 0.05);
-  --color-panel-3: rgb(255 248 240 / 0.08);
-  --color-line: rgb(232 224 210 / 0.1);
-  --color-line-strong: rgb(232 224 210 / 0.18);
-  --color-fg: #f2efe8;
-  --color-muted: #b3afa5;
-  --color-dim: #9a968c;
-  /* Clay: lighter tone for text/icons/focus, deeper tone for fills. */
-  --color-neon: #e8936f;
-  --color-neon-dim: rgb(217 119 87 / 0.16);
-  --color-accent: #d97757;
-  /* Text on bright fills (clay, ok, warn) in dark mode. */
-  --color-ink: #2a1a12;
-  --color-violet: #a594f9;
-  --color-sos: #f2555c;
-  --color-ok: #6bc99a;
-  --color-warn: #e9b45a;
-  --color-high: #ee8650;
-  --color-p1: #f2555c;
-  --color-p2: #ee8650;
-  --color-p3: #e9b45a;
-  --color-p4: #6bc99a;
-  --neon-glow: rgb(217 119 87 / 0.28);
-  --sos-glow: rgb(242 85 92 / 0.45);
-  --sos-fill: #f2555c;
-  --map-pin: #e6d3ad;
-  --card-shadow: none;
-  --scrollbar: rgb(232 224 210 / 0.2);
+  --color-bg: #252c38;
+  --color-chrome: #2b3341;
+  --color-panel: #252c38;
+  --color-panel-2: rgb(10 14 22 / 0.22);
+  --color-panel-3: rgb(10 14 22 / 0.34);
+  --color-line: rgb(150 170 205 / 0.12);
+  --color-line-strong: rgb(150 170 205 / 0.22);
+  --color-fg: #e5ebf4;
+  --color-muted: #aab5c7;
+  --color-dim: #95a1b5;
+  --color-neon: #8db2ff;
+  --color-neon-dim: rgb(90 140 245 / 0.18);
+  --color-accent: #3570e0;
+  --color-on-accent: #ffffff;
+  --color-ink: #10202a;
+  --color-violet: #ab9dff;
+  --color-sos: #ff6b78;
+  --color-ok: #5fd3a5;
+  --color-warn: #f0b75e;
+  --color-high: #f68d5a;
+  --color-p1: #ff6b78;
+  --color-p2: #f68d5a;
+  --color-p3: #f0b75e;
+  --color-p4: #5fd3a5;
+  --neon-glow: rgb(70 125 240 / 0.35);
+  --sos-glow: rgb(242 71 90 / 0.45);
+  --sos-fill: #dc3446;
+  --sos-fill-hi: #ff8994;
+  --map-pin: #8db2ff;
+  --scrollbar: rgb(170 181 199 / 0.22);
 
-  --aurora:
-    radial-gradient(60vmax 50vmax at 0% 0%, rgb(217 119 87 / 0.13), transparent 60%),
-    radial-gradient(55vmax 45vmax at 100% 0%, rgb(201 166 120 / 0.08), transparent 60%),
-    radial-gradient(60vmax 55vmax at 100% 100%, rgb(165 148 249 / 0.06), transparent 60%),
-    radial-gradient(50vmax 40vmax at 0% 100%, rgb(242 85 92 / 0.05), transparent 60%),
-    linear-gradient(180deg, #24221f 0%, #1c1b19 100%);
-  --glass: rgb(52 50 46 / 0.5);
-  --glass-strong: rgb(36 35 33 / 0.78);
-  --glass-soft: rgb(255 248 240 / 0.045);
-  --glass-border: rgb(255 245 230 / 0.09);
-  --glass-edge: rgb(255 245 230 / 0.05);
-  --glass-highlight: inset 0 1px 0 rgb(255 245 230 / 0.07);
-  --glass-shadow: 0 16px 40px -16px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.3);
+  --aurora: linear-gradient(160deg, #29313e 0%, #252c38 45%, #212833 100%);
+  --neu-surface: #252c38;
+  --neu-convex: linear-gradient(145deg, #2a323f, #212732);
+  --neu-concave: linear-gradient(145deg, #212732, #2a323f);
+  --neu-dark: rgb(6 9 15 / 0.72);
+  --neu-light: rgb(66 79 102 / 0.55);
+  --neu-track: rgb(8 11 18 / 0.38);
+  --accent-fill: linear-gradient(145deg, #3d78e8, #2d65d4);
+  --accent-lift: 6px 6px 14px rgb(8 11 18 / 0.6), -4px -4px 10px var(--neu-light);
 }
 
 /* Anonymous flow: one class flips the accent to violet in either theme. */
 html.anon {
-  --color-neon: #6a55d6;
-  --color-accent: #8b7cff;
-  --neon-glow: rgb(106 85 214 / 0.3);
-  --color-neon-dim: rgb(106 85 214 / 0.12);
+  --color-neon: #5b46c9;
+  --color-accent: #5b46c9;
+  --accent-fill: linear-gradient(145deg, #6854d6, #5440c0);
+  --accent-lift: 6px 6px 14px rgb(91 70 201 / 0.3), -5px -5px 12px var(--neu-light);
+  --neon-glow: rgb(91 70 201 / 0.3);
+  --color-neon-dim: rgb(91 70 201 / 0.13);
+  --map-pin: #5b46c9;
 }
 html.anon[data-theme="dark"] {
   --color-neon: #b3a6fb;
-  --color-accent: #a594f9;
-  --color-ink: #1e1838;
+  --color-accent: #6c5ce0;
+  --accent-fill: linear-gradient(145deg, #7464e6, #5f4fd2);
+  --accent-lift: 6px 6px 14px rgb(8 11 18 / 0.6), -4px -4px 10px var(--neu-light);
   --neon-glow: rgb(165 148 249 / 0.3);
   --color-neon-dim: rgb(165 148 249 / 0.16);
+  --map-pin: #b3a6fb;
 }
 
 @layer base {
@@ -230,12 +245,16 @@ html.anon[data-theme="dark"] {
   font-family: var(--font-display);
 }
 
+/* SOS sits in a raised soft-UI dish; the hold progress fills a pressed groove around it. */
 .sos-wrap {
   position: relative;
   width: 200px;
   height: 200px;
   display: grid;
   place-items: center;
+  border-radius: 50%;
+  background: var(--neu-surface);
+  box-shadow: var(--neu-raised);
 }
 
 .sos-ring {
@@ -243,7 +262,7 @@ html.anon[data-theme="dark"] {
   inset: 0;
   border-radius: 50%;
   --p: 0;
-  background: conic-gradient(var(--sos-fill) calc(var(--p) * 1%), var(--color-line) 0);
+  background: conic-gradient(var(--sos-fill) calc(var(--p) * 1%), var(--neu-track) 0);
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--ring-w, 8px)), #000 0);
   mask: radial-gradient(farthest-side, transparent calc(100% - var(--ring-w, 8px)), #000 0);
   pointer-events: none;
@@ -268,11 +287,23 @@ html.anon[data-theme="dark"] {
   height: 56px;
   --ring-w: 4px;
 }
+.sos-wrap.sos-sm {
+  box-shadow: var(--neu-inset-sm);
+}
 .sos-sm .sos-btn {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
+}
+/* The rail SOS is small enough that a pulsing glow swamps its dish: keep a still, tight lift. */
+.sos-sm .sos-btn,
+.sos-sm .sos-btn.pulse {
+  animation: none;
+  box-shadow:
+    inset 1px 2px 4px rgb(255 255 255 / 0.28),
+    inset -2px -3px 6px rgb(120 0 20 / 0.22),
+    2px 3px 6px var(--sos-glow);
 }
 
 .sos-btn {
@@ -285,8 +316,11 @@ html.anon[data-theme="dark"] {
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  background: radial-gradient(circle at 35% 30%, #ff7a86, var(--sos-fill) 60%);
-  box-shadow: 0 0 40px var(--sos-glow);
+  background: radial-gradient(circle at 34% 28%, var(--sos-fill-hi), var(--sos-fill) 62%);
+  box-shadow:
+    inset 2px 3px 6px rgb(255 255 255 / 0.28),
+    inset -4px -6px 12px rgb(120 0 20 / 0.22),
+    6px 8px 18px var(--sos-glow);
   touch-action: none;
   user-select: none;
   transition:
@@ -305,12 +339,17 @@ html.anon[data-theme="dark"] {
 @keyframes sos-pulse {
   0%,
   100% {
-    box-shadow: 0 0 28px var(--sos-glow);
+    box-shadow:
+      inset 2px 3px 6px rgb(255 255 255 / 0.28),
+      inset -4px -6px 12px rgb(120 0 20 / 0.22),
+      6px 8px 18px var(--sos-glow);
   }
   50% {
     box-shadow:
-      0 0 56px var(--sos-glow),
-      0 0 0 6px rgb(255 67 87 / 0.08);
+      inset 2px 3px 6px rgb(255 255 255 / 0.28),
+      inset -4px -6px 12px rgb(120 0 20 / 0.22),
+      6px 8px 34px var(--sos-glow),
+      0 0 0 7px rgb(236 59 82 / 0.1);
   }
 }
 
@@ -410,13 +449,13 @@ html.anon[data-theme="dark"] {
   z-index: 0;
 }
 
-/* Light theme: standard OSM tiles, softened to sit on white panels. */
+/* Light theme: OSM tiles cooled toward the soft blue surface. */
 .leaflet-tile-pane {
-  filter: saturate(0.7) brightness(1.03) contrast(0.95);
+  filter: saturate(0.5) brightness(1.03) contrast(0.94);
 }
 /* Dark theme: night rendering of the same tiles (one provider, two styles). */
 [data-theme="dark"] .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(0.9) saturate(0.35) sepia(0.18);
+  filter: invert(1) hue-rotate(180deg) brightness(0.78) contrast(0.9) saturate(0.4);
 }
 
 .leaflet-bar a,
@@ -426,8 +465,14 @@ html.anon[data-theme="dark"] {
   border-color: var(--color-line) !important;
 }
 .leaflet-bar {
-  border: 1px solid var(--color-line) !important;
-  box-shadow: var(--card-shadow) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+  box-shadow: var(--neu-raised-sm) !important;
+}
+.leaflet-bar a {
+  background: var(--neu-surface) !important;
+  color: var(--color-fg) !important;
 }
 .leaflet-bar a {
   width: 36px !important;
@@ -438,10 +483,11 @@ html.anon[data-theme="dark"] {
   color: var(--color-neon) !important;
 }
 .leaflet-tooltip {
-  background: var(--color-panel);
+  background: var(--color-chrome);
   color: var(--color-fg);
-  border: 1px solid var(--color-line);
-  box-shadow: var(--card-shadow);
+  border: 0;
+  border-radius: 10px;
+  box-shadow: var(--neu-raised-xs);
 }
 
 html.sos-flash header,
@@ -455,86 +501,99 @@ html.sos-flash .bg-chrome {
   }
 }
 
-/* ============ Shared primitives (from the CampusSafe admin design) ============ */
+/* ============ Shared primitives: soft UI material ============ */
 @layer components {
-  /* Frosted-glass panel: translucent fill, backdrop blur, a lit top edge. */
+  /* Raised panel: same colour as the page, shaped only by its two shadows. */
   .card,
   .glass {
-    background: var(--glass);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
-    border: 1px solid var(--glass-border);
-    border-radius: 22px;
-    box-shadow:
-      var(--glass-highlight),
-      0 0 0 1px var(--glass-edge),
-      var(--glass-shadow);
-  }
-  [data-theme="dark"] .card,
-  [data-theme="dark"] .glass {
-    border-color: var(--glass-border);
+    background: var(--neu-surface);
+    border: 0;
+    border-radius: 24px;
+    box-shadow: var(--neu-raised);
   }
 
-  /* Navigation chrome (sidebars, top bars, tab bar): denser glass, always legible. */
+  /* Navigation chrome (sidebars, top bars, tab bar): the same raised material. */
   .glass-bar {
-    background: var(--glass-strong);
-    -webkit-backdrop-filter: blur(28px) saturate(1.8);
-    backdrop-filter: blur(28px) saturate(1.8);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-      var(--glass-highlight),
-      0 0 0 1px var(--glass-edge),
-      var(--glass-shadow);
+    background: var(--neu-surface);
+    border: 0;
+    box-shadow: var(--neu-raised);
   }
 
-  /* Soft lift on hover for clickable glass tiles (pointer devices only). */
+  /* Small raised tile, pressed well, and the pressed state of a toggled control. */
+  .neu-raised {
+    background: var(--neu-surface);
+    box-shadow: var(--neu-raised-sm);
+  }
+  .neu-raised-xs {
+    background: var(--neu-surface);
+    box-shadow: var(--neu-raised-xs);
+  }
+  .neu-well {
+    background: var(--neu-surface);
+    box-shadow: var(--neu-inset-sm);
+  }
+  .neu-inset {
+    background: var(--neu-surface);
+    box-shadow: var(--neu-inset);
+  }
+  .neu-pressed {
+    background: var(--neu-surface);
+    box-shadow: var(--neu-inset-sm);
+  }
+
+  /* Clickable raised tiles rise a little further on hover and sink when pressed. */
+  .glass-hover {
+    transition:
+      transform 220ms var(--ease-smooth-out),
+      box-shadow 220ms var(--ease-smooth-out);
+  }
   @media (hover: hover) {
-    .glass-hover {
-      transition:
-        transform 220ms var(--ease-smooth-out),
-        box-shadow 220ms var(--ease-smooth-out),
-        background-color 220ms var(--ease-smooth-out);
-    }
     .glass-hover:hover {
       transform: translateY(-2px);
-      background: var(--glass-strong);
     }
   }
   .glass-hover:active {
-    transform: scale(0.985);
+    transform: none;
+    box-shadow: var(--neu-inset-sm);
   }
 
+  /* Primary action: the one blue, convex, with a coloured lift. */
   .btn-neon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     min-height: 2.75rem;
-    padding: 0.625rem 1.125rem;
-    border-radius: 14px;
-    background: var(--color-accent);
-    color: var(--color-ink);
+    padding: 0.625rem 1.25rem;
+    border-radius: 16px;
+    background: var(--accent-fill);
+    color: var(--color-on-accent);
     font-size: 0.8125rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     box-shadow:
-      0 0 0 1px var(--color-accent),
-      0 4px 16px var(--neon-glow);
+      inset 1px 1px 0 rgb(255 255 255 / 0.22),
+      var(--accent-lift);
     transition:
-      filter 150ms var(--ease-out),
-      box-shadow 150ms var(--ease-out);
+      transform 160ms var(--ease-out),
+      box-shadow 160ms var(--ease-out),
+      filter 160ms var(--ease-out);
   }
   .btn-neon:hover:not(:disabled) {
-    filter: brightness(1.08);
+    filter: brightness(1.06);
+  }
+  .btn-neon:active:not(:disabled) {
+    transform: scale(0.98);
     box-shadow:
-      0 0 0 1px var(--color-accent),
-      0 6px 24px var(--neon-glow);
+      inset 3px 3px 7px rgb(0 0 0 / 0.22),
+      inset -2px -2px 6px rgb(255 255 255 / 0.12);
   }
   .btn-neon:disabled {
     opacity: 0.55;
     cursor: wait;
   }
 
+  /* Secondary action: a raised pad of the surface itself. */
   .btn-ghost {
     display: inline-flex;
     align-items: center;
@@ -542,29 +601,38 @@ html.sos-flash .bg-chrome {
     gap: 0.5rem;
     min-height: 2.75rem;
     padding: 0.625rem 1.125rem;
-    border-radius: 14px;
-    border: 1px solid var(--color-line);
-    background: var(--glass-soft);
+    border-radius: 16px;
+    border: 0;
+    background: var(--neu-surface);
     color: var(--color-fg);
     font-size: 0.8125rem;
-    font-weight: 500;
+    font-weight: 600;
+    box-shadow: var(--neu-raised-xs);
     transition:
-      background 150ms var(--ease-out),
-      border-color 150ms var(--ease-out);
+      box-shadow 160ms var(--ease-out),
+      color 160ms var(--ease-out);
   }
   .btn-ghost:hover:not(:disabled) {
-    background: var(--color-panel-2);
-    border-color: var(--color-line-strong);
+    color: var(--color-neon);
+    box-shadow: var(--neu-raised-sm);
+  }
+  .btn-ghost:active:not(:disabled) {
+    box-shadow: var(--neu-inset-sm);
+  }
+  .btn-ghost:disabled {
+    opacity: 0.55;
   }
 
+  /* Fields are pressed into the surface. */
   .input {
     width: 100%;
     min-height: 2.75rem;
-    padding: 0.625rem 0.875rem;
+    padding: 0.625rem 0.95rem;
     border-radius: 14px;
-    border: 1px solid var(--color-line);
-    background: var(--glass-soft);
+    border: 1px solid transparent;
+    background: var(--neu-surface);
     color: var(--color-fg);
+    box-shadow: var(--neu-inset-sm);
     /* 16px keeps iOS Safari from zooming into focused fields. */
     font-size: 1rem;
     outline: none;
@@ -581,44 +649,55 @@ html.sos-flash .bg-chrome {
     color: var(--color-dim);
   }
   .input:focus {
-    background: var(--color-panel);
-    border-color: var(--color-neon);
-    box-shadow: 0 0 0 3px var(--color-neon-dim);
+    border-color: color-mix(in srgb, var(--color-neon) 55%, transparent);
+    box-shadow:
+      var(--neu-inset-sm),
+      0 0 0 3px var(--color-neon-dim);
   }
 
   .field-label {
     display: block;
-    margin-bottom: 0.375rem;
+    margin-bottom: 0.45rem;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--color-muted);
   }
 
+  /* Segmented control: a pressed track; the chosen option rises out of it. */
   .seg {
     display: inline-flex;
-    gap: 2px;
-    padding: 4px;
-    background: var(--glass-soft);
-    border: 1px solid var(--color-line);
-    border-radius: 14px;
+    gap: 4px;
+    padding: 5px;
+    background: var(--neu-surface);
+    border-radius: 16px;
+    box-shadow: var(--neu-raised-xs);
   }
   .seg > button {
     padding: 6px 14px;
-    border-radius: 10px;
+    border-radius: 11px;
     transition:
-      background-color 200ms var(--ease-smooth-out),
+      box-shadow 220ms var(--ease-smooth-out),
       color 200ms var(--ease-smooth-out);
     color: var(--color-muted);
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
   }
   .seg > button:hover {
     color: var(--color-fg);
   }
   .seg > button[aria-pressed="true"] {
-    background: var(--color-fg);
-    color: var(--color-panel);
-    font-weight: 600;
+    background: var(--neu-concave);
+    color: var(--color-neon);
+    box-shadow: var(--neu-inset-sm);
+  }
+
+  /* Uppercase, widely tracked micro-label (the reference's "FITNESS" header). */
+  .neu-caps {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-muted);
   }
 }
 
@@ -678,14 +757,14 @@ html.theme-transition *::after {
     color 200ms var(--ease-out) !important;
 }
 
-/* ============ Loading placeholders: a soft light sweep across glass ============ */
+/* ============ Loading placeholders: a pressed groove with a soft light sweep ============ */
 :root {
-  --skeleton-fill: rgb(148 163 184 / 0.16);
-  --skeleton-shine: rgb(255 255 255 / 0.75);
+  --skeleton-fill: rgb(146 168 202 / 0.18);
+  --skeleton-shine: rgb(255 255 255 / 0.7);
 }
 :root[data-theme="dark"] {
-  --skeleton-fill: rgb(255 255 255 / 0.06);
-  --skeleton-shine: rgb(255 255 255 / 0.09);
+  --skeleton-fill: rgb(8 11 18 / 0.22);
+  --skeleton-shine: rgb(255 255 255 / 0.06);
 }
 .skeleton {
   position: relative;
@@ -771,68 +850,49 @@ html.theme-transition *::after {
   }
 }
 
-/* Lower-power phones: lighter blur keeps scrolling smooth. */
+/* Phones: tighter shadows so raised panels do not bleed into the gutters. */
 @media (max-width: 767px) {
   :root {
-    --glass-blur: 16px;
+    --neu-raised: 7px 7px 16px var(--neu-dark), -7px -7px 16px var(--neu-light);
   }
 }
 
 /*
- * Sign-in / sign-up pages. One calm teal family instead of teal + indigo +
- * neon + violet: a deep teal hero, an OPAQUE form sheet (the translucent panel
- * let the hero bleed through as a lavender band), and a solid CTA whose text
- * passes WCAG AA in both themes.
+ * Sign-in / sign-up pages: the same soft UI material. A deep blue hero on
+ * phones, a raised sheet cut from the page surface, pressed fields and the
+ * blue convex CTA.
  */
 .auth-shell {
   --auth-hero:
-    radial-gradient(120% 90% at 100% 0%, rgb(45 212 191 / 0.28), transparent 55%),
-    linear-gradient(160deg, #0a3446 0%, #0c5568 55%, #0f7480 100%);
+    radial-gradient(120% 90% at 100% 0%, rgb(140 180 255 / 0.35), transparent 55%),
+    linear-gradient(160deg, #1d4fb8 0%, #2d6ade 60%, #4a86ef 100%);
   --auth-hero-fg: #ffffff;
-  --auth-hero-muted: rgb(224 247 250 / 0.78);
-  --auth-sheet: #ffffff;
-  --auth-page: #eef3f7;
-  --auth-field: #f5f8fb;
-  --auth-field-border: #d9e1ea;
-  --auth-cta: #0e7490;
-  --auth-cta-hover: #0b6279;
-  --auth-cta-fg: #ffffff;
-  --auth-cta-glow: rgb(14 116 144 / 0.28);
-  --auth-link: #0e7490;
-  --auth-placeholder: #66738a;
-  --auth-selection: rgb(14 116 144 / 0.2);
+  --auth-hero-muted: rgb(232 240 255 / 0.86);
+  --auth-sheet: var(--neu-surface);
+  --auth-page: var(--neu-surface);
+  --auth-field: var(--neu-surface);
+  --auth-field-border: var(--color-line);
+  --auth-cta: var(--color-accent);
+  --auth-cta-hover: var(--color-accent);
+  --auth-cta-fg: var(--color-on-accent);
+  --auth-cta-glow: var(--neon-glow);
+  --auth-link: var(--color-neon);
+  --auth-placeholder: var(--color-dim);
+  --auth-selection: var(--color-neon-dim);
 }
 [data-theme="dark"] .auth-shell {
   --auth-hero:
-    radial-gradient(120% 90% at 100% 0%, rgb(217 119 87 / 0.22), transparent 55%),
-    linear-gradient(160deg, #1a1918 0%, #26221f 55%, #33281f 100%);
-  --auth-hero-fg: #f5f2ec;
-  --auth-hero-muted: rgb(236 226 212 / 0.72);
-  --auth-sheet: #262523;
-  --auth-page: #1c1b1a;
-  --auth-field: #2f2e2b;
-  --auth-field-border: rgb(232 224 210 / 0.14);
-  --auth-cta: #d97757;
-  --auth-cta-hover: #e48a6b;
-  --auth-cta-fg: #2a1a12;
-  --auth-cta-glow: rgb(217 119 87 / 0.28);
-  --auth-link: #e8936f;
-  --auth-placeholder: #9a968c;
-  --auth-selection: rgb(217 119 87 / 0.28);
+    radial-gradient(120% 90% at 100% 0%, rgb(90 140 245 / 0.28), transparent 55%),
+    linear-gradient(160deg, #1b2230 0%, #1f3260 60%, #2a4f9e 100%);
+  --auth-hero-fg: #f2f6fd;
+  --auth-hero-muted: rgb(220 230 248 / 0.78);
 }
 
 @layer components {
   .auth-shell .input {
-    background: var(--auth-field);
-    border-color: var(--auth-field-border);
-  }
-  .auth-shell .input:focus {
-    background: var(--auth-sheet);
-  }
-  .auth-shell .input {
+    background: var(--neu-surface);
     caret-color: var(--auth-link);
   }
-  /* Placeholders pass AA on the field fill (the shared dim grey does not). */
   .auth-shell .input::placeholder {
     color: var(--auth-placeholder);
   }
@@ -854,21 +914,27 @@ html.theme-transition *::after {
     gap: 0.5rem;
     min-height: 3rem;
     padding: 0.75rem 1.125rem;
-    border-radius: 14px;
-    background: var(--auth-cta);
-    color: var(--auth-cta-fg);
+    border-radius: 16px;
+    background: var(--accent-fill);
+    color: var(--color-on-accent);
     font-size: 0.9375rem;
-    font-weight: 600;
-    box-shadow: 0 8px 20px -8px var(--auth-cta-glow);
+    font-weight: 700;
+    box-shadow:
+      inset 1px 1px 0 rgb(255 255 255 / 0.22),
+      var(--accent-lift);
     transition:
-      background 150ms var(--ease-out),
-      transform 150ms var(--ease-out);
+      filter 150ms var(--ease-out),
+      transform 150ms var(--ease-out),
+      box-shadow 150ms var(--ease-out);
   }
   .btn-auth:hover:not(:disabled) {
-    background: var(--auth-cta-hover);
+    filter: brightness(1.06);
   }
   .btn-auth:active:not(:disabled) {
     transform: scale(0.99);
+    box-shadow:
+      inset 3px 3px 7px rgb(0 0 0 / 0.22),
+      inset -2px -2px 6px rgb(255 255 255 / 0.12);
   }
   .btn-auth:disabled {
     opacity: 0.6;

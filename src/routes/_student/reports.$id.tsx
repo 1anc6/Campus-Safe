@@ -70,7 +70,7 @@ function IncidentDetail() {
               <img
                 src={incident.photoData}
                 alt="Photo you attached"
-                className="mt-4 max-h-72 w-full rounded-2xl object-cover ring-1 ring-line"
+                className="mt-4 max-h-72 w-full rounded-2xl object-cover neu-raised-xs"
               />
             )}
             <h2 className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-muted">

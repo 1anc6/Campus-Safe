@@ -228,7 +228,7 @@ function Login() {
       </div>
       <Link
         to="/anonymous"
-        className="group mt-4 flex min-h-14 items-center gap-3 rounded-[14px] border border-[var(--auth-field-border)] bg-[var(--auth-field)] px-4 text-left transition-colors hover:border-[var(--auth-link)]"
+        className="neu-raised group mt-4 flex min-h-14 items-center gap-3 rounded-2xl px-4 text-left transition-shadow hover:shadow-[var(--neu-raised)] active:shadow-[var(--neu-inset-sm)]"
       >
         <EyeOff className="size-[18px] shrink-0 text-[var(--auth-link)]" />
         <span className="min-w-0 flex-1">

@@ -20,9 +20,9 @@ import { SkeletonList } from "@/components/shared/skeleton";
 export const Route = createFileRoute("/admin/users")({ component: UsersPage });
 
 const ROLE_TONE: Record<UserRole, string> = {
-  admin: "bg-violet/15 text-violet ring-violet/30",
-  responder: "bg-sos/15 text-sos ring-sos/30",
-  student: "bg-neon-dim text-neon ring-neon/30",
+  admin: "text-violet",
+  responder: "text-sos",
+  student: "text-neon",
 };
 
 const PERMISSIONS: { role: UserRole; perms: string[] }[] = [
@@ -290,11 +290,13 @@ function UsersPage() {
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
           {PERMISSIONS.map((item) => (
-            <div key={item.role} className={cn("rounded-xl p-4 ring-1", ROLE_TONE[item.role])}>
-              <h3 className="mb-2 text-sm font-bold">{roleLabel(item.role)}</h3>
-              <ul className="space-y-1 text-xs opacity-85">
+            <div key={item.role} className="neu-well rounded-2xl p-4">
+              <h3 className={cn("mb-2 text-sm font-bold", ROLE_TONE[item.role])}>
+                {roleLabel(item.role)}
+              </h3>
+              <ul className="list-disc space-y-1 pl-4 text-xs text-muted marker:text-dim">
                 {item.perms.map((perm) => (
-                  <li key={perm}>• {perm}</li>
+                  <li key={perm}>{perm}</li>
                 ))}
               </ul>
             </div>

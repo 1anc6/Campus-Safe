@@ -383,7 +383,7 @@ function PanelBody({
 
           <Section icon={ShieldCheck} title="Preferences">
             <ThemeToggle withLabel className="ring-line" />
-            <SignOutButton className="w-full justify-center ring-1 ring-line" />
+            <SignOutButton className="w-full justify-center neu-raised-xs" />
           </Section>
         </div>
       </div>
@@ -568,7 +568,7 @@ function Toggle({
       role="switch"
       aria-checked={on}
       onClick={() => onChange(!on)}
-      className="flex w-full items-start gap-3 rounded-xl bg-panel-2 p-3 text-left ring-1 ring-line"
+      className="flex w-full items-start gap-3 rounded-xl p-3 text-left neu-well"
     >
       <span
         className={cn(
@@ -610,7 +610,7 @@ function EmailChanger({
 
   if (!editing) {
     return (
-      <div className="flex items-center justify-between gap-3 rounded-xl bg-panel-2 p-3 ring-1 ring-line">
+      <div className="flex items-center justify-between gap-3 rounded-xl p-3 neu-well">
         <span className="min-w-0">
           <span className="block text-[11px] text-muted">Email</span>
           <span className="block truncate text-sm">{profile.email}</span>
@@ -654,11 +654,7 @@ function EmailChanger({
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="space-y-3 rounded-xl bg-panel-2 p-3 ring-1 ring-line"
-      noValidate
-    >
+    <form onSubmit={submit} className="space-y-3 rounded-xl p-3 neu-well" noValidate>
       <Field label="New email" id="pf-email">
         <input
           id="pf-email"
@@ -711,7 +707,7 @@ function PasswordChanger() {
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="flex w-full items-center gap-3 rounded-xl bg-panel-2 p-3 text-left ring-1 ring-line hover:ring-line-strong"
+        className="flex w-full items-center gap-3 rounded-xl p-3 text-left neu-well"
       >
         <KeyRound className="size-4 text-muted" />
         <span className="flex-1 text-sm">Change password</span>
@@ -753,11 +749,7 @@ function PasswordChanger() {
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="space-y-3 rounded-xl bg-panel-2 p-3 ring-1 ring-line"
-      noValidate
-    >
+    <form onSubmit={submit} className="space-y-3 rounded-xl p-3 neu-well" noValidate>
       <Field label="Current password" id="pf-pw-cur">
         <input
           id="pf-pw-cur"

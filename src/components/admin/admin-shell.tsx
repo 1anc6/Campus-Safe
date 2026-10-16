@@ -148,9 +148,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 aria-current={on ? "page" : undefined}
                 className={cn(
                   "flex min-h-11 items-center gap-3 rounded-2xl px-3.5 text-sm transition-[background-color,color,box-shadow] duration-200",
-                  on
-                    ? "bg-accent/15 text-fg shadow-[inset_0_0_0_1px_var(--color-neon-dim)]"
-                    : "text-muted hover:bg-panel-2 hover:text-fg",
+                  on ? "neu-pressed text-fg" : "text-muted hover:bg-panel-2 hover:text-fg",
                 )}
               >
                 <item.icon

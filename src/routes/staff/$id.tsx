@@ -165,7 +165,9 @@ function AssignedAlert() {
         <div
           className={cn(
             "rounded-2xl px-4 py-2 text-right ring-1",
-            closed ? "ring-line" : "bg-sos/5 ring-sos/25",
+            closed
+              ? "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]"
+              : "bg-sos/5 ring-sos/25",
           )}
         >
           <p
@@ -187,10 +189,10 @@ function AssignedAlert() {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
         {/* Map */}
-        <section className="relative h-[46dvh] min-h-[300px] overflow-hidden rounded-2xl ring-1 ring-line lg:h-[calc(100dvh-12rem)] lg:min-h-[480px]">
+        <section className="relative h-[46dvh] min-h-[300px] overflow-hidden rounded-2xl neu-raised-xs lg:h-[calc(100dvh-12rem)] lg:min-h-[480px]">
           <LiveMap markers={markers} trail={trail} focus={pos} className="h-full w-full" />
           <div className="pointer-events-none absolute inset-x-3 top-3 z-[500] flex flex-wrap items-start justify-between gap-2">
-            <span className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-chrome/90 py-1.5 pl-2 pr-3 text-xs font-medium shadow-lg ring-1 ring-line backdrop-blur">
+            <span className="pointer-events-auto inline-flex items-center gap-2 rounded-full py-1.5 pl-2 pr-3 text-xs font-medium neu-raised">
               <span className="grid size-6 place-items-center rounded-full bg-sos/15 text-sos">
                 <MapPin className="size-3.5" />
               </span>
@@ -211,7 +213,7 @@ function AssignedAlert() {
               href={directionsUrl(pos.lat, pos.lng)}
               target="_blank"
               rel="noreferrer"
-              className="absolute bottom-4 left-3 z-[500] inline-flex min-h-11 items-center gap-2 rounded-xl bg-accent px-4 text-sm font-bold text-ink shadow-lg"
+              className="absolute bottom-4 left-3 z-[500] inline-flex min-h-11 items-center gap-2 rounded-xl bg-accent px-4 text-sm font-bold text-on-accent shadow-[var(--accent-lift)]"
             >
               <Navigation className="size-4" /> Navigate
             </a>
@@ -250,9 +252,7 @@ function AssignedAlert() {
 
           {/* Student */}
           <section className="card p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
-              Student
-            </h2>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">Student</h2>
             <div className="mt-3 flex items-center gap-3">
               <span className="grid size-11 shrink-0 place-items-center rounded-full bg-sos/12 font-display text-lg font-semibold text-sos">
                 {alert.reporterName.charAt(0).toUpperCase()}
@@ -270,7 +270,7 @@ function AssignedAlert() {
                 <Phone className="size-4" /> Call {alert.reporterPhone}
               </a>
             ) : (
-              <p className="mt-3 rounded-xl bg-panel-2 p-3 text-xs text-muted ring-1 ring-line">
+              <p className="mt-3 rounded-xl p-3 text-xs text-muted neu-well">
                 No phone number on the student's profile.
               </p>
             )}
@@ -313,7 +313,7 @@ function ActionButton({
       ? "bg-ok text-ink"
       : next.action === "arrived"
         ? "bg-warn text-ink"
-        : "bg-accent text-ink shadow-[0_4px_16px_var(--neon-glow)]";
+        : "bg-accent text-on-accent shadow-[0_4px_16px_var(--neon-glow)]";
   const Icon =
     next.action === "resolved" ? CheckCircle2 : next.action === "arrived" ? MapPin : Siren;
   return (
@@ -353,8 +353,8 @@ function Progress({ index, closed }: { index: number; closed: boolean }) {
                 className={cn(
                   "grid size-6 shrink-0 place-items-center rounded-full text-[10px] font-bold",
                   done && "bg-ok text-ink",
-                  current && "bg-accent text-ink ring-4 ring-neon-dim",
-                  !done && !current && "bg-panel-2 text-dim ring-1 ring-line",
+                  current && "bg-accent text-on-accent ring-4 ring-neon-dim",
+                  !done && !current && "text-dim neu-well",
                 )}
                 aria-current={current ? "step" : undefined}
               >

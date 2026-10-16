@@ -30,35 +30,33 @@ export function AuthLayout({
   return (
     <div className="auth-shell relative flex min-h-dvh flex-col overflow-hidden bg-[var(--auth-sheet)] lg:items-center lg:justify-center lg:bg-[var(--auth-page)] lg:px-4 lg:py-10">
       {/* Phone header */}
-      <header className="relative bg-[image:var(--auth-hero)] px-4 pb-14 pt-[max(0.75rem,var(--safe-top))] text-[var(--auth-hero-fg)] lg:hidden">
+      <header className="relative px-4 pb-10 pt-[max(0.75rem,var(--safe-top))] text-fg lg:hidden">
         <div className="flex items-center justify-between gap-3">
-          <ThemeToggle className="text-white/80 ring-white/20 hover:bg-white/10 hover:text-white" />
-          <p className="flex items-center gap-2 text-xs text-[var(--auth-hero-muted)]">
+          <ThemeToggle />
+          <p className="flex items-center gap-2 text-xs text-muted">
             <span className="hidden min-[360px]:inline">{switchPrompt}</span>
             <Link
               to={switchTo}
               search={{ redirect }}
-              className="inline-flex min-h-9 items-center rounded-full bg-white px-4 text-xs font-semibold text-[#0a3446] dark:text-[#2a1a12] shadow-sm transition-colors hover:bg-white/90"
+              className="btn-ghost min-h-9 rounded-full px-4 text-xs text-neon"
             >
               {switchLabel}
             </Link>
           </p>
         </div>
         <div className="mt-7 flex flex-col items-center gap-2.5 text-center">
-          <span className="rounded-[18px] bg-white/10 p-1.5 ring-1 ring-white/15">
+          <span className="neu-raised rounded-[22px] p-2.5">
             <BrandMark />
           </span>
           <p className="font-display text-[26px] font-bold tracking-tight">{BRAND.name}</p>
-          <p className="text-xs text-[var(--auth-hero-muted)]">Help on campus, one hold away</p>
+          <p className="text-xs text-muted">Help on campus, one hold away</p>
         </div>
       </header>
 
       {/* Desktop chrome */}
       <div className="absolute right-4 top-[max(1rem,var(--safe-top))] z-20 hidden lg:block">
-        <ThemeToggle className="bg-panel" />
+        <ThemeToggle />
       </div>
-      <div className="pointer-events-none fixed left-20 top-16 hidden size-96 rounded-full bg-[var(--auth-cta)] opacity-[0.12] blur-3xl lg:block" />
-      <div className="pointer-events-none fixed bottom-16 right-20 hidden size-96 rounded-full bg-[#0f7480] dark:bg-[#c9a678] opacity-[0.12] blur-3xl lg:block" />
 
       <div className="relative z-10 flex flex-1 flex-col lg:grid lg:w-full lg:max-w-5xl lg:flex-none lg:grid-cols-2 lg:items-center lg:gap-10">
         <section className="hidden lg:block" aria-hidden="true">
@@ -66,7 +64,7 @@ export function AuthLayout({
             <BrandMark size="lg" />
             <div>
               <p className="font-display text-3xl font-bold">{BRAND.name}</p>
-              <p className="font-mono text-xs tracking-wider text-muted">CAMPUS SAFETY PLATFORM</p>
+              <p className="neu-caps mt-1">Campus safety platform</p>
             </div>
           </div>
           <h2 className="mb-4 font-display text-5xl font-bold leading-tight">
@@ -91,7 +89,7 @@ export function AuthLayout({
           </ul>
         </section>
 
-        <section className="-mt-7 flex-1 rounded-t-[28px] bg-[var(--auth-sheet)] px-5 pb-[max(1.5rem,var(--safe-bottom))] pt-8 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[28px] lg:border lg:border-[var(--auth-field-border)] lg:p-8 lg:shadow-[0_24px_60px_-24px_rgb(10_52_70/0.35)] dark:lg:shadow-[0_24px_60px_-24px_rgb(0_0_0/0.6)]">
+        <section className="mx-3 mb-[max(0.75rem,var(--safe-bottom))] flex-1 rounded-[28px] bg-[var(--auth-sheet)] px-5 shadow-[var(--neu-raised)] lg:mb-0 pb-[max(1.5rem,var(--safe-bottom))] pt-8 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[32px] lg:p-9 lg:shadow-[var(--neu-raised)]">
           <div className="mx-auto w-full max-w-md">{children}</div>
         </section>
       </div>
@@ -112,7 +110,7 @@ function Feature({
 }) {
   return (
     <li className="flex items-start gap-3.5">
-      <span className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--auth-sheet)] ring-1 ring-[var(--auth-field-border)]">
+      <span className="neu-raised mt-0.5 grid size-11 shrink-0 place-items-center rounded-2xl">
         <Icon className={`size-[18px] ${tone}`} />
       </span>
       <span>

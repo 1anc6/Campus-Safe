@@ -278,7 +278,9 @@ function SosBoard() {
                     aria-pressed={on}
                     className={cn(
                       "relative w-full overflow-hidden rounded-xl p-3 pl-4 text-left ring-1 transition-colors",
-                      on ? "bg-panel-2 ring-sos/50" : "ring-line hover:bg-panel-2/60",
+                      on
+                        ? "ring-transparent shadow-[var(--neu-inset-sm)]"
+                        : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
                     )}
                   >
                     <span
@@ -322,7 +324,9 @@ function SosBoard() {
                         aria-pressed={on}
                         className={cn(
                           "flex w-full items-start gap-3 rounded-xl p-3 text-left ring-1 transition-colors",
-                          on ? "bg-panel-2 ring-ok/50" : "ring-line hover:bg-panel-2/60",
+                          on
+                            ? "ring-transparent shadow-[var(--neu-inset-sm)]"
+                            : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
                         )}
                       >
                         <CheckCircle2

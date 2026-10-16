@@ -9,7 +9,7 @@ export type Theme = "light" | "dark";
 
 const STORAGE_KEY = "campussafe.theme";
 const CHANGE_EVENT = "campussafe:theme";
-const META_COLOR: Record<Theme, string> = { light: "#f3f5f8", dark: "#1f1e1d" };
+const META_COLOR: Record<Theme, string> = { light: "#e4ecf7", dark: "#252c38" };
 
 /**
  * Inlined in <head> so the saved theme is applied before first paint (no flash

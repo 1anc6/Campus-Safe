@@ -205,7 +205,7 @@ function StudentHome() {
                   <Link
                     to={r.kind === "sos" ? "/sos/$id" : "/reports/$id"}
                     params={{ id: r.id }}
-                    className="flex min-h-14 items-center gap-3 rounded-xl bg-panel-2 p-3 ring-1 ring-line transition-colors hover:ring-line-strong"
+                    className="flex min-h-14 items-center gap-3 rounded-xl p-3 neu-well transition-colors"
                   >
                     <KindChip kind={r.kind} />
                     <span className="min-w-0 flex-1">
@@ -327,7 +327,7 @@ function SafetyCard({ className }: { className?: string }) {
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full bg-panel px-3 text-xs text-muted ring-1 ring-line">
+    <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-xs text-muted neu-raised">
       {children}
     </span>
   );

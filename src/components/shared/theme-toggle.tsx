@@ -19,7 +19,7 @@ export function ThemeToggle({ className, withLabel }: { className?: string; with
       aria-label="Dark mode"
       title={`Switch to ${next} mode`}
       className={cn(
-        "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl text-muted ring-1 ring-line transition-colors hover:bg-panel-2 hover:text-fg",
+        "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl text-muted neu-raised-xs transition-colors hover:bg-panel-2 hover:text-fg",
         withLabel && "w-full justify-start px-3",
         className,
       )}

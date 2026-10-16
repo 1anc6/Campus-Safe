@@ -1,548 +1,464 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T15:22:06+00:00",
+  "generatedAt": "2026-10-16T12:22:41+00:00",
   "title": "Design System: CampusSafe",
   "extensions": {
     "colorMeta": {
-      "neon": {
-        "role": "primary",
-        "displayName": "Signal Teal",
-        "darkValue": "#e8936f",
-        "tonalRamp": [
-          "oklch(15% 0.053 215)",
-          "oklch(26% 0.072 215)",
-          "oklch(38% 0.092 215)",
-          "oklch(49% 0.100 215)",
-          "oklch(61% 0.100 215)",
-          "oklch(72% 0.092 215)",
-          "oklch(84% 0.072 215)",
-          "oklch(95% 0.053 215)"
-        ],
-        "canonical": "oklch(56.4% 0.100 215)"
-      },
       "accent": {
         "role": "primary",
-        "displayName": "Bright Cyan",
-        "darkValue": "#d97757",
+        "displayName": "Command Blue",
+        "canonical": "oklch(55.2% 0.188 262)",
+        "darkValue": "#3570e0",
         "tonalRamp": [
-          "oklch(15% 0.065 210)",
-          "oklch(26% 0.090 210)",
-          "oklch(38% 0.117 210)",
-          "oklch(49% 0.135 210)",
-          "oklch(61% 0.135 210)",
-          "oklch(72% 0.117 210)",
-          "oklch(84% 0.090 210)",
-          "oklch(95% 0.065 210)"
+          "oklch(15% 0.106 262)",
+          "oklch(26% 0.130 262)",
+          "oklch(38% 0.153 262)",
+          "oklch(49% 0.177 262)",
+          "oklch(61% 0.177 262)",
+          "oklch(72% 0.153 262)",
+          "oklch(84% 0.130 262)",
+          "oklch(95% 0.106 262)"
         ],
-        "canonical": "oklch(78.3% 0.135 210)"
+        "anonValue": "#5b46c9 (dark #6c5ce0)"
       },
-      "ink": {
-        "role": "neutral",
-        "displayName": "Deep Ink",
-        "darkValue": "#2a1a12",
+      "neon": {
+        "role": "primary",
+        "displayName": "Signal Blue",
+        "canonical": "oklch(49.9% 0.180 261)",
+        "darkValue": "#8db2ff",
         "tonalRamp": [
-          "oklch(15% 0.034 218)",
-          "oklch(26% 0.042 218)",
-          "oklch(38% 0.043 218)",
-          "oklch(49% 0.043 218)",
-          "oklch(61% 0.043 218)",
-          "oklch(72% 0.043 218)",
-          "oklch(84% 0.042 218)",
-          "oklch(95% 0.034 218)"
+          "oklch(15% 0.101 261)",
+          "oklch(26% 0.124 261)",
+          "oklch(38% 0.146 261)",
+          "oklch(49% 0.168 261)",
+          "oklch(61% 0.168 261)",
+          "oklch(72% 0.146 261)",
+          "oklch(84% 0.124 261)",
+          "oklch(95% 0.101 261)"
         ],
-        "canonical": "oklch(26.5% 0.043 218)"
+        "anonValue": "#5b46c9 (dark #b3a6fb)"
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "On-Accent White",
+        "canonical": "oklch(100.0% 0.000 90)",
+        "darkValue": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(38% 0.000 90)",
+          "oklch(49% 0.000 90)",
+          "oklch(61% 0.000 90)",
+          "oklch(72% 0.000 90)",
+          "oklch(84% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
       },
       "sos": {
         "role": "secondary",
         "displayName": "Alarm Red",
-        "darkValue": "#f2555c",
+        "canonical": "oklch(53.3% 0.194 20)",
+        "darkValue": "#ff6b78",
         "tonalRamp": [
-          "oklch(15% 0.089 20)",
-          "oklch(26% 0.126 20)",
-          "oklch(38% 0.168 20)",
-          "oklch(49% 0.205 20)",
-          "oklch(61% 0.205 20)",
-          "oklch(72% 0.168 20)",
-          "oklch(84% 0.126 20)",
-          "oklch(95% 0.089 20)"
-        ],
-        "canonical": "oklch(59.9% 0.206 20)"
+          "oklch(15% 0.110 20)",
+          "oklch(26% 0.134 20)",
+          "oklch(38% 0.158 20)",
+          "oklch(49% 0.182 20)",
+          "oklch(61% 0.182 20)",
+          "oklch(72% 0.158 20)",
+          "oklch(84% 0.134 20)",
+          "oklch(95% 0.110 20)"
+        ]
       },
       "sos-fill": {
         "role": "secondary",
-        "displayName": "Alarm Red Fill",
-        "darkValue": "#f2555c",
+        "displayName": "SOS Sphere Red",
+        "canonical": "oklch(62.6% 0.212 19)",
+        "darkValue": "#f2475a",
         "tonalRamp": [
-          "oklch(15% 0.089 20)",
-          "oklch(26% 0.126 20)",
-          "oklch(38% 0.168 20)",
-          "oklch(49% 0.205 20)",
-          "oklch(61% 0.205 20)",
-          "oklch(72% 0.168 20)",
-          "oklch(84% 0.126 20)",
-          "oklch(95% 0.089 20)"
+          "oklch(15% 0.119 19)",
+          "oklch(26% 0.146 19)",
+          "oklch(38% 0.172 19)",
+          "oklch(49% 0.198 19)",
+          "oklch(61% 0.198 19)",
+          "oklch(72% 0.172 19)",
+          "oklch(84% 0.146 19)",
+          "oklch(95% 0.119 19)"
+        ]
+      },
+      "sos-fill-hi": {
+        "role": "secondary",
+        "displayName": "SOS Sphere Highlight",
+        "canonical": "oklch(74.6% 0.156 15)",
+        "darkValue": "#ff8994",
+        "tonalRamp": [
+          "oklch(15% 0.088 15)",
+          "oklch(26% 0.107 15)",
+          "oklch(38% 0.127 15)",
+          "oklch(49% 0.146 15)",
+          "oklch(61% 0.146 15)",
+          "oklch(72% 0.127 15)",
+          "oklch(84% 0.107 15)",
+          "oklch(95% 0.088 15)"
         ]
       },
       "violet": {
         "role": "tertiary",
         "displayName": "Anonymous Violet",
-        "darkValue": "#a594f9",
+        "canonical": "oklch(49.5% 0.194 284)",
+        "darkValue": "#ab9dff",
         "tonalRamp": [
-          "oklch(15% 0.083 286)",
-          "oklch(26% 0.118 286)",
-          "oklch(38% 0.156 286)",
-          "oklch(49% 0.190 286)",
-          "oklch(61% 0.190 286)",
-          "oklch(72% 0.156 286)",
-          "oklch(84% 0.118 286)",
-          "oklch(95% 0.083 286)"
-        ],
-        "canonical": "oklch(54.2% 0.190 286)"
+          "oklch(15% 0.109 284)",
+          "oklch(26% 0.133 284)",
+          "oklch(38% 0.157 284)",
+          "oklch(49% 0.182 284)",
+          "oklch(61% 0.182 284)",
+          "oklch(72% 0.157 284)",
+          "oklch(84% 0.133 284)",
+          "oklch(95% 0.109 284)"
+        ]
       },
       "ok": {
         "role": "status",
         "displayName": "Resolved Green",
-        "darkValue": "#6bc99a",
+        "canonical": "oklch(50.7% 0.098 172)",
+        "darkValue": "#5fd3a5",
         "tonalRamp": [
-          "oklch(15% 0.054 175)",
-          "oklch(26% 0.073 175)",
-          "oklch(38% 0.093 175)",
-          "oklch(49% 0.102 175)",
-          "oklch(61% 0.102 175)",
-          "oklch(72% 0.093 175)",
-          "oklch(84% 0.073 175)",
-          "oklch(95% 0.054 175)"
-        ],
-        "canonical": "oklch(54.2% 0.102 175)"
+          "oklch(15% 0.055 172)",
+          "oklch(26% 0.068 172)",
+          "oklch(38% 0.080 172)",
+          "oklch(49% 0.092 172)",
+          "oklch(61% 0.092 172)",
+          "oklch(72% 0.080 172)",
+          "oklch(84% 0.068 172)",
+          "oklch(95% 0.055 172)"
+        ]
       },
       "warn": {
         "role": "status",
         "displayName": "Caution Amber",
-        "darkValue": "#e9b45a",
+        "canonical": "oklch(52.0% 0.117 65)",
+        "darkValue": "#f0b75e",
         "tonalRamp": [
-          "oklch(15% 0.062 66)",
-          "oklch(26% 0.086 66)",
-          "oklch(38% 0.111 66)",
-          "oklch(49% 0.127 66)",
-          "oklch(61% 0.127 66)",
-          "oklch(72% 0.111 66)",
-          "oklch(84% 0.086 66)",
-          "oklch(95% 0.062 66)"
-        ],
-        "canonical": "oklch(56.8% 0.127 66)"
+          "oklch(15% 0.066 65)",
+          "oklch(26% 0.080 65)",
+          "oklch(38% 0.095 65)",
+          "oklch(49% 0.110 65)",
+          "oklch(61% 0.110 65)",
+          "oklch(72% 0.095 65)",
+          "oklch(84% 0.080 65)",
+          "oklch(95% 0.066 65)"
+        ]
       },
       "high": {
         "role": "status",
         "displayName": "Escalation Orange",
-        "darkValue": "#ee8650",
+        "canonical": "oklch(52.3% 0.165 38)",
+        "darkValue": "#f68d5a",
         "tonalRamp": [
-          "oklch(15% 0.078 38)",
-          "oklch(26% 0.110 38)",
-          "oklch(38% 0.145 38)",
-          "oklch(49% 0.174 38)",
-          "oklch(61% 0.174 38)",
-          "oklch(72% 0.145 38)",
-          "oklch(84% 0.110 38)",
-          "oklch(95% 0.078 38)"
-        ],
-        "canonical": "oklch(55.3% 0.174 38)"
+          "oklch(15% 0.093 38)",
+          "oklch(26% 0.114 38)",
+          "oklch(38% 0.134 38)",
+          "oklch(49% 0.155 38)",
+          "oklch(61% 0.155 38)",
+          "oklch(72% 0.134 38)",
+          "oklch(84% 0.114 38)",
+          "oklch(95% 0.093 38)"
+        ]
       },
       "p1": {
         "role": "status",
         "displayName": "Severity P1",
-        "darkValue": "#f2555c",
+        "canonical": "oklch(53.3% 0.194 20)",
+        "darkValue": "#ff6b78",
         "tonalRamp": [
-          "oklch(15% 0.089 20)",
-          "oklch(26% 0.126 20)",
-          "oklch(38% 0.168 20)",
-          "oklch(49% 0.205 20)",
-          "oklch(61% 0.205 20)",
-          "oklch(72% 0.168 20)",
-          "oklch(84% 0.126 20)",
-          "oklch(95% 0.089 20)"
-        ],
-        "canonical": "oklch(59.9% 0.206 20)"
+          "oklch(15% 0.110 20)",
+          "oklch(26% 0.134 20)",
+          "oklch(38% 0.158 20)",
+          "oklch(49% 0.182 20)",
+          "oklch(61% 0.182 20)",
+          "oklch(72% 0.158 20)",
+          "oklch(84% 0.134 20)",
+          "oklch(95% 0.110 20)"
+        ]
       },
       "p2": {
         "role": "status",
         "displayName": "Severity P2",
-        "darkValue": "#ee8650",
+        "canonical": "oklch(52.3% 0.165 38)",
+        "darkValue": "#f68d5a",
         "tonalRamp": [
-          "oklch(15% 0.078 38)",
-          "oklch(26% 0.110 38)",
-          "oklch(38% 0.145 38)",
-          "oklch(49% 0.174 38)",
-          "oklch(61% 0.174 38)",
-          "oklch(72% 0.145 38)",
-          "oklch(84% 0.110 38)",
-          "oklch(95% 0.078 38)"
-        ],
-        "canonical": "oklch(55.3% 0.174 38)"
+          "oklch(15% 0.093 38)",
+          "oklch(26% 0.114 38)",
+          "oklch(38% 0.134 38)",
+          "oklch(49% 0.155 38)",
+          "oklch(61% 0.155 38)",
+          "oklch(72% 0.134 38)",
+          "oklch(84% 0.114 38)",
+          "oklch(95% 0.093 38)"
+        ]
       },
       "p3": {
         "role": "status",
         "displayName": "Severity P3",
-        "darkValue": "#e9b45a",
+        "canonical": "oklch(52.0% 0.117 65)",
+        "darkValue": "#f0b75e",
         "tonalRamp": [
-          "oklch(15% 0.062 66)",
-          "oklch(26% 0.086 66)",
-          "oklch(38% 0.111 66)",
-          "oklch(49% 0.127 66)",
-          "oklch(61% 0.127 66)",
-          "oklch(72% 0.111 66)",
-          "oklch(84% 0.086 66)",
-          "oklch(95% 0.062 66)"
-        ],
-        "canonical": "oklch(56.8% 0.127 66)"
+          "oklch(15% 0.066 65)",
+          "oklch(26% 0.080 65)",
+          "oklch(38% 0.095 65)",
+          "oklch(49% 0.110 65)",
+          "oklch(61% 0.110 65)",
+          "oklch(72% 0.095 65)",
+          "oklch(84% 0.080 65)",
+          "oklch(95% 0.066 65)"
+        ]
       },
       "p4": {
         "role": "status",
         "displayName": "Severity P4",
-        "darkValue": "#6bc99a",
+        "canonical": "oklch(50.7% 0.098 172)",
+        "darkValue": "#5fd3a5",
         "tonalRamp": [
-          "oklch(15% 0.054 175)",
-          "oklch(26% 0.073 175)",
-          "oklch(38% 0.093 175)",
-          "oklch(49% 0.102 175)",
-          "oklch(61% 0.102 175)",
-          "oklch(72% 0.093 175)",
-          "oklch(84% 0.073 175)",
-          "oklch(95% 0.054 175)"
-        ],
-        "canonical": "oklch(54.2% 0.102 175)"
+          "oklch(15% 0.055 172)",
+          "oklch(26% 0.068 172)",
+          "oklch(38% 0.080 172)",
+          "oklch(49% 0.092 172)",
+          "oklch(61% 0.092 172)",
+          "oklch(72% 0.080 172)",
+          "oklch(84% 0.068 172)",
+          "oklch(95% 0.055 172)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep Ink",
+        "canonical": "oklch(26.5% 0.043 218)",
+        "darkValue": "#10202a",
+        "tonalRamp": [
+          "oklch(15% 0.024 218)",
+          "oklch(26% 0.029 218)",
+          "oklch(38% 0.035 218)",
+          "oklch(49% 0.040 218)",
+          "oklch(61% 0.040 218)",
+          "oklch(72% 0.035 218)",
+          "oklch(84% 0.029 218)",
+          "oklch(95% 0.024 218)"
+        ]
       },
       "bg": {
         "role": "neutral",
-        "displayName": "Mist",
-        "darkValue": "#1f1e1d",
+        "displayName": "Soft Blue Surface",
+        "canonical": "oklch(94.0% 0.017 256)",
+        "darkValue": "#252c38",
         "tonalRamp": [
-          "oklch(15% 0.005 258)",
-          "oklch(26% 0.005 258)",
-          "oklch(38% 0.005 258)",
-          "oklch(49% 0.005 258)",
-          "oklch(61% 0.005 258)",
-          "oklch(72% 0.005 258)",
-          "oklch(84% 0.005 258)",
-          "oklch(95% 0.005 258)"
-        ],
-        "canonical": "oklch(96.9% 0.005 258)"
+          "oklch(15% 0.010 256)",
+          "oklch(26% 0.012 256)",
+          "oklch(38% 0.014 256)",
+          "oklch(49% 0.016 256)",
+          "oklch(61% 0.016 256)",
+          "oklch(72% 0.014 256)",
+          "oklch(84% 0.012 256)",
+          "oklch(95% 0.010 256)"
+        ]
       },
       "chrome": {
         "role": "neutral",
         "displayName": "Chrome",
-        "darkValue": "#1a1918",
+        "canonical": "oklch(95.3% 0.015 257)",
+        "darkValue": "#2b3341",
         "tonalRamp": [
-          "oklch(15% 0.000 258)",
-          "oklch(26% 0.000 258)",
-          "oklch(38% 0.000 258)",
-          "oklch(49% 0.000 258)",
-          "oklch(61% 0.000 258)",
-          "oklch(72% 0.000 258)",
-          "oklch(84% 0.000 258)",
-          "oklch(95% 0.000 258)"
+          "oklch(15% 0.009 257)",
+          "oklch(26% 0.011 257)",
+          "oklch(38% 0.013 257)",
+          "oklch(49% 0.014 257)",
+          "oklch(61% 0.014 257)",
+          "oklch(72% 0.013 257)",
+          "oklch(84% 0.011 257)",
+          "oklch(95% 0.009 257)"
         ]
       },
-      "panel": {
+      "fg": {
         "role": "neutral",
-        "displayName": "Panel",
-        "darkValue": "rgb(48 47 44 / 0.8)",
+        "displayName": "Slate Ink",
+        "canonical": "oklch(29.4% 0.048 262)",
+        "darkValue": "#e5ebf4",
         "tonalRamp": [
-          "oklch(15% 0.010 258)",
-          "oklch(26% 0.010 258)",
-          "oklch(38% 0.010 258)",
-          "oklch(49% 0.010 258)",
-          "oklch(61% 0.010 258)",
-          "oklch(72% 0.010 258)",
-          "oklch(84% 0.010 258)",
-          "oklch(95% 0.010 258)"
+          "oklch(15% 0.027 262)",
+          "oklch(26% 0.033 262)",
+          "oklch(38% 0.039 262)",
+          "oklch(49% 0.045 262)",
+          "oklch(61% 0.045 262)",
+          "oklch(72% 0.039 262)",
+          "oklch(84% 0.033 262)",
+          "oklch(95% 0.027 262)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "oklch(48.3% 0.047 260)",
+        "darkValue": "#aab5c7",
+        "tonalRamp": [
+          "oklch(15% 0.026 260)",
+          "oklch(26% 0.032 260)",
+          "oklch(38% 0.038 260)",
+          "oklch(49% 0.044 260)",
+          "oklch(61% 0.044 260)",
+          "oklch(72% 0.038 260)",
+          "oklch(84% 0.032 260)",
+          "oklch(95% 0.026 260)"
+        ]
+      },
+      "dim": {
+        "role": "neutral",
+        "displayName": "Dim Slate",
+        "canonical": "oklch(51.5% 0.050 262)",
+        "darkValue": "#95a1b5",
+        "tonalRamp": [
+          "oklch(15% 0.028 262)",
+          "oklch(26% 0.035 262)",
+          "oklch(38% 0.041 262)",
+          "oklch(49% 0.047 262)",
+          "oklch(61% 0.047 262)",
+          "oklch(72% 0.041 262)",
+          "oklch(84% 0.035 262)",
+          "oklch(95% 0.028 262)"
         ]
       },
       "panel-2": {
         "role": "neutral",
         "displayName": "Panel 2",
-        "darkValue": "rgb(255 248 240 / 0.05)",
+        "canonical": "rgb(150 172 206 / 0.16)",
+        "darkValue": "rgb(10 14 22 / 0.22)",
         "tonalRamp": [
-          "oklch(15% 0.010 258)",
-          "oklch(26% 0.010 258)",
-          "oklch(38% 0.010 258)",
-          "oklch(49% 0.010 258)",
-          "oklch(61% 0.010 258)",
-          "oklch(72% 0.010 258)",
-          "oklch(84% 0.010 258)",
-          "oklch(95% 0.010 258)"
+          "oklch(15% 0.031 259)",
+          "oklch(26% 0.038 259)",
+          "oklch(38% 0.045 259)",
+          "oklch(49% 0.052 259)",
+          "oklch(61% 0.052 259)",
+          "oklch(72% 0.045 259)",
+          "oklch(84% 0.038 259)",
+          "oklch(95% 0.031 259)"
         ]
       },
       "panel-3": {
         "role": "neutral",
         "displayName": "Panel 3",
-        "darkValue": "rgb(255 248 240 / 0.08)",
+        "canonical": "rgb(150 172 206 / 0.26)",
+        "darkValue": "rgb(10 14 22 / 0.34)",
         "tonalRamp": [
-          "oklch(15% 0.010 258)",
-          "oklch(26% 0.010 258)",
-          "oklch(38% 0.010 258)",
-          "oklch(49% 0.010 258)",
-          "oklch(61% 0.010 258)",
-          "oklch(72% 0.010 258)",
-          "oklch(84% 0.010 258)",
-          "oklch(95% 0.010 258)"
-        ]
-      },
-      "glass": {
-        "role": "neutral",
-        "displayName": "Glass",
-        "darkValue": "rgb(52 50 46 / 0.5)",
-        "tonalRamp": [
-          "oklch(15% 0.010 258)",
-          "oklch(26% 0.010 258)",
-          "oklch(38% 0.010 258)",
-          "oklch(49% 0.010 258)",
-          "oklch(61% 0.010 258)",
-          "oklch(72% 0.010 258)",
-          "oklch(84% 0.010 258)",
-          "oklch(95% 0.010 258)"
-        ]
-      },
-      "glass-strong": {
-        "role": "neutral",
-        "displayName": "Glass Strong",
-        "darkValue": "rgb(36 35 33 / 0.78)",
-        "tonalRamp": [
-          "oklch(15% 0.010 258)",
-          "oklch(26% 0.010 258)",
-          "oklch(38% 0.010 258)",
-          "oklch(49% 0.010 258)",
-          "oklch(61% 0.010 258)",
-          "oklch(72% 0.010 258)",
-          "oklch(84% 0.010 258)",
-          "oklch(95% 0.010 258)"
-        ]
-      },
-      "glass-soft": {
-        "role": "neutral",
-        "displayName": "Glass Soft",
-        "darkValue": "rgb(255 248 240 / 0.045)",
-        "tonalRamp": [
-          "oklch(15% 0.010 258)",
-          "oklch(26% 0.010 258)",
-          "oklch(38% 0.010 258)",
-          "oklch(49% 0.010 258)",
-          "oklch(61% 0.010 258)",
-          "oklch(72% 0.010 258)",
-          "oklch(84% 0.010 258)",
-          "oklch(95% 0.010 258)"
+          "oklch(15% 0.031 259)",
+          "oklch(26% 0.038 259)",
+          "oklch(38% 0.045 259)",
+          "oklch(49% 0.052 259)",
+          "oklch(61% 0.052 259)",
+          "oklch(72% 0.045 259)",
+          "oklch(84% 0.038 259)",
+          "oklch(95% 0.031 259)"
         ]
       },
       "line": {
         "role": "neutral",
         "displayName": "Hairline",
-        "darkValue": "rgb(232 224 210 / 0.1)",
+        "canonical": "rgb(132 156 194 / 0.24)",
+        "darkValue": "rgb(150 170 205 / 0.12)",
         "tonalRamp": [
-          "oklch(15% 0.012 260)",
-          "oklch(26% 0.012 260)",
-          "oklch(38% 0.012 260)",
-          "oklch(49% 0.012 260)",
-          "oklch(61% 0.012 260)",
-          "oklch(72% 0.012 260)",
-          "oklch(84% 0.012 260)",
-          "oklch(95% 0.012 260)"
-        ],
-        "canonical": "oklch(92.6% 0.012 260)"
+          "oklch(15% 0.035 259)",
+          "oklch(26% 0.043 259)",
+          "oklch(38% 0.051 259)",
+          "oklch(49% 0.059 259)",
+          "oklch(61% 0.059 259)",
+          "oklch(72% 0.051 259)",
+          "oklch(84% 0.043 259)",
+          "oklch(95% 0.035 259)"
+        ]
       },
       "line-strong": {
         "role": "neutral",
         "displayName": "Strong Hairline",
-        "darkValue": "rgb(232 224 210 / 0.18)",
+        "canonical": "rgb(116 140 180 / 0.42)",
+        "darkValue": "rgb(150 170 205 / 0.22)",
         "tonalRamp": [
-          "oklch(15% 0.019 258)",
-          "oklch(26% 0.019 258)",
-          "oklch(38% 0.019 258)",
-          "oklch(49% 0.019 258)",
-          "oklch(61% 0.019 258)",
-          "oklch(72% 0.019 258)",
-          "oklch(84% 0.019 258)",
-          "oklch(95% 0.019 258)"
-        ],
-        "canonical": "oklch(86.4% 0.019 258)"
+          "oklch(15% 0.037 260)",
+          "oklch(26% 0.046 260)",
+          "oklch(38% 0.054 260)",
+          "oklch(49% 0.062 260)",
+          "oklch(61% 0.062 260)",
+          "oklch(72% 0.054 260)",
+          "oklch(84% 0.046 260)",
+          "oklch(95% 0.037 260)"
+        ]
       },
-      "fg": {
+      "neu-dark": {
         "role": "neutral",
-        "displayName": "Slate Ink",
-        "darkValue": "#f2efe8",
+        "displayName": "Shadow",
+        "canonical": "rgb(146 168 202 / 0.55)",
+        "darkValue": "rgb(6 9 15 / 0.72)",
         "tonalRamp": [
-          "oklch(15% 0.026 256)",
-          "oklch(26% 0.026 256)",
-          "oklch(38% 0.026 256)",
-          "oklch(49% 0.026 256)",
-          "oklch(61% 0.026 256)",
-          "oklch(72% 0.026 256)",
-          "oklch(84% 0.026 256)",
-          "oklch(95% 0.026 256)"
-        ],
-        "canonical": "oklch(25.7% 0.026 256)"
+          "oklch(15% 0.031 259)",
+          "oklch(26% 0.038 259)",
+          "oklch(38% 0.045 259)",
+          "oklch(49% 0.052 259)",
+          "oklch(61% 0.052 259)",
+          "oklch(72% 0.045 259)",
+          "oklch(84% 0.038 259)",
+          "oklch(95% 0.031 259)"
+        ]
       },
-      "muted": {
+      "neu-light": {
         "role": "neutral",
-        "displayName": "Slate",
-        "darkValue": "#b3afa5",
+        "displayName": "Highlight",
+        "canonical": "rgb(255 255 255 / 0.92)",
+        "darkValue": "rgb(66 79 102 / 0.55)",
         "tonalRamp": [
-          "oklch(15% 0.031 258)",
-          "oklch(26% 0.034 258)",
-          "oklch(38% 0.034 258)",
-          "oklch(49% 0.034 258)",
-          "oklch(61% 0.034 258)",
-          "oklch(72% 0.034 258)",
-          "oklch(84% 0.034 258)",
-          "oklch(95% 0.031 258)"
-        ],
-        "canonical": "oklch(52.4% 0.034 258)"
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(38% 0.000 90)",
+          "oklch(49% 0.000 90)",
+          "oklch(61% 0.000 90)",
+          "oklch(72% 0.000 90)",
+          "oklch(84% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
       },
-      "dim": {
+      "neu-track": {
         "role": "neutral",
-        "displayName": "Dim Slate",
-        "darkValue": "#9a968c",
+        "displayName": "Track",
+        "canonical": "rgb(146 168 202 / 0.32)",
+        "darkValue": "rgb(8 11 18 / 0.38)",
         "tonalRamp": [
-          "oklch(15% 0.033 262)",
-          "oklch(26% 0.039 262)",
-          "oklch(38% 0.039 262)",
-          "oklch(49% 0.039 262)",
-          "oklch(61% 0.039 262)",
-          "oklch(72% 0.039 262)",
-          "oklch(84% 0.039 262)",
-          "oklch(95% 0.033 262)"
-        ],
-        "canonical": "oklch(55.3% 0.039 262)"
-      },
-      "auth-hero-deep": {
-        "role": "auth",
-        "displayName": "Auth Hero Deep Teal",
-        "darkValue": "#1a1918",
-        "tonalRamp": [
-          "oklch(15% 0.040 225)",
-          "oklch(26% 0.051 225)",
-          "oklch(38% 0.060 225)",
-          "oklch(49% 0.060 225)",
-          "oklch(61% 0.060 225)",
-          "oklch(72% 0.060 225)",
-          "oklch(84% 0.051 225)",
-          "oklch(95% 0.040 225)"
+          "oklch(15% 0.031 259)",
+          "oklch(26% 0.038 259)",
+          "oklch(38% 0.045 259)",
+          "oklch(49% 0.052 259)",
+          "oklch(61% 0.052 259)",
+          "oklch(72% 0.045 259)",
+          "oklch(84% 0.038 259)",
+          "oklch(95% 0.031 259)"
         ]
       },
-      "auth-sheet": {
-        "role": "auth",
-        "displayName": "Auth Sheet",
-        "darkValue": "#262523",
+      "neon-dim": {
+        "role": "primary",
+        "displayName": "Signal Blue Tint",
+        "canonical": "rgb(45 106 222 / 0.14)",
+        "darkValue": "rgb(90 140 245 / 0.18)",
         "tonalRamp": [
-          "oklch(15% 0.000 240)",
-          "oklch(26% 0.000 240)",
-          "oklch(38% 0.000 240)",
-          "oklch(49% 0.000 240)",
-          "oklch(61% 0.000 240)",
-          "oklch(72% 0.000 240)",
-          "oklch(84% 0.000 240)",
-          "oklch(95% 0.000 240)"
+          "oklch(15% 0.106 262)",
+          "oklch(26% 0.130 262)",
+          "oklch(38% 0.153 262)",
+          "oklch(49% 0.177 262)",
+          "oklch(61% 0.177 262)",
+          "oklch(72% 0.153 262)",
+          "oklch(84% 0.130 262)",
+          "oklch(95% 0.106 262)"
         ]
-      },
-      "auth-page": {
-        "role": "auth",
-        "displayName": "Auth Page",
-        "darkValue": "#1c1b1a",
-        "tonalRamp": [
-          "oklch(15% 0.008 240)",
-          "oklch(26% 0.008 240)",
-          "oklch(38% 0.008 240)",
-          "oklch(49% 0.008 240)",
-          "oklch(61% 0.008 240)",
-          "oklch(72% 0.008 240)",
-          "oklch(84% 0.008 240)",
-          "oklch(95% 0.008 240)"
-        ]
-      },
-      "auth-field": {
-        "role": "auth",
-        "displayName": "Auth Field",
-        "darkValue": "#2f2e2b",
-        "tonalRamp": [
-          "oklch(15% 0.006 240)",
-          "oklch(26% 0.006 240)",
-          "oklch(38% 0.006 240)",
-          "oklch(49% 0.006 240)",
-          "oklch(61% 0.006 240)",
-          "oklch(72% 0.006 240)",
-          "oklch(84% 0.006 240)",
-          "oklch(95% 0.006 240)"
-        ]
-      },
-      "auth-field-border": {
-        "role": "auth",
-        "displayName": "Auth Field Border",
-        "darkValue": "rgb(232 224 210 / 0.14)",
-        "tonalRamp": [
-          "oklch(15% 0.015 250)",
-          "oklch(26% 0.015 250)",
-          "oklch(38% 0.015 250)",
-          "oklch(49% 0.015 250)",
-          "oklch(61% 0.015 250)",
-          "oklch(72% 0.015 250)",
-          "oklch(84% 0.015 250)",
-          "oklch(95% 0.015 250)"
-        ]
-      },
-      "auth-cta": {
-        "role": "auth",
-        "displayName": "Auth Teal CTA",
-        "darkValue": "#d97757",
-        "tonalRamp": [
-          "oklch(15% 0.051 223)",
-          "oklch(26% 0.069 223)",
-          "oklch(38% 0.087 223)",
-          "oklch(49% 0.094 223)",
-          "oklch(61% 0.094 223)",
-          "oklch(72% 0.087 223)",
-          "oklch(84% 0.069 223)",
-          "oklch(95% 0.051 223)"
-        ],
-        "canonical": "oklch(52.0% 0.094 223)"
-      },
-      "auth-cta-hover": {
-        "role": "auth",
-        "displayName": "Auth Teal CTA Hover",
-        "darkValue": "#e48a6b",
-        "tonalRamp": [
-          "oklch(15% 0.051 223)",
-          "oklch(26% 0.069 223)",
-          "oklch(38% 0.087 223)",
-          "oklch(49% 0.094 223)",
-          "oklch(61% 0.094 223)",
-          "oklch(72% 0.087 223)",
-          "oklch(84% 0.069 223)",
-          "oklch(95% 0.051 223)"
-        ]
-      },
-      "auth-placeholder": {
-        "role": "auth",
-        "displayName": "Auth Placeholder",
-        "darkValue": "#9a968c",
-        "tonalRamp": [
-          "oklch(15% 0.033 262)",
-          "oklch(26% 0.039 262)",
-          "oklch(38% 0.039 262)",
-          "oklch(49% 0.039 262)",
-          "oklch(61% 0.039 262)",
-          "oklch(72% 0.039 262)",
-          "oklch(84% 0.039 262)",
-          "oklch(95% 0.033 262)"
-        ]
-      },
-      "map-pin": {
-        "value": "var(--color-accent)",
-        "darkValue": "#e6d3ad",
-        "role": "Non-SOS map pins; never red"
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "SOS countdown numeral; the SOS button label uses the same face at 1.75rem."
+        "purpose": "SOS countdown numeral only (Manrope 700, 6rem)."
       },
       "headline": {
         "displayName": "Headline",
@@ -550,249 +466,256 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Dashboard card and panel titles."
+        "purpose": "Card and feature titles."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Rows, descriptions, form copy; inputs are 1rem below 768px."
+        "purpose": "Rows, descriptions, form copy; inputs 1rem below 768px."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Field labels, chip and segmented text; in-panel section headings at 11px uppercase."
+        "purpose": "Field labels, chip and segmented text, buttons at 0.8125rem."
+      },
+      "caps": {
+        "displayName": "Caps",
+        "purpose": "Product line under the wordmark and in-panel section labels; never above a page heading."
       },
       "mono": {
         "displayName": "Mono",
-        "purpose": "Machine values: tracking codes, relative times, counts, table headers."
+        "purpose": "Machine data only: codes, times, counts, phone numbers."
       }
     },
     "shadows": [
       {
-        "name": "glass-panel",
-        "value": "var(--glass-highlight), 0 0 0 1px var(--glass-edge), var(--glass-shadow)",
-        "purpose": "Every card and panel, with backdrop-filter blur(22px) saturate(1.6); 16px blur under 768px."
+        "name": "neu-raised",
+        "value": "10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light)",
+        "purpose": "Cards, panels, navigation bars, auth sheet, big SOS dish. Tightens to 7px 7px 16px / -7px -7px 16px below 768px."
       },
       {
-        "name": "glass-highlight-light",
-        "value": "inset 0 1px 0 rgb(255 255 255 / 0.9)",
-        "purpose": "Lit top edge (dark: alpha 0.07)."
+        "name": "neu-raised-sm",
+        "value": "5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light)",
+        "purpose": "Small tiles, convex controls, map zoom control, hover of raised-xs controls. Also aliased as --card-shadow."
       },
       {
-        "name": "glass-shadow-light",
-        "value": "0 10px 30px -12px rgb(30 41 72 / 0.18), 0 2px 6px -2px rgb(30 41 72 / 0.06)",
-        "purpose": "Soft drop under glass, light theme."
+        "name": "neu-raised-xs",
+        "value": "3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light)",
+        "purpose": "Ghost buttons, segmented track, unchosen choice tiles, tooltips."
       },
       {
-        "name": "glass-shadow-dark",
-        "value": "0 16px 40px -16px rgb(0 0 0 / 0.55), 0 2px 8px -2px rgb(0 0 0 / 0.3)",
-        "purpose": "Soft drop under glass, dark theme."
+        "name": "neu-inset",
+        "value": "inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light)",
+        "purpose": "Deep wells."
       },
       {
-        "name": "glass-bar",
-        "value": "glass-panel stack with backdrop-filter blur(28px) saturate(1.8) over --glass-strong",
-        "purpose": "Sidebars, top bars, tab bar."
+        "name": "neu-inset-sm",
+        "value": "inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light)",
+        "purpose": "Every pressed state (chosen segment, chosen tile, active nav, selected queue row, :active buttons), text fields, value wells, rail SOS dish."
       },
       {
-        "name": "neon-glow",
-        "value": "0 0 0 1px var(--color-accent), 0 4px 16px var(--neon-glow)",
-        "purpose": "Primary button only; 0 6px 24px on hover."
+        "name": "accent-lift",
+        "value": "inset 1px 1px 0 rgb(255 255 255 / 0.22), 6px 6px 14px rgb(45 106 222 / 0.32), -5px -5px 12px var(--neu-light)",
+        "purpose": "Primary and auth buttons only. Dark: 6px 6px 14px rgb(8 11 18 / 0.6), -4px -4px 10px var(--neu-light)."
       },
       {
-        "name": "sos-glow",
-        "value": "0 0 40px var(--sos-glow)",
-        "purpose": "SOS button only; pulses between 28px and 56px."
+        "name": "accent-pressed",
+        "value": "inset 3px 3px 7px rgb(0 0 0 / 0.22), inset -2px -2px 6px rgb(255 255 255 / 0.12)",
+        "purpose": "Primary and auth buttons on :active (replaces the lift)."
       },
       {
-        "name": "auth-cta",
-        "value": "0 8px 20px -8px var(--auth-cta-glow)",
-        "purpose": "Auth submit button."
+        "name": "sos-sphere",
+        "value": "inset 2px 3px 6px rgb(255 255 255 / 0.28), inset -4px -6px 12px rgb(120 0 20 / 0.22), 6px 8px 18px var(--sos-glow)",
+        "purpose": "SOS button only; idle pulse widens the drop to 34px and adds a 0 0 0 7px rgb(236 59 82 / 0.1) halo. Rail size: still 2px 3px 6px lift."
       },
       {
-        "name": "card-shadow",
-        "value": "0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.04)",
-        "purpose": "Leaflet controls and tooltips (none in dark)."
-      },
-      {
-        "name": "focus-ring",
-        "value": "outline: 2px solid var(--color-neon); outline-offset: 2px",
-        "purpose": "Global :focus-visible ring for links, buttons, switches, tabs, summary and select; auth screens use --auth-link."
-      },
-      {
-        "name": "input-focus",
-        "value": "0 0 0 3px var(--color-neon-dim)",
-        "purpose": "Input focus halo, paired with a neon border."
+        "name": "focus-halo",
+        "value": "var(--neu-inset-sm), 0 0 0 3px var(--color-neon-dim)",
+        "purpose": "Focused text field, with a 55% Signal Blue border."
       }
     ],
     "motion": [
       {
         "name": "ease-smooth-out",
         "value": "cubic-bezier(0.22, 1, 0.36, 1)",
-        "purpose": "Exponential ease-out for reveals, tile lift, segmented control, page enter, activity feed."
+        "purpose": "Hover lift, segmented and nav state, page enter, activity timeline."
       },
       {
         "name": "ease-out",
         "value": "cubic-bezier(0.23, 1, 0.32, 1)",
-        "purpose": "Exponential ease-out for button state changes, pulses, theme switch."
+        "purpose": "Button press, field focus, SOS press, pulses."
       },
       {
-        "name": "state-change",
-        "value": "150ms",
-        "purpose": "Button hover, input focus, press."
+        "name": "press",
+        "value": "150-160ms",
+        "purpose": "Button and SOS press/release."
       },
       {
-        "name": "tile-lift",
-        "value": "220ms, translateY(-2px); press scale(0.985)",
-        "purpose": "Clickable glass tiles on hover-capable devices."
+        "name": "state",
+        "value": "200-220ms",
+        "purpose": "Hover lift, segmented option, nav active, theme switch colour fade."
       },
       {
         "name": "page-transition",
-        "value": "out 140ms fade and rise 4px; in 260ms fade from 10px below",
-        "purpose": "View Transitions cross-fade; navigation chrome stays still."
+        "value": "out 140ms / in 260ms",
+        "purpose": "View Transitions cross-fade with a 10px rise; chrome stays still."
       },
       {
-        "name": "activity-draw",
-        "value": "marker pop 420ms, connector draw 380ms (+120ms), staggered by --reveal-delay; new row 520ms slide out of a 6px blur",
+        "name": "activity-reveal",
+        "value": "pop 420ms, draw 380ms, enter 520ms",
         "purpose": "The dashboard's one authored motion moment."
       },
       {
         "name": "sos-pulse",
         "value": "2.4s infinite",
-        "purpose": "Idle SOS button glow."
-      },
-      {
-        "name": "marker-ping",
-        "value": "1.6s infinite",
-        "purpose": "Live alert map marker."
+        "purpose": "Idle SOS glow (hero and tab bar sizes only)."
       },
       {
         "name": "reduced-motion",
-        "value": "animation and transition durations 0.01ms; activity and skeleton animations removed, final state shown",
-        "purpose": "prefers-reduced-motion: reduce."
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "All animations and transitions collapse to 0.01ms; timeline shows final state; skeleton sweep removed."
       }
     ],
     "breakpoints": [
-      {
-        "name": "phone",
-        "value": "<768px",
-        "purpose": "Lighter glass blur (16px), 16px input text, bottom tab bar."
-      },
       {
         "name": "sm",
         "value": "640px"
       },
       {
         "name": "md",
-        "value": "768px"
+        "value": "768px",
+        "note": "tab bar becomes rail; inputs drop to 0.875rem; raised shadow widens"
       },
       {
         "name": "lg",
         "value": "1024px",
-        "purpose": "Auth two-column layout."
+        "note": "admin sidebar docks; auth goes two-column"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
       },
       {
         "name": "2xl",
         "value": "1536px",
-        "purpose": "Student rail widens from 76px to 240px."
+        "note": "student rail expands to 240px with labels"
       }
-    ]
+    ],
+    "themes": {
+      "default": "light",
+      "dark": "html[data-theme=dark] redefines every token",
+      "anon": "html.anon rebinds the accent family to violet in both themes"
+    },
+    "legacyAliases": {
+      "--glass": "var(--neu-surface)",
+      "--glass-strong": "var(--color-chrome)",
+      "--glass-soft": "var(--neu-surface)",
+      "--card-shadow": "var(--neu-raised-sm)",
+      "--auth-hero": "still defined in .auth-shell; no longer paints the phone header"
+    }
   },
   "components": [
     {
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The one primary action on a surface: bright cyan fill, dark ink text, neon glow.",
-      "html": "<button class=\"ds-btn-neon\">Start walk</button>",
-      "css": ".ds-btn-neon { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.625rem 1.125rem; border: none; border-radius: 14px; background: var(--color-accent, #00cfe8); color: var(--color-ink, #062a33); font: 700 0.8125rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.02em; box-shadow: 0 0 0 1px var(--color-accent, #00cfe8), 0 4px 16px var(--neon-glow, rgb(0 207 232 / 0.28)); cursor: pointer; transition: filter 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-neon:hover { filter: brightness(1.08); box-shadow: 0 0 0 1px var(--color-accent, #00cfe8), 0 6px 24px var(--neon-glow, rgb(0 207 232 / 0.28)); } .ds-btn-neon:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; } .ds-btn-neon:disabled { opacity: 0.55; cursor: wait; }"
+      "description": "The one blue convex action per surface; white text, coloured lift, sinks on press.",
+      "html": "<button class=\"ds-btn-primary\">Start walk · 10 min</button>",
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:2.75rem;padding:.625rem 1.25rem;border:0;border-radius:16px;background:var(--accent-fill);color:var(--color-on-accent);font:700 .8125rem/1.2 var(--font-sans);letter-spacing:.02em;box-shadow:inset 1px 1px 0 rgb(255 255 255 / .22),var(--accent-lift);cursor:pointer;transition:transform 160ms var(--ease-out),box-shadow 160ms var(--ease-out),filter 160ms var(--ease-out)}.ds-btn-primary:hover{filter:brightness(1.06)}.ds-btn-primary:active{transform:scale(.98);box-shadow:inset 3px 3px 7px rgb(0 0 0 / .22),inset -2px -2px 6px rgb(255 255 255 / .12)}.ds-btn-primary:focus-visible{outline:2px solid var(--color-neon,#1f5bc7);outline-offset:2px;}"
     },
     {
       "name": "Ghost Button",
       "kind": "button",
       "refersTo": "button-ghost",
-      "description": "Secondary actions: faint glass fill with a hairline.",
+      "description": "Secondary action: a raised pad of the surface that rises on hover and presses in on click.",
       "html": "<button class=\"ds-btn-ghost\">SOS map</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.625rem 1.125rem; border-radius: 14px; border: 1px solid var(--color-line, #e2e7ef); background: var(--glass-soft, rgb(255 255 255 / 0.5)); color: var(--color-fg, #1b2430); font: 500 0.8125rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-ghost:hover { background: var(--color-panel-2, rgb(255 255 255 / 0.55)); border-color: var(--color-line-strong, #cbd3df); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; }"
-    },
-    {
-      "name": "Auth Button",
-      "kind": "button",
-      "refersTo": "button-auth",
-      "description": "Submit on sign-in and sign-up: solid teal on an opaque sheet, AA text in both themes.",
-      "html": "<button class=\"ds-btn-auth\">Sign in</button>",
-      "css": ".ds-btn-auth { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3rem; padding: 0.75rem 1.125rem; border: none; border-radius: 14px; background: var(--auth-cta, #0e7490); color: var(--auth-cta-fg, #ffffff); font: 600 0.9375rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; box-shadow: 0 8px 20px -8px var(--auth-cta-glow, rgb(14 116 144 / 0.28)); cursor: pointer; transition: background 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-auth:hover { background: var(--auth-cta-hover, #0b6279); } .ds-btn-auth:active { transform: scale(0.99); } .ds-btn-auth:focus-visible { outline: 2px solid var(--auth-link, #0e7490); outline-offset: 2px; }"
-    },
-    {
-      "name": "SOS Button",
-      "kind": "custom",
-      "refersTo": "button-sos",
-      "description": "Hold-to-send SOS: red sphere in a conic progress ring, pulsing glow when idle.",
-      "html": "<div class=\"ds-sos-wrap\"><div class=\"ds-sos-ring\" style=\"--p:35\"></div><button class=\"ds-sos-btn\">SOS</button></div>",
-      "css": ".ds-sos-wrap { position: relative; width: 200px; height: 200px; display: grid; place-items: center; } .ds-sos-ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--sos-fill, #ff4357) calc(var(--p) * 1%), var(--color-line, #e2e7ef) 0); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 0); mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 0); } .ds-sos-btn { position: relative; width: 176px; height: 176px; border-radius: 50%; border: none; color: #fff; font: 700 1.75rem/1 'Space Grotesk', Inter, sans-serif; letter-spacing: 0.08em; background: radial-gradient(circle at 35% 30%, #ff7a86, var(--sos-fill, #ff4357) 60%); box-shadow: 0 0 40px var(--sos-glow, rgb(255 67 87 / 0.35)); cursor: pointer; transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1); animation: ds-sos-pulse 2.4s cubic-bezier(0.23, 1, 0.32, 1) infinite; } .ds-sos-btn:active { transform: scale(0.96); } .ds-sos-btn:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; } @keyframes ds-sos-pulse { 0%, 100% { box-shadow: 0 0 28px var(--sos-glow, rgb(255 67 87 / 0.35)); } 50% { box-shadow: 0 0 56px var(--sos-glow, rgb(255 67 87 / 0.35)), 0 0 0 6px rgb(255 67 87 / 0.08); } } @media (prefers-reduced-motion: reduce) { .ds-sos-btn { animation: none; } }"
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:2.75rem;padding:.625rem 1.125rem;border:0;border-radius:16px;background:var(--neu-surface);color:var(--color-fg);font:600 .8125rem/1.2 var(--font-sans);box-shadow:var(--neu-raised-xs);cursor:pointer;transition:box-shadow 160ms var(--ease-out),color 160ms var(--ease-out)}.ds-btn-ghost:hover{color:var(--color-neon);box-shadow:var(--neu-raised-sm)}.ds-btn-ghost:active{box-shadow:var(--neu-inset-sm)}.ds-btn-ghost:focus-visible{outline:2px solid var(--color-neon,#1f5bc7);outline-offset:2px;}"
     },
     {
       "name": "Text Field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Glass-soft field with a teal focus border and halo.",
-      "html": "<label class=\"ds-field-label\" for=\"ds-in\">Destination</label><input id=\"ds-in\" class=\"ds-input\" placeholder=\"Where to? e.g. Boys Hostel\">",
-      "css": ".ds-field-label { display: block; margin-bottom: 0.375rem; font: 500 0.75rem/1.33 Inter, ui-sans-serif, system-ui, sans-serif; color: var(--color-muted, #5e6b7e); } .ds-input { width: 100%; min-height: 2.75rem; padding: 0.625rem 0.875rem; border-radius: 14px; border: 1px solid var(--color-line, #e2e7ef); background: var(--glass-soft, rgb(255 255 255 / 0.5)); color: var(--color-fg, #1b2430); font: 400 0.875rem/1.4 Inter, ui-sans-serif, system-ui, sans-serif; caret-color: var(--color-neon, #00849a); outline: none; transition: border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-input::placeholder { color: var(--color-dim, #66738a); } .ds-input:focus, .ds-input:focus-visible { background: var(--color-panel, rgb(255 255 255 / 0.8)); border-color: var(--color-neon, #00849a); box-shadow: 0 0 0 3px var(--color-neon-dim, rgb(0 207 232 / 0.13)); }"
-    },
-    {
-      "name": "Glass Card",
-      "kind": "card",
-      "refersTo": "card",
-      "description": "The one panel material: frosted glass with a fixed header row over a scrolling body.",
-      "html": "<section class=\"ds-card\"><header class=\"ds-card-head\"><h2>Live queue</h2><span class=\"ds-badge\">8</span></header><div class=\"ds-card-body\">Suspicious · Central Library</div></section>",
-      "css": ".ds-card { background: var(--glass, rgb(255 255 255 / 0.55)); -webkit-backdrop-filter: blur(var(--glass-blur, 22px)) saturate(1.6); backdrop-filter: blur(var(--glass-blur, 22px)) saturate(1.6); border: 1px solid var(--glass-border, rgb(255 255 255 / 0.75)); box-shadow: var(--glass-highlight, inset 0 1px 0 rgb(255 255 255 / 0.9)), 0 0 0 1px var(--glass-edge, rgb(15 23 42 / 0.07)), var(--glass-shadow, 0 10px 30px -12px rgb(30 41 72 / 0.18)); border-radius: 22px; color: var(--color-fg, #1b2430); font: 400 0.875rem/1.43 Inter, ui-sans-serif, system-ui, sans-serif; overflow: hidden; } .ds-card-head { display: flex; align-items: center; gap: 0.5rem; min-height: 3.5rem; padding: 0.5rem 1rem; border-bottom: 1px solid var(--color-line, #e2e7ef); } .ds-card-head h2 { margin: 0; font: 600 0.875rem/1.43 'Space Grotesk', Inter, sans-serif; } .ds-badge { border-radius: 9999px; padding: 0.125rem 0.5rem; background: var(--color-panel-2, rgb(255 255 255 / 0.55)); box-shadow: 0 0 0 1px var(--color-line, #e2e7ef); font: 400 11px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--color-muted, #5e6b7e); } .ds-card-body { padding: 1rem; }"
+      "description": "Fields are pressed into the surface; focus adds a blue border and neon-dim halo.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Destination</span><input class=\"ds-input\" placeholder=\"Where to? e.g. Boys Hostel\"></label>",
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-field{display:block;width:280px;font-family:var(--font-sans)}.ds-field-label{display:block;margin-bottom:.45rem;font-size:.75rem;font-weight:600;color:var(--color-muted)}.ds-input{width:100%;box-sizing:border-box;min-height:2.75rem;padding:.625rem .95rem;border-radius:14px;border:1px solid transparent;background:var(--neu-surface);color:var(--color-fg);font:400 .875rem var(--font-sans);caret-color:var(--color-neon);box-shadow:var(--neu-inset-sm);outline:none;transition:border-color 150ms var(--ease-out),box-shadow 150ms var(--ease-out)}.ds-input::placeholder{color:var(--color-dim)}.ds-input:focus{border-color:color-mix(in srgb,var(--color-neon) 55%,transparent);box-shadow:var(--neu-inset-sm),0 0 0 3px var(--color-neon-dim)}"
     },
     {
       "name": "Segmented Control",
-      "kind": "nav",
+      "kind": "custom",
       "refersTo": "segmented",
-      "description": "Every filter and range switch; the pressed option inverts to ink.",
+      "description": "Raised track; the chosen option sinks into it with Signal Blue text.",
       "html": "<div class=\"ds-seg\" role=\"group\"><button aria-pressed=\"true\">All</button><button aria-pressed=\"false\">SOS</button><button aria-pressed=\"false\">Incidents</button></div>",
-      "css": ".ds-seg { display: inline-flex; gap: 2px; padding: 4px; background: var(--glass-soft, rgb(255 255 255 / 0.5)); border: 1px solid var(--color-line, #e2e7ef); border-radius: 14px; } .ds-seg > button { padding: 6px 14px; border: none; border-radius: 10px; background: transparent; color: var(--color-muted, #5e6b7e); font: 500 0.75rem/1.33 Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background-color 200ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms cubic-bezier(0.22, 1, 0.36, 1); } .ds-seg > button:hover { color: var(--color-fg, #1b2430); } .ds-seg > button[aria-pressed=\"true\"] { background: var(--color-fg, #1b2430); color: var(--color-panel, #ffffff); font-weight: 600; } .ds-seg > button:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; }"
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-seg{display:inline-flex;gap:4px;padding:5px;background:var(--neu-surface);border-radius:16px;box-shadow:var(--neu-raised-xs)}.ds-seg>button{padding:6px 14px;border:0;border-radius:11px;background:transparent;color:var(--color-muted);font:600 .75rem var(--font-sans);cursor:pointer;transition:box-shadow 220ms var(--ease-smooth-out),color 200ms var(--ease-smooth-out)}.ds-seg>button:hover{color:var(--color-fg)}.ds-seg>button[aria-pressed=\"true\"]{background:var(--neu-concave);color:var(--color-neon);box-shadow:var(--neu-inset-sm)}.ds-seg>button:focus-visible{outline:2px solid var(--color-neon,#1f5bc7);outline-offset:2px;}"
     },
     {
-      "name": "Severity and Kind Chips",
+      "name": "Raised Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A panel cut from the page: surface fill, 24px corners, raised shadow, no border; a pressed well holds a read-only value.",
+      "html": "<section class=\"ds-card\"><h3 class=\"ds-card-title\">Walk with me</h3><p class=\"ds-card-body\">Walking alone? We will check on you.</p><div class=\"ds-well\">Tracking code <code>CS-P2LW-55CK</code></div></section>",
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-card{width:300px;padding:16px;background:var(--neu-surface);border:0;border-radius:24px;box-shadow:var(--neu-raised);font-family:var(--font-sans);color:var(--color-fg);transition:transform 220ms var(--ease-smooth-out),box-shadow 220ms var(--ease-smooth-out)}.ds-card:hover{transform:translateY(-2px)}.ds-card:active{transform:none;box-shadow:var(--neu-inset-sm)}.ds-card-title{margin:0 0 4px;font:600 1rem/1.5 var(--font-display)}.ds-card-body{margin:0 0 12px;font-size:.875rem;color:var(--color-muted)}.ds-well{padding:12px;border-radius:12px;background:var(--neu-surface);box-shadow:var(--neu-inset-sm);font-size:.8125rem;color:var(--color-muted)}.ds-well code{font:500 .75rem var(--font-mono);color:var(--color-fg)}"
+    },
+    {
+      "name": "Navigation Rail Items",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Inactive items sit flat in Slate; the active item is pressed in with a Signal Blue icon.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item\" aria-current=\"page\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg>Dashboard</a><a class=\"ds-nav-item\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><path d=\"M14 2v6h6\"/></svg>Incidents</a></nav>",
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-nav{width:240px;padding:12px;border-radius:28px;background:var(--neu-surface);box-shadow:var(--neu-raised);display:grid;gap:6px;font-family:var(--font-sans)}.ds-nav-item{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 14px;border-radius:16px;color:var(--color-muted);font-size:.875rem;font-weight:500;text-decoration:none;transition:background-color 200ms,color 200ms,box-shadow 200ms}.ds-nav-item svg{color:var(--color-dim)}.ds-nav-item:hover{background:rgb(150 172 206 / .16);color:var(--color-fg)}.ds-nav-item[aria-current=\"page\"]{background:var(--neu-surface);box-shadow:var(--neu-inset-sm);color:var(--color-fg)}.ds-nav-item[aria-current=\"page\"] svg{color:var(--color-neon)}.ds-nav-item:focus-visible{outline:2px solid var(--color-neon,#1f5bc7);outline-offset:2px;}"
+    },
+    {
+      "name": "Signal Chips",
       "kind": "chip",
       "refersTo": "chip-p1",
-      "description": "Pill chips: signal colour text on a 15% tint of itself; always labelled.",
-      "html": "<span class=\"ds-chip ds-p1\">P1</span> <span class=\"ds-chip ds-p2\">P2</span> <span class=\"ds-chip ds-p3\">P3</span> <span class=\"ds-chip ds-p4\">P4</span> <span class=\"ds-kind ds-anon\">ANON</span> <span class=\"ds-kind ds-sos\">SOS</span>",
-      "css": ".ds-chip { display: inline-flex; align-items: center; border-radius: 9999px; padding: 4px 10px; font: 600 0.75rem/1.33 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.025em; } .ds-p1 { color: var(--color-p1, #e0354a); background: color-mix(in srgb, var(--color-p1, #e0354a) 15%, transparent); } .ds-p2 { color: var(--color-p2, #c2410c); background: color-mix(in srgb, var(--color-p2, #c2410c) 15%, transparent); } .ds-p3 { color: var(--color-p3, #a86500); background: color-mix(in srgb, var(--color-p3, #a86500) 15%, transparent); } .ds-p4 { color: var(--color-p4, #00826c); background: color-mix(in srgb, var(--color-p4, #00826c) 15%, transparent); } .ds-kind { display: inline-flex; width: 44px; justify-content: center; border-radius: 9999px; padding: 2px 0; font: 700 10px/1.4 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.05em; } .ds-anon { color: var(--color-violet, #6a55d6); background: color-mix(in srgb, var(--color-violet, #6a55d6) 15%, transparent); } .ds-sos { color: var(--color-sos, #e0354a); background: color-mix(in srgb, var(--color-sos, #e0354a) 15%, transparent); }"
+      "description": "Severity, status and kind as tinted pills with text labels; no border, no shadow.",
+      "html": "<span class=\"ds-chip ds-p1\">P1</span> <span class=\"ds-chip ds-review\">Under review</span> <span class=\"ds-chip ds-ok\">Resolved</span> <span class=\"ds-kind ds-anon\">ANON</span> <span class=\"ds-kind ds-sos\">SOS</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:9999px;font:600 .75rem/1.33 Inter,ui-sans-serif,sans-serif}.ds-p1{background:rgb(196 34 57 / .15);color:#c42239}.ds-review{background:rgb(91 70 201 / .15);color:#5b46c9}.ds-ok{background:rgb(0 119 95 / .15);color:#00775f}.ds-kind{display:inline-flex;justify-content:center;width:44px;padding:2px 0;border-radius:9999px;font:700 10px Inter,sans-serif;letter-spacing:.05em}.ds-anon{background:rgb(91 70 201 / .15);color:#5b46c9}.ds-sos{background:rgb(196 34 57 / .15);color:#c42239}"
     },
     {
-      "name": "Glass Tab Bar",
-      "kind": "nav",
-      "refersTo": "nav-bar",
-      "description": "Floating phone navigation; the active item sits in a cyan tint.",
-      "html": "<nav class=\"ds-tabbar\"><a class=\"ds-tab is-active\" href=\"#\">Home</a><a class=\"ds-tab\" href=\"#\">Report</a><a class=\"ds-tab\" href=\"#\">Anonymous</a><a class=\"ds-tab\" href=\"#\">My Reports</a></nav>",
-      "css": ".ds-tabbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 6px; border-radius: 28px; background: var(--glass-strong, rgb(255 255 255 / 0.72)); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8); border: 1px solid var(--glass-border, rgb(255 255 255 / 0.75)); box-shadow: var(--glass-highlight, inset 0 1px 0 rgb(255 255 255 / 0.9)), 0 0 0 1px var(--glass-edge, rgb(15 23 42 / 0.07)), var(--glass-shadow, 0 10px 30px -12px rgb(30 41 72 / 0.18)); } .ds-tab { display: grid; place-items: center; min-height: 44px; border-radius: 18px; color: var(--color-muted, #5e6b7e); font: 500 11px/1.2 Inter, ui-sans-serif, system-ui, sans-serif; text-decoration: none; transition: background-color 200ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms cubic-bezier(0.22, 1, 0.36, 1); } .ds-tab:hover { color: var(--color-fg, #1b2430); } .ds-tab.is-active { background: color-mix(in srgb, var(--color-accent, #00cfe8) 15%, transparent); color: var(--color-fg, #1b2430); box-shadow: inset 0 0 0 1px var(--color-neon-dim, rgb(0 207 232 / 0.13)); } .ds-tab:focus-visible { outline: 2px solid var(--color-neon, #00849a); outline-offset: 2px; }"
+      "name": "Choice Tile",
+      "kind": "custom",
+      "refersTo": "choice-tile",
+      "description": "Category and severity pickers: raised when available, sunk with a Signal Blue label when chosen.",
+      "html": "<div class=\"ds-tiles\"><button class=\"ds-tile\" aria-pressed=\"true\">Theft</button><button class=\"ds-tile\" aria-pressed=\"false\">Harassment</button><button class=\"ds-tile\" aria-pressed=\"false\">Medical</button></div>",
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-tiles{display:flex;gap:12px;padding:12px;background:var(--neu-surface)}.ds-tile{min-height:5rem;min-width:96px;padding:12px;border:0;border-radius:12px;background:var(--neu-surface);color:var(--color-fg);font:600 .75rem var(--font-sans);box-shadow:var(--neu-raised-xs);cursor:pointer;transition:box-shadow 200ms var(--ease-smooth-out),color 200ms}.ds-tile:hover{box-shadow:var(--neu-raised-sm)}.ds-tile[aria-pressed=\"true\"]{color:var(--color-neon);box-shadow:var(--neu-inset-sm)}.ds-tile:focus-visible{outline:2px solid var(--color-neon,#1f5bc7);outline-offset:2px;}"
+    },
+    {
+      "name": "SOS Dish",
+      "kind": "custom",
+      "refersTo": "button-sos",
+      "description": "Signature: a red sphere in a raised dish; the hold fills the pressed groove with a conic ring.",
+      "html": "<div class=\"ds-sos-wrap\"><div class=\"ds-sos-ring\" style=\"--p:35\"></div><button class=\"ds-sos-btn\">SOS</button></div>",
+      "css": ":host{--neu-surface:#e4ecf7;--neu-dark:rgb(146 168 202 / 0.55);--neu-light:rgb(255 255 255 / 0.92);--neu-raised:10px 10px 24px var(--neu-dark),-10px -10px 24px var(--neu-light);--neu-raised-sm:5px 5px 12px var(--neu-dark),-5px -5px 12px var(--neu-light);--neu-raised-xs:3px 3px 7px var(--neu-dark),-3px -3px 7px var(--neu-light);--neu-inset-sm:inset 3px 3px 6px var(--neu-dark),inset -3px -3px 6px var(--neu-light);--neu-concave:linear-gradient(145deg,#d9e3f0,#edf3fb);--accent-fill:linear-gradient(145deg,#3a77ea,#2a62d4);--accent-lift:6px 6px 14px rgb(45 106 222 / 0.32),-5px -5px 12px var(--neu-light);--color-neon:#1f5bc7;--color-neon-dim:rgb(45 106 222 / 0.14);--color-fg:#1f2c44;--color-muted:#4f5f79;--color-dim:#586885;--color-on-accent:#fff;--sos-fill:#ec3b52;--sos-fill-hi:#ff7f8c;--sos-glow:rgb(212 44 67 / 0.32);--neu-track:rgb(146 168 202 / 0.32);--font-sans:Inter,ui-sans-serif,system-ui,sans-serif;--font-display:Manrope,Inter,ui-sans-serif,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-smooth-out:cubic-bezier(0.22,1,0.36,1)} .ds-sos-wrap{position:relative;width:200px;height:200px;display:grid;place-items:center;border-radius:50%;background:var(--neu-surface);box-shadow:var(--neu-raised)}.ds-sos-ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--sos-fill) calc(var(--p) * 1%),var(--neu-track) 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 0);mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 0);pointer-events:none}.ds-sos-btn{position:relative;width:176px;height:176px;border-radius:50%;border:0;color:#fff;font:700 1.75rem var(--font-display);letter-spacing:.08em;background:radial-gradient(circle at 34% 28%,var(--sos-fill-hi),var(--sos-fill) 62%);box-shadow:inset 2px 3px 6px rgb(255 255 255 / .28),inset -4px -6px 12px rgb(120 0 20 / .22),6px 8px 18px var(--sos-glow);cursor:pointer;transition:transform 150ms var(--ease-out);animation:ds-sos-pulse 2.4s var(--ease-out) infinite}.ds-sos-btn:active{transform:scale(.96)}.ds-sos-btn:focus-visible{outline:2px solid var(--color-neon,#1f5bc7);outline-offset:2px;}@keyframes ds-sos-pulse{50%{box-shadow:inset 2px 3px 6px rgb(255 255 255 / .28),inset -4px -6px 12px rgb(120 0 20 / .22),6px 8px 34px var(--sos-glow),0 0 0 7px rgb(236 59 82 / .1)}}@media (prefers-reduced-motion:reduce){.ds-sos-btn{animation:none}}"
     }
   ],
   "narrative": {
-    "northStar": "The Calm Glass Console",
-    "overview": "CampusSafe is a safety loop for one campus, used by a scared student on a phone, a command operator at a desk and a responder in the field. The visual world is liquid glass over an aurora: a fixed, softly coloured gradient field sits behind every page, and every panel, bar and sheet is frosted glass that lets that light through. The result reads calm and technical rather than alarming, so the one thing that is allowed to be loud, the red SOS, is unmistakable.\n\nColour is semantic before it is decorative. Cyan (neon/accent) is \"act\" and \"you\"; red is SOS and P1; violet is anonymity, and the anonymous flow flips the whole accent to violet; green, amber and orange carry status and severity. Everything else is a cool slate neutral. Density varies by role: the student app is roomy and phone-first with a centred SOS in the tab bar; the admin console is a dense multi-panel dashboard of framed glass cards with fixed headers and scrolling bodies; the responder app sits between the two.\n\nLight is the default theme and dark is a full peer (`data-theme=\"dark\"`), not an afterthought: every token is redefined for dark, and the map tiles switch to a night rendering of the same provider.",
+    "northStar": "The Pressed Console",
+    "overview": "CampusSafe is a safety loop for one campus, used by a scared student on a phone, a command operator at a desk and a responder in the field. The visual world is soft UI cut from a single material: the page is a quiet soft-blue surface, and every panel, bar and control is that same surface pushed up or pressed in. Nothing floats on top of anything else. Shape comes only from a pair of shadows, a cool one to the bottom-right and a light one to the top-left, as if lit from the top-left corner. The world deliberately refuses the earlier frosted-glass look: no translucency, no backdrop blur, no aurora of colour behind the panels.\n\nThe material carries meaning. Raised means available: a card you can open, a button you can press, a tile you can pick. Pressed means chosen or typed into: the selected filter, the active nav item, the chosen category, every text field. Colour then does semantic work on top of that grammar: the one blue is \"act\", red is SOS and P1, violet is anonymity, and green, amber and orange carry status and severity. The calm, low-contrast surface is what lets the red SOS sphere read as the single loud thing on screen.\n\nDensity varies by role: the student app is roomy and phone-first with the SOS dish riding up out of the tab bar; the admin console is a dense grid of raised cards inside a raised sidebar and top bar; the responder app sits between. Light is the default theme and dark is a full peer (`data-theme=\"dark\"`): the same shapes cut from a deep slate-blue (`#252c38`), lit by a faint blue-grey highlight instead of white.",
     "keyCharacteristics": [
-      "Frosted glass panels (22px corners, lit top edge, hairline, soft drop) over a fixed aurora.",
-      "Semantic colour: cyan act, red SOS, violet anonymous, green/amber/orange status.",
-      "Space Grotesk headings, Inter body, JetBrains Mono for codes, times and counts.",
-      "Pill chips and tinted tiles carry severity and kind; never colour alone.",
-      "One authored motion moment per surface; everything else is quiet, exponential ease-out."
+      "One material: every surface is the page colour, shaped only by a top-left light and bottom-right shadow.",
+      "Raised = available, pressed = chosen or typed into.",
+      "One blue convex fill with white text for the primary action; red SOS sphere in a raised dish; violet for anonymity.",
+      "Manrope headings, Inter body, JetBrains Mono only for machine data.",
+      "Severity and kind carried by tinted pill chips with text labels, never colour alone.",
+      "One authored motion moment per surface; everything else is a short exponential ease-out."
     ],
     "rules": [
       {
         "name": "The Dim Floor Rule",
-        "body": "`dim` is the lightest text colour in the system and it is set to pass WCAG AA for small text on white and on glass (`#66738a` light, `#808ba0` dark). Do not introduce a lighter grey for text.",
+        "body": "`dim` is the lightest text colour in the system and it passes WCAG AA for small text on the surface (4.7:1 on `#e4ecf7` in light, 5.4:1 on `#252c38` in dark). Do not introduce a lighter grey for text.",
         "section": "colors"
       },
       {
-        "name": "The Ink-On-Cyan Rule",
-        "body": "Text on Bright Cyan, Caution Amber or Resolved Green fills is `ink` (`#062a33`) in both themes, never white.",
+        "name": "The White-On-Blue Rule",
+        "body": "Text on the blue accent fill is `on-accent` white in both themes, never ink.",
         "section": "colors"
       },
       {
         "name": "The Anonymous Flip Rule",
-        "body": "Anonymity is shown by swapping the accent, not by adding a new one: `html.anon` rebinds neon, accent, neon-dim and neon-glow to violet, and every component follows.",
+        "body": "Anonymity is shown by swapping the accent, not by adding a new one: `html.anon` rebinds neon, accent, accent-fill, accent-lift, neon-dim, neon-glow and map-pin to violet, and every component follows.",
+        "section": "colors"
+      },
+      {
+        "name": "The Violet Is Anonymity Rule",
+        "body": "Violet means \"identity withheld\". Charts, gradients and decoration do not borrow it; outside the anonymous flow it appears only on anonymous data and the under-review status.",
         "section": "colors"
       },
       {
@@ -807,33 +730,44 @@
       },
       {
         "name": "The One Material Rule",
-        "body": "A surface is either glass (`.card`/`.glass`) or glass bar (`.glass-bar`). Do not invent a third panel recipe or a heavier shadow for emphasis; emphasis comes from colour and content.",
+        "body": "Every panel, bar and control is cut from the page surface and shaped only by the light/shadow pair. Do not combine a border or ring with a soft shadow on the same element, and give each control exactly one elevation cue: raised, pressed, or (for the primary) the blue lift.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Pressed Means Chosen Rule",
+        "body": "Selection is shown by sinking, not by outlining or inverting. A control that is chosen, active or typed into takes the inset shadow; everything available stays raised. Never use the inset state for \"suggested\" or \"hovered\".",
         "section": "elevation"
       },
       {
         "name": "The Glow Is Earned Rule",
-        "body": "Coloured glows belong only to the primary action and the SOS. Cards, chips and rows never glow.",
+        "body": "Coloured light belongs only to the primary blue lift and the SOS sphere. Cards, chips, rows, chart marks and legend dots never glow.",
         "section": "elevation"
+      },
+      {
+        "name": "The Pin Rule",
+        "body": "On any map, only SOS is red. Non-SOS pins use `--map-pin` (the accent in light, `#8db2ff` in dark, violet in the anonymous flow), which must never drift toward red or orange.",
+        "section": "components"
       }
     ],
     "dos": [
-      "**Do** build every panel from the one glass material (`.card`/`.glass`, 22px) and every navigation bar from `.glass-bar`.",
-      "**Do** carry severity and kind with pill chips and tinted tiles, always with a text label (P1, SOS, ANON, Resolved), never colour alone.",
-      "**Do** rely on the global keyboard focus ring (2px Signal Teal outline, 2px offset) and the themed selection tint and caret; on auth screens use the `--auth-*` ring, caret, placeholder and selection.",
-      "**Do** use the `--auth-*` token set, the opaque sheet and the solid teal CTA on sign-in and sign-up screens.",
+      "**Do** build every panel from the one material: surface fill, 24px corners, the Raised shadow; every navigation bar the same, at 22px or 28px.",
+      "**Do** show \"chosen\", \"active\" and \"typed into\" by pressing the control in (inset small), and keep everything available raised.",
+      "**Do** keep the primary action the only blue convex fill on a surface, with white text and the accent lift.",
+      "**Do** carry severity and kind with tinted pill chips, always with a text label (P1, SOS, ANON, Resolved), never colour alone.",
+      "**Do** rely on the global keyboard focus ring (2px Signal Blue outline, 2px offset), the neon-dim selection tint and the Signal Blue caret.",
       "**Do** give each surface at most one authored motion moment (the activity feed's draw-down on the dashboard), using exponential ease-out (`cubic-bezier(0.22, 1, 0.36, 1)` or `cubic-bezier(0.23, 1, 0.32, 1)`), with a reduced-motion fallback that shows the final state.",
-      "**Do** port third-party (21st.dev) components to CSS motion and project tokens before they ship.",
-      "**Do** keep Dim Slate as the lightest text colour and Deep Ink as the text on bright fills.",
-      "**Do** redefine any new token for dark under `:root[data-theme=\"dark\"]`."
+      "**Do** keep Dim Slate as the lightest text colour, and check any text on a solid status fill clears 4.5:1 in both themes.",
+      "**Do** redefine any new token for dark under `:root[data-theme=\"dark\"]` and, if it is accent-coloured, for `html.anon`."
     ],
     "donts": [
+      "**Don't** reintroduce translucent glass, backdrop blur or a coloured aurora behind panels.",
+      "**Don't** put a border or ring and a soft shadow on the same element, or stack two elevation cues on one control.",
+      "**Don't** mark a selection by outlining, inverting to a dark fill, or tinting; sink it.",
+      "**Don't** let anything glow except the primary blue lift and the SOS sphere.",
       "**Don't** put eyebrow or kicker labels above page headings.",
-      "**Don't** use coloured side stripes (left-border accents) on list rows or cards to show severity or status; use chips and tiles.",
-      "**Don't** show availability, coverage, response-time or adoption claims the product cannot back up (no \"24/7 monitoring\", no user counts, no endorsement).",
-      "**Don't** import a third-party component together with its own design system, animation library or palette.",
-      "**Don't** animate continuously anything that is not live state; looping motion is reserved for the SOS button, live map markers and small live-status dots.",
-      "**Don't** put white text on Bright Cyan, Caution Amber or Resolved Green fills.",
-      "**Don't** use the translucent glass panel behind auth forms.",
+      "**Don't** use violet for decoration, chart gradients or categorical series; it means anonymity.",
+      "**Don't** use coloured side stripes (left-border accents) on list rows or cards to show severity or status; use chips.",
+      "**Don't** animate continuously anything that is not live state.",
       "**Don't** use a grey lighter than Dim Slate for any text, including placeholders."
     ]
   }

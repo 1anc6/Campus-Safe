@@ -1,58 +1,52 @@
 ---
 name: CampusSafe
-description: Liquid-glass safety console for one campus; cyan for action, red for SOS, violet for anonymity.
+description: Soft UI safety console for one campus; one pressed-and-raised material, blue for action, red for SOS, violet for anonymity.
 colors:
-  neon: "#00849a"
-  accent: "#00cfe8"
+  bg: "#e4ecf7"
+  chrome: "#e9f0fa"
+  panel-2: "rgb(150 172 206 / 0.16)"
+  panel-3: "rgb(150 172 206 / 0.26)"
+  line: "rgb(132 156 194 / 0.24)"
+  line-strong: "rgb(116 140 180 / 0.42)"
+  neu-dark: "rgb(146 168 202 / 0.55)"
+  neu-light: "rgb(255 255 255 / 0.92)"
+  neu-track: "rgb(146 168 202 / 0.32)"
+  fg: "#1f2c44"
+  muted: "#4f5f79"
+  dim: "#586885"
+  accent: "#2d6ade"
+  neon: "#1f5bc7"
+  neon-dim: "rgb(45 106 222 / 0.14)"
+  on-accent: "#ffffff"
   ink: "#062a33"
-  sos: "#e0354a"
-  sos-fill: "#ff4357"
-  violet: "#6a55d6"
-  ok: "#00826c"
-  warn: "#a86500"
-  high: "#c2410c"
-  p1: "#e0354a"
-  p2: "#c2410c"
-  p3: "#a86500"
-  p4: "#00826c"
-  bg: "#f3f5f8"
-  chrome: "#ffffff"
-  panel: "rgb(255 255 255 / 0.8)"
-  panel-2: "rgb(255 255 255 / 0.55)"
-  panel-3: "rgb(226 232 240 / 0.6)"
-  glass: "rgb(255 255 255 / 0.55)"
-  glass-strong: "rgb(255 255 255 / 0.72)"
-  glass-soft: "rgb(255 255 255 / 0.5)"
-  line: "#e2e7ef"
-  line-strong: "#cbd3df"
-  fg: "#1b2430"
-  muted: "#5e6b7e"
-  dim: "#66738a"
-  auth-hero-deep: "#0a3446"
-  auth-sheet: "#ffffff"
-  auth-page: "#eef3f7"
-  auth-field: "#f5f8fb"
-  auth-field-border: "#d9e1ea"
-  auth-cta: "#0e7490"
-  auth-cta-hover: "#0b6279"
-  auth-placeholder: "#66738a"
+  sos: "#c42239"
+  sos-fill: "#ec3b52"
+  sos-fill-hi: "#ff7f8c"
+  violet: "#5b46c9"
+  ok: "#00775f"
+  warn: "#965800"
+  high: "#b43b0a"
+  p1: "#c42239"
+  p2: "#b43b0a"
+  p3: "#965800"
+  p4: "#00775f"
 typography:
   display:
-    fontFamily: "Space Grotesk, Inter, ui-sans-serif, sans-serif"
+    fontFamily: "Manrope, Inter, ui-sans-serif, sans-serif"
     fontSize: "6rem"
     fontWeight: 700
     lineHeight: 1
   headline:
-    fontFamily: "Space Grotesk, Inter, ui-sans-serif, sans-serif"
+    fontFamily: "Manrope, Inter, ui-sans-serif, sans-serif"
     fontSize: "1.5rem"
     fontWeight: 600
     lineHeight: 1.33
     letterSpacing: "-0.025em"
   title:
-    fontFamily: "Space Grotesk, Inter, ui-sans-serif, sans-serif"
-    fontSize: "0.875rem"
+    fontFamily: "Manrope, Inter, ui-sans-serif, sans-serif"
+    fontSize: "1rem"
     fontWeight: 600
-    lineHeight: 1.43
+    lineHeight: 1.5
   body:
     fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.875rem"
@@ -63,18 +57,25 @@ typography:
     fontSize: "0.75rem"
     fontWeight: 600
     lineHeight: 1.33
+  caps:
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.6875rem"
+    fontWeight: 700
+    lineHeight: 1.45
+    letterSpacing: "0.22em"
   mono:
     fontFamily: "JetBrains Mono, ui-monospace, SF Mono, monospace"
     fontSize: "0.6875rem"
-    fontWeight: 400
+    fontWeight: 500
     lineHeight: 1.45
 rounded:
   xs: "4px"
   sm: "8px"
+  seg-option: "11px"
   md: "12px"
-  control: "14px"
+  field: "14px"
   lg: "16px"
-  card: "22px"
+  topbar: "22px"
   xl: "24px"
   bar: "28px"
   2xl: "32px"
@@ -85,70 +86,86 @@ spacing:
   md: "12px"
   lg: "16px"
   xl: "24px"
+  2xl: "32px"
 components:
   button-primary:
     backgroundColor: "{colors.accent}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    padding: "10px 18px"
+    textColor: "{colors.on-accent}"
+    rounded: "{rounded.lg}"
+    padding: "10px 20px"
     height: "44px"
   button-ghost:
-    backgroundColor: "{colors.glass-soft}"
+    backgroundColor: "{colors.bg}"
     textColor: "{colors.fg}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.lg}"
     padding: "10px 18px"
     height: "44px"
   button-ghost-hover:
-    backgroundColor: "{colors.panel-2}"
+    textColor: "{colors.neon}"
   button-auth:
-    backgroundColor: "{colors.auth-cta}"
-    textColor: "{colors.auth-sheet}"
-    rounded: "{rounded.control}"
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.on-accent}"
+    rounded: "{rounded.lg}"
     padding: "12px 18px"
     height: "48px"
-  button-auth-hover:
-    backgroundColor: "{colors.auth-cta-hover}"
   button-sos:
     backgroundColor: "{colors.sos-fill}"
-    textColor: "{colors.chrome}"
-    typography: "{typography.display}"
+    textColor: "{colors.on-accent}"
     rounded: "{rounded.full}"
     size: "176px"
+  button-sos-md:
+    backgroundColor: "{colors.sos-fill}"
+    textColor: "{colors.on-accent}"
+    rounded: "{rounded.full}"
+    size: "72px"
+  button-sos-sm:
+    backgroundColor: "{colors.sos-fill}"
+    textColor: "{colors.on-accent}"
+    rounded: "{rounded.full}"
+    size: "44px"
   input:
-    backgroundColor: "{colors.glass-soft}"
+    backgroundColor: "{colors.bg}"
     textColor: "{colors.fg}"
-    rounded: "{rounded.control}"
-    padding: "10px 14px"
+    rounded: "{rounded.field}"
+    padding: "10px 15px"
     height: "44px"
-  input-auth:
-    backgroundColor: "{colors.auth-field}"
-    textColor: "{colors.fg}"
-    rounded: "{rounded.control}"
   card:
-    backgroundColor: "{colors.glass}"
-    rounded: "{rounded.card}"
+    backgroundColor: "{colors.bg}"
+    rounded: "{rounded.xl}"
     padding: "16px"
   nav-bar:
-    backgroundColor: "{colors.glass-strong}"
+    backgroundColor: "{colors.bg}"
     rounded: "{rounded.bar}"
+  nav-item-active:
+    backgroundColor: "{colors.bg}"
+    textColor: "{colors.fg}"
+    rounded: "{rounded.lg}"
+    height: "44px"
   segmented:
-    backgroundColor: "{colors.glass-soft}"
+    backgroundColor: "{colors.bg}"
     textColor: "{colors.muted}"
-    rounded: "{rounded.control}"
-    padding: "4px"
+    rounded: "{rounded.lg}"
+    padding: "5px"
   segmented-active:
-    backgroundColor: "{colors.fg}"
-    textColor: "{colors.chrome}"
+    textColor: "{colors.neon}"
+    rounded: "{rounded.seg-option}"
+    padding: "6px 14px"
+  choice-tile:
+    backgroundColor: "{colors.bg}"
+    textColor: "{colors.fg}"
+    rounded: "{rounded.md}"
+    padding: "12px"
+  choice-tile-chosen:
+    textColor: "{colors.neon}"
   chip-p1:
-    backgroundColor: "rgb(224 53 74 / 0.15)"
+    backgroundColor: "rgb(196 34 57 / 0.15)"
     textColor: "{colors.p1}"
     typography: "{typography.label}"
     rounded: "{rounded.full}"
     padding: "4px 10px"
   chip-anonymous:
-    backgroundColor: "rgb(106 85 214 / 0.15)"
+    backgroundColor: "rgb(91 70 201 / 0.15)"
     textColor: "{colors.violet}"
-    typography: "{typography.label}"
     rounded: "{rounded.full}"
     padding: "2px 0"
     width: "44px"
@@ -158,183 +175,222 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Calm Glass Console"**
+**Creative North Star: "The Pressed Console"**
 
-CampusSafe is a safety loop for one campus, used by a scared student on a phone, a command operator at a desk and a responder in the field. The visual world is liquid glass over an aurora: a fixed, softly coloured gradient field sits behind every page, and every panel, bar and sheet is frosted glass that lets that light through. The result reads calm and technical rather than alarming, so the one thing that is allowed to be loud, the red SOS, is unmistakable.
+CampusSafe is a safety loop for one campus, used by a scared student on a phone, a command operator at a desk and a responder in the field. The visual world is soft UI cut from a single material: the page is a quiet soft-blue surface, and every panel, bar and control is that same surface pushed up or pressed in. Nothing floats on top of anything else. Shape comes only from a pair of shadows, a cool one to the bottom-right and a light one to the top-left, as if lit from the top-left corner. The world deliberately refuses the earlier frosted-glass look: no translucency, no backdrop blur, no aurora of colour behind the panels.
 
-Colour is semantic before it is decorative. Cyan (neon/accent) is "act" and "you"; red is SOS and P1; violet is anonymity, and the anonymous flow flips the whole accent to violet; green, amber and orange carry status and severity. Everything else is a cool slate neutral. Density varies by role: the student app is roomy and phone-first with a centred SOS in the tab bar; the admin console is a dense multi-panel dashboard of framed glass cards with fixed headers and scrolling bodies; the responder app sits between the two.
+The material carries meaning. Raised means available: a card you can open, a button you can press, a tile you can pick. Pressed means chosen or typed into: the selected filter, the active nav item, the chosen category, every text field. Colour then does semantic work on top of that grammar: the one blue is "act", red is SOS and P1, violet is anonymity, and green, amber and orange carry status and severity. The calm, low-contrast surface is what lets the red SOS sphere read as the single loud thing on screen.
 
-Light is the default theme and dark is a full peer (`data-theme="dark"`), not an afterthought: every token is redefined for dark, and the map tiles switch to a night rendering of the same provider.
-
-**Dark is warm charcoal, not navy.** Dark mode uses neutral greys with a faint warm cast (bg `#1f1e1d`, chrome `#1a1918`, panels `#302f2c` at 80%, text `#f2efe8`, muted `#b3afa5`), a soft warm gradient behind the glass (clay, sand and a trace of violet over `#24221f → #1c1b19`), and a **clay** accent instead of cyan: `accent` `#d97757` for fills with dark-brown ink (`#2a1a12`) on them, `neon` `#e8936f` for text, icons, links and focus. SOS stays a clear red (`#f2555c`), anonymous stays violet (`#a594f9`), and status/severity colours are softened (ok `#6bc99a`, warn `#e9b45a`, high `#ee8650`). Never reintroduce blue-tinted surfaces or cyan glow in dark.
+Density varies by role: the student app is roomy and phone-first with the SOS dish riding up out of the tab bar; the admin console is a dense grid of raised cards inside a raised sidebar and top bar; the responder app sits between. Light is the default theme and dark is a full peer (`data-theme="dark"`): the same shapes cut from a deep slate-blue (`#252c38`), lit by a faint blue-grey highlight instead of white.
 
 **Key Characteristics:**
-- Frosted glass panels (22px corners, lit top edge, hairline, soft drop) over a fixed aurora.
-- Semantic colour: cyan act, red SOS, violet anonymous, green/amber/orange status.
-- Space Grotesk headings, Inter body, JetBrains Mono for codes, times and counts.
-- Pill chips and tinted tiles carry severity and kind; never colour alone.
-- One authored motion moment per surface; everything else is quiet, exponential ease-out.
+
+- One material: every surface is the page colour, shaped only by a top-left light and bottom-right shadow.
+- Raised = available, pressed = chosen or typed into.
+- One blue convex fill with white text for the primary action; red SOS sphere in a raised dish; violet for anonymity.
+- Manrope headings, Inter body, JetBrains Mono only for machine data.
+- Severity and kind carried by tinted pill chips with text labels, never colour alone.
+- One authored motion moment per surface; everything else is a short exponential ease-out.
 
 ## Colors
 
-A cool slate neutral field with one cyan action colour and a tightly bound set of semantic signal colours; text colours are tuned for WCAG AA, bright brand fills are kept for surfaces.
+A single cool soft-blue surface with one blue action colour and a tightly bound set of semantic signal colours; text colours are tuned for WCAG AA on the surface itself.
 
 ### Primary
-- **Signal Teal** (neon): the readable accent for text, icons, links, focus rings, caret and selection tint. In dark it becomes clay (`#e8936f` text, `#d97757` fill). Under `html.anon` it becomes violet (`#6a55d6` light, `#b3a6fb` text / `#a594f9` fill dark).
-- **Bright Cyan** (accent): the fill colour for the primary button, active tab tint, "you are here" marker and progress bars. Text on it is always **Deep Ink** (ink), never white.
+
+- **Command Blue** (accent): the fill of the primary action, rendered as a convex gradient (`#3a77ea → #2a62d4`, dark `#3d78e8 → #2d65d4`) with white text (on-accent). Also the default non-SOS map pin. Dark value `#3570e0`.
+- **Signal Blue** (neon): the readable blue for text, icons, links, the focus ring, caret, chosen segment and chosen tile labels. Dark value `#8db2ff`. Its 14% tint (neon-dim) is the selection colour and the focus halo on fields.
 
 ### Secondary
-- **Alarm Red** (sos, sos-fill): SOS and P1 only. `sos` is the readable red for text and chips; `sos-fill` (`#ff4357` light, `#f2555c` dark) is the radial-gradient fill of the SOS button and the pulsing alert marker.
+
+- **Alarm Red** (sos, sos-fill, sos-fill-hi): SOS and P1 only. `sos` is the readable red for text and chips (dark `#ff6b78`); `sos-fill` and `sos-fill-hi` (dark `#f2475a`, `#ff8994`) form the radial gradient of the SOS sphere and the live-alert map marker.
 
 ### Tertiary
-- **Anonymous Violet** (violet): anonymous reports, "under review" and "received" status, and the whole accent when the anonymous flow is active.
+
+- **Anonymous Violet** (violet): anonymous reports, the ANON kind chip, "under review" and "received" status, and the whole accent while the anonymous flow is active. Dark value `#ab9dff`.
 
 ### Status and severity
-- **Resolved Green** (ok / p4), **Caution Amber** (warn / p3), **Escalation Orange** (high / p2), **Alarm Red** (p1). Severity P1 to P4 maps one-to-one to red, orange, amber, green. Each is used as text on a 15% tint of itself.
+
+- **Resolved Green** (ok / p4), **Caution Amber** (warn / p3), **Escalation Orange** (high / p2), **Alarm Red** (p1). Severity P1 to P4 maps one-to-one to red, orange, amber, green. Each is used as text on a 15% tint of itself. Dark values: ok `#5fd3a5`, warn `#f0b75e`, high `#f68d5a`.
+- **Deep Ink** (ink): text on solid ok and warn fills (dark `#10202a`).
 
 ### Neutral
-- **Mist** (bg): page background under the aurora. **Chrome** (chrome): solid white for the few opaque surfaces.
-- **Glass**, **Glass Strong**, **Glass Soft** (glass, glass-strong, glass-soft): panel fill, navigation-bar fill, and the faint fill for rows, inputs and ghost buttons.
-- **Panel**, **Panel 2**, **Panel 3**: older translucent fills still used for map controls, tooltips and hover states.
-- **Hairline** (line) and **Strong Hairline** (line-strong): dividers, input borders, timeline connectors.
-- **Slate Ink** (fg): body and heading text. **Slate** (muted): secondary text and labels. **Dim Slate** (dim): timestamps, placeholders, tertiary text.
 
-### Auth palette
-The sign-in and sign-up screens use their own `--auth-*` family scoped to `.auth-shell`: a deep teal hero gradient (from `#0a3446`; warm charcoal-to-umber with a clay glow in dark), an **opaque** form sheet (auth-sheet; `#262523` in dark), a solid teal CTA (auth-cta; clay `#d97757` with dark-brown text in dark), its own field fill and border, link colour, placeholder (auth-placeholder) and selection tint. The glass panel is deliberately not used here: a translucent sheet let the hero bleed through.
+- **Soft Blue Surface** (bg): the page and every panel, bar and control cut from it. The page carries a barely-there wash of the same colour (`#eaf1fa → #e4ecf7 → #dce6f3`). Dark `#252c38`.
+- **Chrome** (chrome): the slightly lighter opaque surface for things that float above the page: popovers, sheets, toasts, tooltips. Dark `#2b3341`.
+- **Shadow** (neu-dark) and **Highlight** (neu-light): the two lights every elevation is built from. Dark: `rgb(6 9 15 / 0.72)` and `rgb(66 79 102 / 0.55)`.
+- **Track** (neu-track): the groove under progress rings, the SOS hold ring and toggles.
+- **Panel 2 / Panel 3** (panel-2, panel-3): faint cool tints for hover on flat rows and nav items.
+- **Hairline** (line) and **Strong Hairline** (line-strong): dividers inside cards and the activity timeline connector.
+- **Slate Ink** (fg): headings and body text (dark `#e5ebf4`). **Slate** (muted): secondary text and field labels (dark `#aab5c7`). **Dim Slate** (dim): timestamps, placeholders, tertiary text (dark `#95a1b5`).
+
+### Charts
+
+Recharts reads its own palette that mirrors the tokens: the accent blue for volume (with the **today** bar a solid, full-strength accent and earlier days a faded fill), severity colours for P1 to P4, status colours for the status breakdown, and violet only for the anonymous share.
 
 ### Named Rules
-**The Dim Floor Rule.** `dim` is the lightest text colour in the system and it is set to pass WCAG AA for small text on white and on glass (`#66738a` light, `#9a968c` dark). Do not introduce a lighter grey for text.
 
-**The Ink-On-Cyan Rule.** Text on Bright Cyan, Caution Amber or Resolved Green fills is `ink` (`#062a33`) in both themes, never white.
+**The Dim Floor Rule.** `dim` is the lightest text colour in the system and it passes WCAG AA for small text on the surface (4.7:1 on `#e4ecf7` in light, 5.4:1 on `#252c38` in dark). Do not introduce a lighter grey for text.
 
-**The Anonymous Flip Rule.** Anonymity is shown by swapping the accent, not by adding a new one: `html.anon` rebinds neon, accent, neon-dim and neon-glow to violet, and every component follows.
+**The White-On-Blue Rule.** Text on the blue accent fill is `on-accent` white in both themes, never ink.
+
+**The Anonymous Flip Rule.** Anonymity is shown by swapping the accent, not by adding a new one: `html.anon` rebinds neon, accent, accent-fill, accent-lift, neon-dim, neon-glow and map-pin to violet, and every component follows.
+
+**The Violet Is Anonymity Rule.** Violet means "identity withheld". Charts, gradients and decoration do not borrow it; outside the anonymous flow it appears only on anonymous data and the under-review status.
 
 ## Typography
 
-**Display Font:** Space Grotesk (with Inter, ui-sans-serif)
+**Display Font:** Manrope (with Inter, ui-sans-serif)
 **Body Font:** Inter (with ui-sans-serif, system-ui)
 **Label/Mono Font:** JetBrains Mono (with ui-monospace, SF Mono)
 
-**Character:** Space Grotesk gives headings and numbers a slightly engineered, instrument-panel edge; Inter keeps everything else neutral and legible under stress. Mono marks machine data: tracking codes, timestamps, counts, role tags.
+**Character:** Manrope gives headings and big numerals a rounded, friendly geometry that matches the soft material; Inter keeps everything else neutral and legible under stress. Mono marks machine data only.
 
-All `h1`, `h2` and `h3` elements are set in the display font by the base layer, with `text-wrap: balance`; paragraphs use `text-wrap: pretty`.
+All `h1`, `h2` and `h3` elements are set in the display font by the base layer with `text-wrap: balance`; paragraphs use `text-wrap: pretty`.
 
 ### Hierarchy
-- **Display** (700, 6rem, line-height 1): the SOS countdown numeral only. The SOS button label uses the same face at 700, 1.75rem, tracked 0.08em.
-- **Headline** (600, 1.5rem rising to 1.875rem at md, tight tracking): one page heading per screen ("Command dashboard", "Stay safe on campus").
-- **Title** (600, 0.875rem): panel and card titles inside dashboard cards; 1.125rem for dialog and sheet titles.
+
+- **Display** (700, 6rem, line-height 1): the SOS countdown numeral only. The SOS sphere label uses the same face at 700, 1.75rem, tracked 0.08em (1.125rem in the tab-bar dish, 0.8125rem on the rail).
+- **Headline** (600, 1.5rem rising to 1.875rem at md, tight tracking): one page heading per screen ("Command dashboard", "Stay safe on campus"). The auth brand panel uses a 3rem bold variant.
+- **Title** (600, 1rem): card and feature titles; panel headers on the admin console use the label size.
 - **Body** (400, 0.875rem): list rows, descriptions, form copy. Inputs are 1rem below 768px (stops iOS zoom) and 0.875rem above.
-- **Label** (500 to 600, 0.75rem): field labels in `muted`, chip text, segmented-control text. Small in-panel section headings ("Progress", "Timeline") use 0.6875rem, 600, uppercase, wide tracking, in `muted`.
-- **Mono** (400, 0.6875rem): badges, relative times ("30m", "14h 30m"), tracking codes, table headers.
+- **Label** (600, 0.75rem): field labels in `muted`, chip text, segmented-control text, buttons at 0.8125rem.
+- **Caps** (700, 0.6875rem, tracked 0.22em, uppercase, `muted`): the product line under the wordmark ("Operations console") and small in-panel section labels ("Progress", "Timeline"). It names the block it sits in; it never introduces a page heading.
+- **Mono** (500, 0.6875rem): tracking codes, relative times ("30m", "14h 20m"), counts, phone numbers, the Ctrl K hint.
 
 ### Named Rules
+
 **The No Kicker Rule.** Page headings stand alone. Do not put an eyebrow or kicker label above an `h1` or `h2`; context goes in a line below the heading (for example "Live · updated 3s ago").
 
 **The Mono Means Machine Rule.** JetBrains Mono is for values a system produced (codes, times, counts, IDs), never for prose or headings.
 
 ## Layout
 
-Phone-first for students and responders, desktop-first for admins, all on Tailwind's 4px spacing scale.
+Phone-first for students and responders, desktop-first for admins, all on Tailwind's 4px spacing scale. Raised panels sit in a 12px inset from the viewport so their shadows have room to fall.
 
-- **Student:** content column of `max-w-2xl` (narrow) or `max-w-6xl` (wide). On phones a floating glass tab bar (`max-w-lg`, five columns, 28px corners) sits at the bottom with the compact SOS (84px) in the centre slot. On desktop a floating glass icon rail (76px wide, 240px at 2xl) replaces it, carrying the smallest SOS (56px).
-- **Admin:** a floating glass sidebar and a floating glass top bar frame a grid of dashboard cards: a row of four KPI tiles, then paired panels (queue and case detail, activity and charts). Each card has a fixed 56px header with a hairline below and a scrolling body padded 12px (16px from sm).
-- **Responder:** a floating glass top bar over a `max-w-6xl` column, padded 16px (24px from sm).
-- **Auth:** on phones a teal hero header with the sheet rising over it (28px top corners); from lg a two-column `max-w-5xl` layout with a brand panel beside a `max-w-md` sheet.
-- Fixed bars respect `env(safe-area-inset-*)` via `pt-safe` / `pb-safe`. Navigation chrome carries its own view-transition name so it stays still while pages cross-fade.
+- **Student:** content column of `max-w-2xl` (narrow) or `max-w-6xl` (wide), padded 16px, 24px from sm, 32px from xl. On phones a raised tab bar (`max-w-lg`, five columns, 28px corners, 12px from the edges) sits at the bottom; the centre slot holds the SOS in an 84px dish that rides up out of the bar. On desktop a raised icon rail (76px wide, 240px at 2xl, 28px corners) replaces it and carries the smallest SOS in a pressed dish. A raised top bar (22px corners) appears on phones only.
+- **Admin:** a raised sidebar (256px, 28px corners, an off-canvas drawer below lg) and a raised top bar (22px corners) frame a grid of raised cards: a row of four KPI tiles, then paired panels (live queue and case detail, activity and charts).
+- **Auth:** on phones the brand header sits directly on the surface (a raised brand tile, wordmark, one-line promise) with the raised form sheet below (28px corners); from lg a two-column `max-w-5xl` layout with the brand panel beside a `max-w-md` sheet (32px corners). The `--auth-hero` gradient tokens remain defined in the stylesheet but no longer paint the phone header.
+- Fixed bars respect `env(safe-area-inset-*)`. Navigation chrome carries its own view-transition name so it stays still while pages cross-fade with a small rise.
+- Below 768px the large raised shadow tightens (10px to 7px offset, 24px to 16px blur) so panels do not bleed into the gutters.
 
 ## Elevation & Depth
 
-Depth comes from glass, not from stacked shadows. Every panel is the same material: translucent fill, a backdrop blur with boosted saturation, an inset white highlight on the top edge, a one-pixel edge ring, and one soft diffuse drop. Navigation chrome uses a denser, more opaque glass with a stronger blur so it stays legible over content. The aurora behind the page is what the glass refracts; it is fixed and never scrolls. In dark the drops deepen and the highlights fade to near nothing.
+Depth is the whole material. There is no translucency, no blur, and no border-defined panel: every surface shares the page colour and is shaped only by a dual shadow, a cool `neu-dark` to the bottom-right and a `neu-light` highlight to the top-left. Raised shadows push a surface up; inset shadows press it into the page. Controls that can be pressed use a slightly convex fill so they read as domed. The legacy custom-property names `--glass`, `--glass-strong`, `--glass-soft` and `--card-shadow` survive only as aliases to this soft UI material (surface, chrome, surface, small raised shadow) for components that still reference them; they describe nothing glassy.
 
 ### Shadow Vocabulary
-- **Glass panel** (`box-shadow: var(--glass-highlight), 0 0 0 1px var(--glass-edge), var(--glass-shadow)`; blur 22px, 16px under 768px): every card and panel.
-- **Glass bar** (same stack, blur 28px, saturate 1.8): sidebars, top bars, tab bar.
-- **Neon glow** (`0 0 0 1px var(--color-accent), 0 4px 16px var(--neon-glow)`): primary button only; grows to 24px on hover.
-- **SOS glow** (`0 0 40px var(--sos-glow)`, pulsing 28 to 56px): the SOS button and nothing else.
-- **Auth CTA lift** (`0 8px 20px -8px var(--auth-cta-glow)`): the auth submit button.
+
+- **Raised** (`box-shadow: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light)`; 7px / 16px on phones): cards, panels, navigation bars, the auth sheet, the big SOS dish.
+- **Raised small** (`5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light)`): small tiles, the convex control fill, map zoom control, hover state of raised-xs controls.
+- **Raised xs** (`3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light)`): ghost buttons, the segmented track, unchosen choice tiles, tooltips.
+- **Inset** (`inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light)`): deep wells.
+- **Inset small** (`inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light)`): every pressed state (chosen segment, chosen tile, active nav item, selected queue row, `:active` buttons), text fields, read-only value wells, and the rail SOS dish.
+- **Accent lift** (`inset 1px 1px 0 rgb(255 255 255 / 0.22), 6px 6px 14px rgb(45 106 222 / 0.32), -5px -5px 12px var(--neu-light)`): the primary and auth buttons only. In dark the coloured shadow becomes a deep neutral (`rgb(8 11 18 / 0.6)`).
+- **SOS sphere** (`inset 2px 3px 6px rgb(255 255 255 / 0.28), inset -4px -6px 12px rgb(120 0 20 / 0.22), 6px 8px 18px var(--sos-glow)`, idle pulse to 34px plus a 7px faint red halo): the SOS button and nothing else. The rail size keeps a still, tight 2px 3px 6px lift.
 
 ### Named Rules
-**The One Material Rule.** A surface is either glass (`.card`/`.glass`) or glass bar (`.glass-bar`). Do not invent a third panel recipe or a heavier shadow for emphasis; emphasis comes from colour and content.
 
-**The Glow Is Earned Rule.** Coloured glows belong only to the primary action and the SOS. Cards, chips and rows never glow.
+**The One Material Rule.** Every panel, bar and control is cut from the page surface and shaped only by the light/shadow pair. Do not combine a border or ring with a soft shadow on the same element, and give each control exactly one elevation cue: raised, pressed, or (for the primary) the blue lift.
+
+**The Pressed Means Chosen Rule.** Selection is shown by sinking, not by outlining or inverting. A control that is chosen, active or typed into takes the inset shadow; everything available stays raised. Never use the inset state for "suggested" or "hovered".
+
+**The Glow Is Earned Rule.** Coloured light belongs only to the primary blue lift and the SOS sphere. Cards, chips, rows, chart marks and legend dots never glow.
 
 ## Shapes
 
-Soft and rounded throughout, with radius growing with the size of the object: pill chips and the circular SOS; 10px for segmented-control buttons; 14px for buttons, inputs and the segmented track; 22px for cards; 28px for floating navigation bars and the auth sheet; 24 to 32px for large tiles. Borders are hairlines (1px `line`), never heavy strokes. Approximate positions on the map are drawn as dashed hollow rings so they never read as a precise GPS fix.
+Soft, rounded and growing with the object: fully round pills for chips and the SOS sphere and dish; 11px for segmented options inside a 16px track; 12px for choice tiles, wells and skeletons; 14px for text fields; 16px for buttons and nav items; 22px for top bars; 24px for cards; 28px for rails, sidebars, the tab bar and the phone auth sheet; 32px for the desktop auth sheet. Panels carry no stroke at all. Approximate positions on the map are drawn as dashed hollow rings so they never read as a precise GPS fix.
 
 ## Components
 
 ### Buttons
-Tactile, confident and few.
-- **Shape:** gently rounded (14px), minimum 44px tall.
-- **Primary (`.btn-neon`):** Bright Cyan fill, Deep Ink text, 13px bold with slight tracking, neon glow. Hover brightens (filter 1.08) and widens the glow. Disabled drops to 55% opacity with a wait cursor.
-- **Ghost (`.btn-ghost`):** Glass Soft fill, hairline border, Slate Ink text, 13px medium. Hover moves to Panel 2 with a stronger hairline.
-- **Auth (`.btn-auth`):** solid teal (auth-cta), white text (clay with dark-brown text in dark), 48px tall, 15px semibold, a soft lift shadow; presses to scale 0.99.
-- **Focus:** the global ring (2px Signal Teal outline, 2px offset), keyboard only.
 
-### SOS Button (signature)
-A 176px red sphere (radial gradient from `#ff7a86` to sos-fill) inside a 200px conic progress ring that fills while the user holds to send. It pulses its glow when idle, presses to scale 0.96, and appears in three sizes: hero (176px), phone tab bar (72px in an 84px ring) and desktop rail (46px in a 56px ring). Besides small live-state dots and live map markers, it is the only element allowed to animate continuously.
+Domed, tactile, few.
+
+- **Shape:** gently rounded (16px), minimum 44px tall, 0.8125rem text.
+- **Primary (`.btn-neon`):** the convex Command Blue fill, white bold text with slight tracking, the accent lift. Hover brightens (filter 1.06). On `:active` it sinks: scale 0.98 and an inner shadow replaces the lift. Disabled drops to 55% opacity with a wait cursor.
+- **Ghost (`.btn-ghost`):** a raised-xs pad of the surface with Slate Ink semibold text. Hover rises to raised-small and turns the label Signal Blue; `:active` presses to inset small.
+- **Auth (`.btn-auth`):** the primary recipe at 48px tall and 0.9375rem.
+- **Focus:** the global keyboard ring (2px Signal Blue outline, 2px offset); mouse clicks stay ring-free.
+
+### SOS (signature)
+
+A red sphere (radial gradient from sos-fill-hi at 34% 28% to sos-fill) sitting in a raised dish of the surface. Holding fills a conic progress ring in the dish's pressed groove from the Track colour to sos-fill. Three sizes: hero (176px sphere in a 200px dish, 8px groove, idle glow pulse), phone tab bar (72px in an 84px raised dish, 5px groove), desktop rail (44px in a 56px **pressed** dish, 4px groove, no pulse, still tight lift). Presses to scale 0.96. Besides small live-status dots, live map markers and skeleton shimmer, it is the only element allowed to animate continuously.
 
 ### Chips
-- **Style:** fully rounded pills, 12px semibold text in the signal colour on a 15% tint of the same colour; no border.
+
+- **Style:** fully rounded pills, 0.75rem semibold text in the signal colour on a 15% tint of the same colour; no border, no shadow.
 - **Severity (P1 to P4):** red, orange, amber, green.
-- **Status:** reported/sent cyan, under review/received violet, in progress/assigned amber, resolved/arrived green, closed/cancelled grey.
-- **Kind:** fixed 44px width, 10px bold tracked text: SOS red, INC cyan, ANON violet.
+- **Status:** reported/sent blue, under review/received violet, in progress/assigned amber, resolved/arrived green, closed/cancelled grey (20% muted).
+- **Kind:** fixed 44px width, 10px bold tracked text: SOS red, INC blue, ANON violet.
 
 ### Cards / Containers
-- **Corner Style:** 22px.
-- **Background:** Glass, with backdrop blur and the glass shadow stack (see Elevation & Depth).
-- **Border:** 1px glass-border (bright white in light, faint white in dark) plus an inset edge ring.
-- **Internal Padding:** 12px, 16px from sm; dashboard cards have a 56px header row with a hairline divider.
-- **Hover:** clickable tiles (`.glass-hover`) lift 2px and move to Glass Strong on pointer devices, and press to scale 0.985.
+
+- **Corner Style:** 24px.
+- **Background:** the surface itself.
+- **Shadow Strategy:** Raised (see Elevation & Depth). Clickable cards (`.glass-hover`) rise 2px on hover-capable pointers and press to inset small on `:active`.
+- **Border:** none.
+- **Internal Padding:** 16px; admin panel headers sit on a hairline divider.
+- **Wells:** read-only values, message bodies and secondary lists inside a card sit in inset-small wells (12 to 16px corners).
 
 ### Inputs / Fields
-- **Style:** Glass Soft fill, 1px hairline, 14px corners, 44px tall; placeholder in Dim Slate; Signal Teal caret.
-- **Focus:** fill moves to Panel, border to Signal Teal, plus a 3px neon-dim halo.
-- **Labels:** 12px medium Slate, 6px above the field.
-- **Auth fields:** auth-field fill and auth-field-border, auth-placeholder placeholder, auth-link caret and focus ring.
+
+- **Style:** pressed into the surface (inset small), 14px corners, 44px tall, a transparent 1px border reserved for focus; placeholder in Dim Slate; Signal Blue caret.
+- **Focus:** the border takes 55% Signal Blue and a 3px neon-dim halo joins the inset.
+- **Labels:** 0.75rem semibold Slate, 7px above the field.
 
 ### Segmented Control
-A 14px rounded Glass Soft track with 4px padding; options are 12px medium Slate text in 10px-rounded buttons. The pressed option inverts to Slate Ink fill with panel-coloured text. Used for every filter and range switch (queue filter, chart range, report type).
+
+A raised-xs track (16px corners, 5px padding, 4px gap). Options are 0.75rem semibold Slate text in 11px-rounded buttons. The chosen option (`aria-pressed="true"`) sinks: concave fill, inset small, Signal Blue text. Used for every filter and range switch (queue filter, chart range, report type, walk duration).
+
+### Choice Tiles
+
+Category, severity and responder pickers are raised-xs tiles (12px corners) that rise to raised-small on hover and sink to inset small with a Signal Blue (violet in the anonymous flow) label when chosen.
 
 ### Navigation
-- **Student phone:** floating glass tab bar, five slots, SOS in the centre. **Student desktop / admin:** floating glass rail or sidebar.
-- **Active item:** a 15% Bright Cyan tint with an inset neon-dim ring and Slate Ink text; inactive items are Slate.
-- **Top bars:** floating glass bars with 22 to 28px corners.
+
+- **Student phone:** raised tab bar, five slots, SOS dish in the centre. **Student desktop:** raised icon rail. **Admin:** raised sidebar.
+- **Active item:** pressed (inset small) with Slate Ink text and a Signal Blue icon; on the tab bar the icon pill sinks and the label turns Signal Blue. Inactive items are Slate with a Dim Slate icon and a faint Panel 2 hover.
+- **Top bars:** raised bars with 22px corners.
 
 ### Map Markers
-- **Live alert:** red dot with a white panel ring and an expanding ping (cyan or violet variants for other kinds).
-- **You are here:** cyan dot, 3px white ring, breathing halo.
+
+- **Live alert:** red dot with a surface ring and an expanding ping (blue or violet variants for other kinds).
+- **You are here:** map-pin dot, 3px white ring, breathing halo.
 - **Resolved:** solid green dot, no animation.
 - **Approximate:** dashed hollow ring in the signal colour, no animation.
-Map tiles are OpenStreetMap, softened in light and night-inverted with a slight warm sepia in dark. Non-SOS pins (incidents, units, "you are here") use `--map-pin`: the accent in light, sand `#e6d3ad` in dark, so no pin can ever be mistaken for SOS red.
+  Tiles are OpenStreetMap, desaturated toward the surface in light and night-inverted in dark. The zoom control is a raised-small stack with 14px corners.
 
-**The Pin Rule.** On any map, only SOS is red. If an accent colour drifts toward red or orange, map pins must take a separate, clearly non-red token.
+**The Pin Rule.** On any map, only SOS is red. Non-SOS pins use `--map-pin` (the accent in light, `#8db2ff` in dark, violet in the anonymous flow), which must never drift toward red or orange.
 
 ### Activity Timeline (signature)
-The admin dashboard's live feed, grouped by day. Each row has a 28px round marker tinted by kind (SOS red, anonymous violet, incident and broadcast cyan, resolved green) and a 2px connector line. On load, markers pop in and the connector draws downward row by row with a staggered delay; this is the dashboard's one authored motion moment. New rows slide in at the top out of a 6px blur with a brief neon-dim flash and are announced to screen readers. The scroller feathers its bottom edge while more rows wait below. Ported from a 21st.dev Timeline to CSS keyframes and project tokens.
+
+The admin dashboard's live feed, grouped by day. Each row has a 28px round marker tinted by kind (SOS red, anonymous violet, incident and broadcast blue, resolved green) and a 2px connector. On load, markers pop in and the connector draws downward row by row with a staggered delay; this is the dashboard's one authored motion moment. New rows slide in at the top out of a 6px blur with a brief neon-dim flash and are announced to screen readers. The scroller feathers its bottom edge while more rows wait below.
 
 ### Skeletons
-Loading placeholders are a soft slate fill (12px corners) with a light sweep; the sweep is removed under reduced motion.
+
+Loading placeholders are a faint pressed fill (12px corners) with a soft light sweep; the sweep is removed under reduced motion.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** build every panel from the one glass material (`.card`/`.glass`, 22px) and every navigation bar from `.glass-bar`.
-- **Do** carry severity and kind with pill chips and tinted tiles, always with a text label (P1, SOS, ANON, Resolved), never colour alone.
-- **Do** rely on the global keyboard focus ring (2px Signal Teal outline, 2px offset) and the themed selection tint and caret; on auth screens use the `--auth-*` ring, caret, placeholder and selection.
-- **Do** use the `--auth-*` token set, the opaque sheet and the solid teal CTA on sign-in and sign-up screens.
+
+- **Do** build every panel from the one material: surface fill, 24px corners, the Raised shadow; every navigation bar the same, at 22px or 28px.
+- **Do** show "chosen", "active" and "typed into" by pressing the control in (inset small), and keep everything available raised.
+- **Do** keep the primary action the only blue convex fill on a surface, with white text and the accent lift.
+- **Do** carry severity and kind with tinted pill chips, always with a text label (P1, SOS, ANON, Resolved), never colour alone.
+- **Do** rely on the global keyboard focus ring (2px Signal Blue outline, 2px offset), the neon-dim selection tint and the Signal Blue caret.
 - **Do** give each surface at most one authored motion moment (the activity feed's draw-down on the dashboard), using exponential ease-out (`cubic-bezier(0.22, 1, 0.36, 1)` or `cubic-bezier(0.23, 1, 0.32, 1)`), with a reduced-motion fallback that shows the final state.
-- **Do** port third-party (21st.dev) components to CSS motion and project tokens before they ship.
-- **Do** keep Dim Slate as the lightest text colour and Deep Ink as the text on bright fills.
-- **Do** redefine any new token for dark under `:root[data-theme="dark"]`.
+- **Do** keep Dim Slate as the lightest text colour, and check any text on a solid status fill clears 4.5:1 in both themes.
+- **Do** redefine any new token for dark under `:root[data-theme="dark"]` and, if it is accent-coloured, for `html.anon`.
 
 ### Don't:
+
+- **Don't** reintroduce translucent glass, backdrop blur or a coloured aurora behind panels.
+- **Don't** put a border or ring and a soft shadow on the same element, or stack two elevation cues on one control.
+- **Don't** mark a selection by outlining, inverting to a dark fill, or tinting; sink it.
+- **Don't** let anything glow except the primary blue lift and the SOS sphere.
 - **Don't** put eyebrow or kicker labels above page headings.
-- **Don't** use coloured side stripes (left-border accents) on list rows or cards to show severity or status; use chips and tiles.
-- **Don't** show availability, coverage, response-time or adoption claims the product cannot back up (no "24/7 monitoring", no user counts, no endorsement).
-- **Don't** import a third-party component together with its own design system, animation library or palette.
-- **Don't** animate continuously anything that is not live state; looping motion is reserved for the SOS button, live map markers and small live-status dots.
-- **Don't** put white text on Bright Cyan, Caution Amber or Resolved Green fills.
-- **Don't** use the translucent glass panel behind auth forms.
+- **Don't** use violet for decoration, chart gradients or categorical series; it means anonymity.
+- **Don't** use coloured side stripes (left-border accents) on list rows or cards to show severity or status; use chips.
+- **Don't** animate continuously anything that is not live state.
 - **Don't** use a grey lighter than Dim Slate for any text, including placeholders.

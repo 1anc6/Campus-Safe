@@ -31,8 +31,8 @@ export function StatusStepper({
                   complete
                     ? "bg-ok text-ink"
                     : active
-                      ? "bg-accent text-ink"
-                      : "bg-panel-2 text-muted ring-1 ring-line",
+                      ? "bg-accent text-on-accent"
+                      : "text-muted neu-well",
                 )}
               >
                 {complete ? <Check className="size-3.5" strokeWidth={3} /> : i + 1}

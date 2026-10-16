@@ -220,7 +220,9 @@ function Command() {
                     aria-pressed={on}
                     className={cn(
                       "relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left ring-1 transition-colors",
-                      on ? "bg-panel-2 ring-neon/40" : "ring-transparent hover:bg-panel-2/60",
+                      on
+                        ? "ring-transparent shadow-[var(--neu-inset-sm)]"
+                        : "ring-transparent hover:shadow-[var(--neu-raised-xs)]",
                     )}
                   >
                     <KindChip kind={q.kind} />
@@ -430,8 +432,8 @@ function StepTrack({
                 done
                   ? "bg-ok text-ink"
                   : active
-                    ? "bg-accent text-ink"
-                    : "bg-panel-2 text-muted ring-1 ring-line",
+                    ? "bg-accent text-on-accent"
+                    : "text-muted neu-well",
               )}
             >
               {done ? <Check className="size-3.5" strokeWidth={3} /> : i + 1}
@@ -532,7 +534,7 @@ function Detail({
       </div>
 
       {sos && (
-        <div className="flex items-center justify-between gap-3 rounded-xl bg-panel-2/60 p-3 ring-1 ring-line">
+        <div className="flex items-center justify-between gap-3 rounded-xl p-3 neu-well">
           <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-wider text-dim">Reporter</p>
             <p className="truncate font-medium">{sos.reporterName}</p>
@@ -551,11 +553,7 @@ function Detail({
           <span className="font-mono">{anonCode ?? "the tracking code"}</span>.
         </p>
       )}
-      {desc && (
-        <p className="rounded-xl bg-panel-2/40 p-3 text-sm leading-relaxed text-fg ring-1 ring-line">
-          {desc}
-        </p>
-      )}
+      {desc && <p className="rounded-xl p-3 text-sm leading-relaxed text-fg neu-well">{desc}</p>}
 
       <section>
         <SectionLabel>Progress</SectionLabel>

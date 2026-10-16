@@ -27,7 +27,7 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: BRAND.name },
-      { name: "theme-color", content: "#f3f5f8" },
+      { name: "theme-color", content: "#e4ecf7" },
       { name: "description", content: BRAND.description },
       // Installable web app (Add to Home Screen) on iOS.
       { name: "apple-mobile-web-app-capable", content: "yes" },
@@ -54,7 +54,7 @@ export const Route = createRootRoute({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Manrope:wght@500;600;700;800&display=swap",
       },
     ],
   }),
