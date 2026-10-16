@@ -338,6 +338,14 @@ A red sphere (radial gradient from sos-fill-hi at 34% 28% to sos-fill) sitting i
 - **Focus:** the border takes 55% Signal Blue and a 3px neon-dim halo joins the inset.
 - **Labels:** 0.75rem semibold Slate, 7px above the field.
 
+### Dropdowns (`NeuSelect`)
+
+Every choice list uses `src/components/shared/neu-select.tsx` (Radix Select), never the platform `<select>` sheet. The trigger is the pressed field above with a chevron that turns when open. The list is a raised floating panel on `chrome` (16px corners, 8px below the trigger, at least the trigger's width); rows are 44px tall, rise to raised-xs with Signal Blue text when highlighted, and the chosen row sinks to inset small with a check. Long lists can carry group headings in the caps label style; campus places are grouped by zone (`placeOptions`). `size="sm"` gives a 40px trigger for table rows.
+
+### SOS Conversation (`ChatThread`)
+
+The live SOS screens for student, command and responder share `src/components/shared/chat-thread.tsx`, a raised card. The viewer's own messages sit right on the convex blue fill with white text (18px corners, a tight bottom corner on the sender's side); the other side sits left on raised-xs with a small name label; system events are centred notes in a pressed well. Times read "6:31 PM" for today. Quick-reply pills (ghost buttons) send in one tap, Enter sends and Shift+Enter breaks the line, and a "new messages" pill appears when the reader has scrolled up. Students can write while the alert is open and for 24 hours after it closes. A student's unanswered message shows as a pressed note on the command SOS list, and a new reply from command vibrates the student's phone and shows a toast.
+
 ### Segmented Control
 
 A raised-xs track (16px corners, 5px padding, 4px gap). Options are 0.75rem semibold Slate text in 11px-rounded buttons. The chosen option (`aria-pressed="true"`) sinks: concave fill, inset small, Signal Blue text. Used for every filter and range switch (queue filter, chart range, report type, walk duration).

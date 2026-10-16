@@ -7,6 +7,7 @@ import { CATEGORIES, INCIDENT_STATUSES, SEVERITIES, type Severity } from "@/lib/
 import { listIncidentsAdmin } from "@/backend/functions/admin";
 import { cn, formatClock } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
+import { NeuSelect } from "@/components/shared/neu-select";
 
 type IncidentSearch = {
   q?: string;
@@ -113,15 +114,16 @@ function IncidentsPage() {
             />
           </div>
           <div className="flex gap-2">
-            <select
+            <NeuSelect
               value={search.sort ?? "priority"}
-              onChange={(e) => setFilter({ sort: e.target.value === "date" ? "date" : undefined })}
-              className="input w-auto flex-1 sm:flex-none"
+              onValueChange={(v) => setFilter({ sort: v === "date" ? "date" : undefined })}
+              options={[
+                { value: "priority", label: "Sort by priority" },
+                { value: "date", label: "Sort by date" },
+              ]}
+              className="w-auto flex-1 sm:w-48 sm:flex-none"
               aria-label="Sort"
-            >
-              <option value="priority">Sort by priority</option>
-              <option value="date">Sort by date</option>
-            </select>
+            />
             <button
               type="button"
               onClick={() => setShowFilters((v) => !v)}
@@ -138,50 +140,38 @@ function IncidentsPage() {
           <div className="mt-3 grid grid-cols-1 gap-3 border-t border-line pt-3 sm:grid-cols-3">
             <label>
               <span className="field-label">Status</span>
-              <select
+              <NeuSelect
                 value={search.status ?? ""}
-                onChange={(e) => setFilter({ status: e.target.value || undefined })}
-                className="input"
-              >
-                <option value="">All statuses</option>
-                {INCIDENT_STATUSES.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(v) => setFilter({ status: v || undefined })}
+                options={[
+                  { value: "", label: "All statuses" },
+                  ...INCIDENT_STATUSES.map((s) => ({ value: s.id, label: s.label })),
+                ]}
+              />
             </label>
             <label>
               <span className="field-label">Priority</span>
-              <select
+              <NeuSelect
                 value={search.severity ?? ""}
-                onChange={(e) =>
-                  setFilter({ severity: (e.target.value || undefined) as Severity | undefined })
+                onValueChange={(v) =>
+                  setFilter({ severity: (v || undefined) as Severity | undefined })
                 }
-                className="input"
-              >
-                <option value="">All priorities</option>
-                {SEVERITIES.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.id} · {s.label}
-                  </option>
-                ))}
-              </select>
+                options={[
+                  { value: "", label: "All priorities" },
+                  ...SEVERITIES.map((s) => ({ value: s.id, label: s.id, hint: s.label })),
+                ]}
+              />
             </label>
             <label>
               <span className="field-label">Category</span>
-              <select
+              <NeuSelect
                 value={search.category ?? ""}
-                onChange={(e) => setFilter({ category: e.target.value || undefined })}
-                className="input"
-              >
-                <option value="">All categories</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(v) => setFilter({ category: v || undefined })}
+                options={[
+                  { value: "", label: "All categories" },
+                  ...CATEGORIES.map((c) => ({ value: c.id, label: c.name })),
+                ]}
+              />
             </label>
             {activeFilters > 0 && (
               <button

@@ -62,6 +62,8 @@ export type SosAlert = {
   resolvedAt: string | null;
   /** Time of the most recent GPS point received for this alert (live list only). */
   lastPingAt?: string | null;
+  /** Newest message the student wrote on this alert, when it is newer than command's last reply. */
+  unansweredReply?: { body: string; at: string } | null;
 };
 
 export type SosPoint = {

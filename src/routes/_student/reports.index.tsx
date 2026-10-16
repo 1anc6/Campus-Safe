@@ -146,7 +146,7 @@ function MyReports() {
         </div>
       )}
 
-      <ul className="grid gap-3 md:grid-cols-2">
+      <ul className={cn("grid gap-3", rows.length > 1 && "md:grid-cols-2")}>
         {rows.map((r) =>
           r.kind === "sos" ? (
             <li key={`sos-${r.sos.id}`}>

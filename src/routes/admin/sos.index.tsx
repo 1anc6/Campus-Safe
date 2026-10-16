@@ -5,6 +5,7 @@ import {
   Crosshair,
   LocateFixed,
   MapPinOff,
+  MessageCircle,
   Phone,
   ShieldCheck,
   SignalLow,
@@ -277,16 +278,12 @@ function SosBoard() {
                     onClick={() => setFocusId(on ? null : s.id)}
                     aria-pressed={on}
                     className={cn(
-                      "relative w-full overflow-hidden rounded-xl p-3 pl-4 text-left ring-1 transition-colors",
+                      "relative w-full overflow-hidden rounded-2xl p-3.5 text-left ring-1 transition-[box-shadow]",
                       on
                         ? "ring-transparent shadow-[var(--neu-inset-sm)]"
                         : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
                     )}
                   >
-                    <span
-                      className="absolute inset-y-2 left-1.5 w-1 rounded-full bg-sos"
-                      aria-hidden="true"
-                    />
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="truncate font-medium">{s.reporterName}</p>
@@ -303,6 +300,17 @@ function SosBoard() {
                     <p className="mt-0.5 truncate text-xs text-dim">
                       {s.assignedName ? `Assigned: ${s.assignedName}` : "Unassigned"}
                     </p>
+                    {s.unansweredReply && (
+                      <p className="neu-well mt-2.5 flex items-start gap-2 rounded-xl px-2.5 py-2 text-xs">
+                        <MessageCircle className="mt-px size-3.5 shrink-0 text-neon" />
+                        <span className="min-w-0">
+                          <span className="font-semibold text-neon">
+                            Student wrote {waitLabel(s.unansweredReply.at, now)} ago
+                          </span>
+                          <span className="block truncate text-fg">{s.unansweredReply.body}</span>
+                        </span>
+                      </p>
+                    )}
                   </button>
                 </li>
               );

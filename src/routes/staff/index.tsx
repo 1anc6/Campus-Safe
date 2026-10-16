@@ -127,7 +127,7 @@ function AlertCard({ alert, now }: { alert: SosAlert; now: number }) {
         {alert.reporterMedical && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {alert.reporterMedical.bloodGroup && (
-              <span className="inline-flex items-center gap-1 rounded-md bg-sos px-2 py-0.5 text-xs font-bold text-white">
+              <span className="inline-flex items-center gap-1 rounded-md bg-[var(--sos-fill)] px-2 py-0.5 text-xs font-bold text-white">
                 <Droplet className="size-3" /> {alert.reporterMedical.bloodGroup}
               </span>
             )}

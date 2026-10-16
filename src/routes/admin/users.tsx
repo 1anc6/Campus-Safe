@@ -16,6 +16,7 @@ import {
 } from "@/backend/functions/profile";
 import { cn } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
+import { NeuSelect } from "@/components/shared/neu-select";
 
 export const Route = createFileRoute("/admin/users")({ component: UsersPage });
 
@@ -169,19 +170,16 @@ function UsersPage() {
             aria-label="Search users"
           />
         </div>
-        <select
+        <NeuSelect
           value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value as UserRole | "all")}
-          className="input sm:w-48"
+          onValueChange={(v) => setRoleFilter(v as UserRole | "all")}
+          options={[
+            { value: "all", label: "All roles" },
+            ...USER_ROLES.map((r) => ({ value: r.id, label: r.label })),
+          ]}
+          className="sm:w-48"
           aria-label="Filter by role"
-        >
-          <option value="all">All roles</option>
-          {USER_ROLES.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.label}
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
       {error && (
@@ -195,25 +193,30 @@ function UsersPage() {
       {/* Phones / small tablets: cards */}
       <ul className="space-y-2 md:hidden">
         {filtered.map((p) => (
-          <li key={p.userId} className="card flex items-center gap-3 p-3">
-            <Avatar profile={{ ...p, phone: null, avatarUrl: null }} className="size-10" />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">
-                {p.name}
-                {p.userId === viewer?.userId && (
-                  <span className="ml-1 text-xs text-dim">(you)</span>
-                )}
-              </p>
-              <p className="truncate text-xs text-muted">{p.email ?? "No email"}</p>
+          <li key={p.userId} className="card p-3.5">
+            <div className="flex items-center gap-3">
+              <Avatar profile={{ ...p, phone: null, avatarUrl: null }} className="size-10" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {p.name}
+                  {p.userId === viewer?.userId && (
+                    <span className="ml-1 text-xs text-dim">(you)</span>
+                  )}
+                </p>
+                <p className="truncate text-xs text-muted">{p.email ?? "No email"}</p>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <RoleSelect
-                person={p}
-                self={p.userId === viewer?.userId}
-                saving={savingId === p.userId}
-                onChange={changeRole}
-              />
-              <ResetButton person={p} onClick={() => setResetting(p)} />
+            <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-3">
+              <span className="text-xs text-muted">Role</span>
+              <span className="flex items-center gap-1">
+                <RoleSelect
+                  person={p}
+                  self={p.userId === viewer?.userId}
+                  saving={savingId === p.userId}
+                  onChange={changeRole}
+                />
+                <ResetButton person={p} onClick={() => setResetting(p)} />
+              </span>
             </div>
           </li>
         ))}
@@ -320,20 +323,16 @@ function RoleSelect({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <select
+      <NeuSelect
         value={person.role}
         disabled={self || saving}
-        onChange={(e) => void onChange(person, e.target.value as UserRole)}
-        className="input min-h-10 w-auto py-1.5 text-xs disabled:opacity-60"
+        onValueChange={(v) => void onChange(person, v as UserRole)}
+        options={USER_ROLES.map((r) => ({ value: r.id, label: r.label }))}
+        size="sm"
+        className="min-w-28"
         aria-label={`Role for ${person.name}`}
         title={self ? "You cannot change your own role" : undefined}
-      >
-        {USER_ROLES.map((r) => (
-          <option key={r.id} value={r.id}>
-            {r.label}
-          </option>
-        ))}
-      </select>
+      />
       {saving && <LoaderCircle className="size-4 animate-spin text-muted" />}
     </div>
   );
@@ -540,17 +539,11 @@ function CreateAccountForm({ onClose, onCreated }: { onClose: () => void; onCrea
         </label>
         <label>
           <span className="field-label">Role</span>
-          <select
+          <NeuSelect
             value={role}
-            onChange={(e) => setRole(e.target.value as UserRole)}
-            className="input"
-          >
-            {USER_ROLES.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.label}
-              </option>
-            ))}
-          </select>
+            onValueChange={(v) => setRole(v as UserRole)}
+            options={USER_ROLES.map((r) => ({ value: r.id, label: r.label }))}
+          />
         </label>
       </div>
       {error && (

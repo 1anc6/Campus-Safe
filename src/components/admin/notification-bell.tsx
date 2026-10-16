@@ -44,7 +44,7 @@ export function NotificationBell({ unseen, onSeen }: { unseen: number; onSeen: (
       >
         <Bell className="size-4" />
         {unseen > 0 && (
-          <span className="absolute right-1 top-1 grid min-w-4 place-items-center rounded-full bg-sos px-1 font-mono text-[9px] font-bold text-white ring-2 ring-chrome">
+          <span className="absolute right-1 top-1 grid min-w-4 place-items-center rounded-full bg-[var(--sos-fill)] px-1 font-mono text-[9px] font-bold text-white ring-2 ring-chrome">
             {unseen > 99 ? "99+" : unseen}
           </span>
         )}
@@ -122,7 +122,7 @@ function NotificationLink({ n, ...rest }: { n: AdminNotification }) {
         <span className="flex items-center gap-2">
           <span className="truncate text-sm font-medium">{n.title}</span>
           {n.unseen && (
-            <span className="shrink-0 rounded bg-sos px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-white">
+            <span className="shrink-0 rounded bg-[var(--sos-fill)] px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-white">
               New
             </span>
           )}

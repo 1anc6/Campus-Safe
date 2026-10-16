@@ -2,13 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Phone } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Fact, Panel, ResponderPicker } from "@/components/admin/case-panels";
 import {
-  Fact,
-  Panel,
-  ReplyForm,
-  ResponderPicker,
-  ThreadList,
-} from "@/components/admin/case-panels";
+  ChatThread,
+  STAFF_CHAT_LABELS,
+  STAFF_QUICK_REPLIES,
+} from "@/components/shared/chat-thread";
 import { LiveMap } from "@/components/shared/live-map";
 import { MedicalCard } from "@/components/shared/medical-card";
 import { StatusPill } from "@/components/shared/pills";
@@ -158,17 +157,17 @@ function SosCase() {
               </a>
             )}
           </Panel>
-          <Panel title="Timeline">
-            <ThreadList messages={messages} />
-            <div className="mt-3">
-              <ReplyForm
-                onSend={async (body) => {
-                  await postThread({ data: { kind: "sos", subjectId: alert.id, body } });
-                  await load();
-                }}
-              />
-            </div>
-          </Panel>
+          <ChatThread
+            messages={messages}
+            selfRoles={["admin"]}
+            labels={STAFF_CHAT_LABELS}
+            quickReplies={closed ? [] : STAFF_QUICK_REPLIES}
+            placeholder={`Message ${alert.reporterName}`}
+            onSend={async (body) => {
+              await postThread({ data: { kind: "sos", subjectId: alert.id, body } });
+              await load();
+            }}
+          />
         </div>
 
         <aside className="space-y-4">

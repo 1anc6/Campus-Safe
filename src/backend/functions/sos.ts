@@ -11,6 +11,7 @@ import type {
   ThreadMessage,
 } from "@/lib/types";
 import { iso, newId } from "@/lib/utils";
+import { rateLimit } from "@/backend/core/rate-limit";
 import { z } from "zod";
 import {
   addSystemMessage,
@@ -366,6 +367,31 @@ export const getSos = createServerFn({ method: "GET" })
         createdAt: iso(m.created_at),
       })),
     };
+  });
+
+/**
+ * The student who raised an SOS writes to campus command on its thread: what
+ * happened, where exactly they are, what they need. Open alerts only, plus a
+ * day after closing so a grievance can still be added once help has left.
+ */
+export const replySos = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(z.object({ id: z.string(), body: z.string().trim().min(1).max(1000) }))
+  .handler(async ({ context, data }) => {
+    rateLimit(`sos-reply:${context.userId}`, 30, 10 * 60_000);
+    const sql = await getSql();
+    const own = await sql<{ id: string }>`
+      select id from sos_alerts
+      where id = ${data.id} and user_id = ${context.userId}
+        and (status not in ('resolved', 'cancelled') or resolved_at > now() - interval '24 hours')
+    `;
+    if (!own[0]) throw new Error("This alert is closed. Start a report instead.");
+    await sql`
+      insert into threads (id, kind, subject_id, author_role, author_id, body)
+      values (${newId()}, ${"sos"}, ${data.id}, ${"reporter"}, ${context.userId}, ${data.body})
+    `;
+    await audit(context.userId, "sos.reply", "sos", data.id);
+    return { ok: true as const };
   });
 
 export const assignSos = createServerFn({ method: "POST" })

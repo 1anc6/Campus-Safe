@@ -541,7 +541,7 @@ function BloodChip({
         on
           ? wide
             ? "bg-fg text-panel ring-fg"
-            : "bg-sos text-white ring-sos"
+            : "bg-[var(--sos-fill)] text-white ring-sos"
           : "bg-panel-2 text-fg ring-line hover:ring-line-strong",
       )}
     >

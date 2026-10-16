@@ -20,7 +20,13 @@ import { ResponderShell } from "@/components/responder/responder-shell";
 import { distanceM, SOS_STEPS } from "@/lib/campus";
 import { directionsUrl, formatDistance, useNow } from "@/lib/responder";
 import { getSos, setSosStatus } from "@/backend/functions/sos";
-import type { SosAlert, SosPoint } from "@/lib/types";
+import { postThread } from "@/backend/functions/reports";
+import {
+  ChatThread,
+  STAFF_CHAT_LABELS,
+  STAFF_QUICK_REPLIES,
+} from "@/components/shared/chat-thread";
+import type { SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 import { SkeletonCard, SkeletonDetail, SkeletonGroup } from "@/components/shared/skeleton";
@@ -47,6 +53,7 @@ function AssignedAlert() {
   const { id } = Route.useParams();
   const [alert, setAlert] = useState<SosAlert | null>(null);
   const [trail, setTrail] = useState<SosPoint[]>([]);
+  const [messages, setMessages] = useState<ThreadMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<Action | null>(null);
   const [confirmResolve, setConfirmResolve] = useState(false);
@@ -57,6 +64,7 @@ function AssignedAlert() {
     const d = await getSos({ data: { id } });
     setAlert(d.alert);
     setTrail(d.trail);
+    setMessages(d.messages);
   }, [id]);
 
   useEffect(() => {
@@ -276,6 +284,18 @@ function AssignedAlert() {
             )}
             <MedicalCard info={alert.reporterMedical} className="mt-3" />
           </section>
+
+          <ChatThread
+            messages={messages}
+            selfRoles={["responder"]}
+            labels={STAFF_CHAT_LABELS}
+            quickReplies={closed ? [] : STAFF_QUICK_REPLIES}
+            placeholder={`Message ${alert.reporterName}`}
+            onSend={async (body) => {
+              await postThread({ data: { kind: "sos", subjectId: alert.id, body } });
+              await load();
+            }}
+          />
         </aside>
       </div>
 

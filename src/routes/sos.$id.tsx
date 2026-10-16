@@ -4,11 +4,13 @@ import { LiveMap } from "@/components/shared/live-map";
 import { StatusStepper } from "@/components/shared/status-stepper";
 import { SOS_STEPS } from "@/lib/campus";
 import { getFix, GOOD_FIX_M, gpsBlockedByInsecureOrigin } from "@/lib/gps";
-import { getSos, markSosSafe, pingSosLocation } from "@/backend/functions/sos";
-import { cn, formatClock, waitLabel } from "@/lib/utils";
+import { getSos, markSosSafe, pingSosLocation, replySos } from "@/backend/functions/sos";
+import { ChatThread } from "@/components/shared/chat-thread";
+import { cn, waitLabel } from "@/lib/utils";
 import type { SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
-import { ArrowLeft, Crosshair, MapPinOff, Phone } from "lucide-react";
+import { ArrowLeft, Crosshair, MapPinOff, Phone, ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 /** Minimum gap between GPS uploads, and the heartbeat that re-sends the last fix. */
 const PING_EVERY_MS = 7000;
@@ -20,6 +22,17 @@ const FALLBACK_EVERY_MS = 30000;
  */
 const WORSE_FACTOR = 2;
 const GOOD_FIX_FRESH_MS = 60_000;
+/** Students can still add to the conversation for a day after the alert closes. */
+const REPLY_GRACE_MS = 24 * 60 * 60_000;
+
+/** One-tap answers for the questions command asks most, written for a scared thumb. */
+const STUDENT_QUICK_REPLIES = [
+  "Someone is following me",
+  "I'm hurt, I need medical help",
+  "I can't talk, text only",
+  "I'm hiding, please hurry",
+  "I'm with a friend",
+];
 
 type Sharing = "starting" | "live" | "approx" | "blocked" | "insecure";
 
@@ -51,12 +64,30 @@ function Active() {
 
   const [error, setError] = useState<string | null>(null);
 
+  /** Staff messages already seen, so only new replies buzz the phone. */
+  const seenStaff = useRef<number | null>(null);
+
   const refresh = useCallback(async () => {
     const data = await getSos({ data: { id } });
     alertRef.current = data.alert;
     setAlert(data.alert);
     setTrail(data.trail);
     setMessages(data.messages);
+    const staff = data.messages.filter(
+      (m) => m.authorRole === "admin" || m.authorRole === "responder",
+    );
+    if (seenStaff.current != null && staff.length > seenStaff.current) {
+      const latest = staff[staff.length - 1]!;
+      try {
+        navigator.vibrate?.([80, 60, 80]);
+      } catch {
+        /* vibration unsupported */
+      }
+      toast(latest.authorRole === "responder" ? "Responder" : "Campus command", {
+        description: latest.body,
+      });
+    }
+    seenStaff.current = staff.length;
     return data.alert;
   }, [id]);
 
@@ -190,6 +221,8 @@ function Active() {
   const markedSafe = messages.some(
     (m) => m.authorRole === "system" && m.body.startsWith("Reporter marked themselves safe"),
   );
+  const canReply =
+    !closed || (alert.resolvedAt != null && now - Date.parse(alert.resolvedAt) < REPLY_GRACE_MS);
   const currentId =
     alert.status === "resolved" ? "resolved" : alert.status === "cancelled" ? "sent" : alert.status;
 
@@ -243,22 +276,23 @@ function Active() {
           />
         </div>
 
-        <div className="px-5 py-5">
+        <div className="space-y-4 px-5 py-5">
           <div className="card p-4">
             <StatusStepper steps={stepsFor(alert, markedSafe)} current={currentId} />
           </div>
 
           {alert.assignedName && (
-            <div className="mt-4 flex items-center justify-between card p-4">
-              <div>
+            <div className="card flex items-center justify-between gap-3 p-4">
+              <div className="min-w-0">
                 <p className="text-xs text-muted">Responder</p>
-                <p className="font-medium">{alert.assignedName}</p>
+                <p className="truncate font-display font-semibold">{alert.assignedName}</p>
                 {alert.assignedPhone && <p className="text-xs text-muted">{alert.assignedPhone}</p>}
               </div>
               {alert.assignedPhone && (
                 <a
                   href={`tel:${alert.assignedPhone}`}
-                  className="grid size-12 place-items-center rounded-full bg-ok text-ink"
+                  aria-label={`Call ${alert.assignedName}`}
+                  className="grid size-12 shrink-0 place-items-center rounded-full bg-ok text-ink shadow-[var(--neu-raised-xs)]"
                 >
                   <Phone className="size-5" />
                 </a>
@@ -266,24 +300,27 @@ function Active() {
             </div>
           )}
 
-          <ul className="mt-4 space-y-2">
-            {messages.map((m) => (
-              <li key={m.id} className="rounded-xl px-3 py-2 text-sm neu-raised">
-                <span className="text-[11px] text-muted">
-                  {m.authorRole} · {formatClock(m.createdAt)}
-                </span>
-                <p>{m.body}</p>
-              </li>
-            ))}
-          </ul>
+          <ChatThread
+            messages={messages}
+            selfRoles={["reporter"]}
+            labels={{ reporter: "You", admin: "Campus command", responder: "Responder" }}
+            quickReplies={closed ? [] : STUDENT_QUICK_REPLIES}
+            placeholder="Message campus command"
+            disabled={!canReply}
+            disabledNote="This alert closed over a day ago. File a report to raise anything new."
+            onSend={async (body) => {
+              await replySos({ data: { id, body } });
+              await refresh();
+            }}
+          />
 
           {!closed && (
             <button
               type="button"
               onClick={() => void safe()}
-              className="mt-6 min-h-14 w-full rounded-xl bg-ok font-display text-lg font-bold text-ink"
+              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-ok font-display text-lg font-bold text-ink shadow-[var(--neu-raised-sm)] transition-transform active:scale-[0.99]"
             >
-              I'm safe
+              <ShieldCheck className="size-5" /> I'm safe
             </button>
           )}
         </div>
@@ -316,8 +353,8 @@ function SharingBanner({
     <div
       role="status"
       className={cn(
-        "mx-auto mt-3 flex max-w-md items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-xs ring-1",
-        ok ? "bg-ok/10 text-ok ring-ok/25" : "bg-warn/10 text-warn ring-warn/30",
+        "neu-well mx-auto mt-3 flex max-w-md items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-left text-xs",
+        ok ? "text-ok" : "text-warn",
       )}
     >
       {ok ? <Crosshair className="size-4 shrink-0" /> : <MapPinOff className="size-4 shrink-0" />}

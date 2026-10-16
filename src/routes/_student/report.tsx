@@ -26,6 +26,7 @@ import { createIncident } from "@/backend/functions/reports";
 import type { GpsFix } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn } from "@/lib/utils";
+import { NeuSelect, placeOptions } from "@/components/shared/neu-select";
 
 export const Route = createFileRoute("/_student/report")({
   staticData: { width: "wide" },
@@ -173,17 +174,11 @@ function ReportForm() {
               ) : (
                 <label className="block">
                   <span className="field-label">Place</span>
-                  <select
+                  <NeuSelect
                     value={locationId}
-                    onChange={(e) => setLocationId(e.target.value)}
-                    className="input"
-                  >
-                    {LOCATIONS.map((l) => (
-                      <option key={l.id} value={l.id}>
-                        {l.name} · {l.zone}
-                      </option>
-                    ))}
-                  </select>
+                    onValueChange={setLocationId}
+                    options={placeOptions(LOCATIONS)}
+                  />
                 </label>
               )}
               <label className="block">

@@ -266,7 +266,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           {activeSos > 0 && (
             <Link
               to="/admin/sos"
-              className="mt-2 block rounded-2xl bg-sos px-4 py-2 text-center text-xs font-semibold text-white shadow-[0_8px_24px_-8px_var(--sos-glow)] sm:text-sm"
+              className="mt-2 block rounded-2xl bg-[var(--sos-fill)] px-4 py-2 text-center text-xs font-semibold text-white shadow-[0_8px_24px_-8px_var(--sos-glow)] sm:text-sm"
             >
               {activeSos} live SOS — jump the queue
             </Link>

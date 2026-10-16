@@ -9,7 +9,7 @@ const LEVEL = {
   critical: {
     icon: TriangleAlert,
     ring: "ring-sos/40",
-    chip: "bg-sos text-white",
+    chip: "bg-[var(--sos-fill)] text-white",
     tint: "bg-sos/10",
     label: "Urgent",
   },

@@ -6,6 +6,7 @@ import { FormSection } from "@/components/student/form-section";
 import { CATEGORIES, LOCATIONS, SEVERITIES, type Severity } from "@/lib/campus";
 import { createAnonymous } from "@/backend/functions/reports";
 import { cn } from "@/lib/utils";
+import { NeuSelect, placeOptions } from "@/components/shared/neu-select";
 
 export const Route = createFileRoute("/anonymous")({ component: AnonymousPage });
 
@@ -113,31 +114,19 @@ function AnonymousPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="block">
                     <span className="field-label">Category</span>
-                    <select
+                    <NeuSelect
                       value={categoryId}
-                      onChange={(e) => setCategoryId(e.target.value)}
-                      className="input"
-                    >
-                      {CATEGORIES.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                      onValueChange={setCategoryId}
+                      options={CATEGORIES.map((c) => ({ value: c.id, label: c.name }))}
+                    />
                   </label>
                   <label className="block">
                     <span className="field-label">Campus place</span>
-                    <select
+                    <NeuSelect
                       value={locationId}
-                      onChange={(e) => setLocationId(e.target.value)}
-                      className="input"
-                    >
-                      {LOCATIONS.map((l) => (
-                        <option key={l.id} value={l.id}>
-                          {l.name}
-                        </option>
-                      ))}
-                    </select>
+                      onValueChange={setLocationId}
+                      options={placeOptions(LOCATIONS)}
+                    />
                   </label>
                   <label className="block sm:col-span-2">
                     <span className="field-label">Roughly when</span>

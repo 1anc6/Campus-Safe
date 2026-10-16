@@ -259,7 +259,7 @@ function SafetyCard({ className }: { className?: string }) {
         ) : ready ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {profile.bloodGroup && (
-              <span className="inline-flex items-center gap-1 rounded-lg bg-sos px-2.5 py-1 text-sm font-bold text-white">
+              <span className="inline-flex items-center gap-1 rounded-lg bg-[var(--sos-fill)] px-2.5 py-1 text-sm font-bold text-white">
                 <Droplet className="size-3.5" /> {profile.bloodGroup}
               </span>
             )}
@@ -339,7 +339,7 @@ function ActiveSosBanner({ id, className }: { id: string; className?: string }) 
       to="/sos/$id"
       params={{ id }}
       className={cn(
-        "flex min-h-11 items-center gap-3 bg-sos px-4 py-2.5 text-sm font-semibold text-white",
+        "flex min-h-11 items-center gap-3 bg-[var(--sos-fill)] px-4 py-2.5 text-sm font-semibold text-white",
         className,
       )}
     >

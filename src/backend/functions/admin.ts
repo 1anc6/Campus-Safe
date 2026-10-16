@@ -252,12 +252,24 @@ export const getLive = createServerFn({ method: "GET" })
       reporter_name: string | null;
       assigned_name: string | null;
       last_ping_at: unknown;
+      reply_body: string | null;
+      reply_at: unknown;
     }>`
       select s.id, s.user_id, s.status, s.lat, s.lng, s.accuracy_m, s.is_approximate,
              s.assigned_to, s.notes, s.started_at, s.received_at, s.assigned_at, s.arrived_at, s.resolved_at,
              p.name as reporter_name, r.name as assigned_name,
-             (select max(l.recorded_at) from sos_locations l where l.alert_id = s.id) as last_ping_at
+             (select max(l.recorded_at) from sos_locations l where l.alert_id = s.id) as last_ping_at,
+             q.body as reply_body, q.created_at as reply_at
       from sos_alerts s
+      left join lateral (
+        select t.body, t.created_at from threads t
+        where t.kind = 'sos' and t.subject_id = s.id and t.author_role = 'reporter'
+          and t.created_at > coalesce((
+            select max(c.created_at) from threads c
+            where c.kind = 'sos' and c.subject_id = s.id and c.author_role in ('admin', 'responder')
+          ), '-infinity'::timestamptz)
+        order by t.created_at desc limit 1
+      ) q on true
       left join profiles p on p.user_id = s.user_id
       left join responders r on r.id = s.assigned_to
       where s.status not in ('resolved','cancelled')
@@ -364,6 +376,7 @@ export const getLive = createServerFn({ method: "GET" })
       arrivedAt: s.arrived_at ? iso(s.arrived_at) : null,
       resolvedAt: s.resolved_at ? iso(s.resolved_at) : null,
       lastPingAt: s.last_ping_at ? iso(s.last_ping_at) : null,
+      unansweredReply: s.reply_body ? { body: s.reply_body, at: iso(s.reply_at) } : null,
     }));
 
     // Last 40 GPS points per open alert, for live trails on the map.

@@ -18,7 +18,7 @@ export function MedicalCard({ info, className }: { info: MedicalInfo | null; cla
       </p>
       <div className="flex flex-wrap items-center gap-2">
         {info.bloodGroup && (
-          <span className="inline-flex items-center gap-1 rounded-lg bg-sos px-2.5 py-1 text-sm font-bold text-white">
+          <span className="inline-flex items-center gap-1 rounded-lg bg-[var(--sos-fill)] px-2.5 py-1 text-sm font-bold text-white">
             <Droplet className="size-3.5" /> {info.bloodGroup}
           </span>
         )}
