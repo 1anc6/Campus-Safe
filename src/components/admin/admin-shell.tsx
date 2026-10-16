@@ -227,8 +227,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 </p>
               )}
               {!onDashboard && (
-                <div className="flex min-w-0 items-center gap-2 overflow-x-auto">
-                  <CounterPill label="Active SOS" value={activeSos} tone="sos" />
+                <div className="flex shrink-0 items-center gap-2">
+                  <CounterPill label="Active SOS" short="SOS" value={activeSos} tone="sos" />
                   <span className="hidden items-center gap-2 md:flex">
                     <CounterPill label="New" value={counters?.incoming ?? 0} tone="neon" />
                     <CounterPill
@@ -286,31 +286,47 @@ function greeting(): string {
 }
 
 const TONES = {
-  sos: "bg-sos/15 text-sos ring-sos/30",
-  neon: "bg-neon-dim text-neon ring-neon/30",
-  warn: "bg-warn/15 text-warn ring-warn/30",
-  ok: "bg-ok/15 text-ok ring-ok/30",
+  sos: "bg-sos/12 text-sos",
+  neon: "bg-neon-dim text-neon",
+  warn: "bg-warn/12 text-warn",
+  ok: "bg-ok/12 text-ok",
 } as const;
 
 function CounterPill({
   label,
+  short,
   value,
   tone,
 }: {
   label: string;
+  /** Label used on narrow phones, where the full one would be cut off. */
+  short?: string;
   value: number;
   tone: keyof typeof TONES;
 }) {
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 ring-1",
+        "flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 shadow-[var(--neu-inset-sm)] sm:gap-2",
         TONES[tone],
       )}
+      aria-label={`${value} ${label}`}
     >
-      <span className="font-mono text-sm font-bold tabular-nums">{value}</span>
-      <span className="whitespace-nowrap text-[10px] uppercase tracking-wider opacity-80">
-        {label}
+      <span className="font-mono text-sm font-bold tabular-nums" aria-hidden="true">
+        {value}
+      </span>
+      <span
+        className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider"
+        aria-hidden="true"
+      >
+        {short ? (
+          <>
+            <span className="sm:hidden">{short}</span>
+            <span className="hidden sm:inline">{label}</span>
+          </>
+        ) : (
+          label
+        )}
       </span>
       {tone === "sos" && value > 0 && (
         <span className="pulse-dot size-1.5 rounded-full bg-current" />

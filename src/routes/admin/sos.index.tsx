@@ -217,10 +217,10 @@ function SosBoard() {
       <div className="grid gap-4 lg:h-[calc(100dvh-12rem)] lg:min-h-[540px] lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)]">
         <DashCard
           title="Live campus map"
-          bodyClassName="relative h-[420px] flex-none p-0 sm:h-[480px] sm:p-0 lg:h-auto lg:flex-1"
+          bodyClassName="relative h-[clamp(240px,40dvh,340px)] flex-none p-0 sm:h-[440px] sm:p-0 lg:h-auto lg:flex-1"
           actions={
             <ul
-              className="flex flex-wrap items-center gap-3 text-xs text-muted"
+              className="flex flex-wrap items-center justify-end gap-x-2.5 gap-y-1 text-[11px] text-muted sm:gap-3 sm:text-xs"
               aria-label="Map legend"
             >
               {LEGEND.map((l) => (

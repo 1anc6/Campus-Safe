@@ -22,7 +22,7 @@ export function DashCard({
   return (
     <section className={cn("card flex min-h-0 min-w-0 flex-col", className)}>
       <div className="flex min-h-14 items-center justify-between gap-2 border-b border-line px-4 py-2">
-        <h2 className="flex items-center gap-2 text-sm font-semibold">
+        <h2 className="flex shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold">
           {title}
           {badge && (
             <span className="rounded-full px-2 py-0.5 font-mono text-[11px] text-muted neu-well">
