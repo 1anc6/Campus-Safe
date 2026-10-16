@@ -95,6 +95,8 @@ export const LOCATIONS = [
     lng: 77.99361,
   },
   { id: "hostel-p", name: "Priyadarshini Hostel", zone: "Residence", lat: 30.26872, lng: 77.99617 },
+  // OpenStreetMap: "Boys Hostel" (building=university), beside the Mess.
+  { id: "hostel-boys", name: "Boys Hostel", zone: "Residence", lat: 30.26739, lng: 77.99433 },
   { id: "mess", name: "Mess", zone: "Commons", lat: 30.26762, lng: 77.99393 },
   { id: "cafe", name: "Cafe and Gym", zone: "Commons", lat: 30.26714, lng: 77.99467 },
   { id: "sports", name: "Basketball Court", zone: "Recreation", lat: 30.26702, lng: 77.99596 },
@@ -200,4 +202,41 @@ export function nearestLocation(point: { lat: number; lng: number }) {
     if (!best || d < best.distance) best = { name: l.name, distance: d };
   }
   return best!;
+}
+
+/** A campus place by its display name (Safe Walk stores the name). */
+export function placeByName(name: string | null | undefined) {
+  if (!name) return null;
+  const key = name.trim().toLowerCase();
+  return LOCATIONS.find((l) => l.name.toLowerCase() === key) ?? null;
+}
+
+/** Minutes on foot at an unhurried campus pace (~1.3 m/s), never less than one. */
+export function walkMinutes(metres: number): number {
+  return Math.max(1, Math.round(metres / 78));
+}
+
+const COMPASS = [
+  "north",
+  "north-east",
+  "east",
+  "south-east",
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+];
+
+/** "north-east": the direction to head from `a` to reach `b`. */
+export function headingLabel(
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number },
+): string {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const y = Math.sin(toRad(b.lng - a.lng)) * Math.cos(toRad(b.lat));
+  const x =
+    Math.cos(toRad(a.lat)) * Math.sin(toRad(b.lat)) -
+    Math.sin(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.cos(toRad(b.lng - a.lng));
+  const deg = ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+  return COMPASS[Math.round(deg / 45) % 8]!;
 }

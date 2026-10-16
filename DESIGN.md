@@ -346,6 +346,10 @@ Every choice list uses `src/components/shared/neu-select.tsx` (Radix Select), ne
 
 The live SOS screens for student, command and responder share `src/components/shared/chat-thread.tsx`, a raised card. The viewer's own messages sit right on the convex blue fill with white text (18px corners, a tight bottom corner on the sender's side); the other side sits left on raised-xs with a small name label; system events are centred notes in a pressed well. Times read "6:31 PM" for today. Quick-reply pills (ghost buttons) send in one tap, Enter sends and Shift+Enter breaks the line, and a "new messages" pill appears when the reader has scrolled up. Students can write while the alert is open and for 24 hours after it closes. A student's unanswered message shows as a pressed note on the command SOS list, and a new reply from command vibrates the student's phone and shows a toast.
 
+### Safe Walk guide and progress
+
+Picking a Safe Walk destination (a `NeuSelect` of campus places) marks it on the home map with a blue teardrop pin and an always-on label, draws a dotted guide line from the student's live position, frames both, and shows a bottom bar with distance, walking time, heading and a Directions button that hands off to Google Maps walking directions. The line is straight, not road-following. An active walk shows a "progress at a glance" ticket: a deep-navy card (the one deliberate exception to One Material, for at-a-glance contrast) with From → To, start and check-in times, a curved path whose fill and glowing walker icon track progress (by distance with GPS, by time without), the check-in countdown and an arrival estimate; details and actions sit below it on the surface.
+
 ### Segmented Control
 
 A raised-xs track (16px corners, 5px padding, 4px gap). Options are 0.75rem semibold Slate text in 11px-rounded buttons. The chosen option (`aria-pressed="true"`) sinks: concave fill, inset small, Signal Blue text. Used for every filter and range switch (queue filter, chart range, report type, walk duration).

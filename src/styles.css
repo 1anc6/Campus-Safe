@@ -429,6 +429,48 @@ html.anon[data-theme="dark"] {
   border-color: var(--color-ok);
 }
 
+/* Where a student is walking to: a blue teardrop pin with a white core. */
+.marker-dest {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--accent-fill);
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 0.3),
+    3px 4px 10px rgb(20 40 90 / 0.35);
+  animation: dest-drop 420ms var(--ease-smooth-out) both;
+}
+.marker-dest::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: #fff;
+}
+@keyframes dest-drop {
+  from {
+    opacity: 0;
+    translate: 0 -10px;
+  }
+}
+.leaflet-container .leaflet-tooltip.map-label {
+  background: var(--color-chrome);
+  border: 0;
+  box-shadow: var(--neu-raised-xs);
+}
+.leaflet-tooltip.map-label {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--color-neon);
+}
+.leaflet-tooltip.map-label::before {
+  display: none;
+}
+
 @keyframes marker-ping {
   0% {
     box-shadow: 0 0 0 0 rgb(255 59 78 / 0.55);
@@ -488,7 +530,7 @@ html.anon[data-theme="dark"] {
 .leaflet-control-attribution a {
   color: var(--color-neon) !important;
 }
-.leaflet-tooltip {
+.leaflet-container .leaflet-tooltip {
   background: var(--color-chrome);
   color: var(--color-fg);
   border: 0;

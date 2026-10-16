@@ -45,14 +45,12 @@ export function NeuSelect({
   "aria-label"?: string;
 }) {
   const current = options.find((o) => o.value === value);
+  // With no matching option (nothing picked yet) Radix needs "" to show the placeholder.
+  const rootValue = current ? enc(value) : "";
   const groups = groupOptions(options);
 
   return (
-    <Select.Root
-      value={enc(value)}
-      onValueChange={(v) => onValueChange(dec(v))}
-      disabled={disabled}
-    >
+    <Select.Root value={rootValue} onValueChange={(v) => onValueChange(dec(v))} disabled={disabled}>
       <Select.Trigger
         id={id}
         title={title}

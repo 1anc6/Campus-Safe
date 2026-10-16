@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { KindChip, StatusPill } from "@/components/shared/pills";
 import { MyLocationMap } from "@/components/student/my-location-map";
 import { profileCompleteness, useProfilePanel } from "@/components/student/profile-panel";
-import { SafeWalkCard } from "@/components/student/safe-walk";
+import { SafeWalkCard, useSafeWalk } from "@/components/student/safe-walk";
 import { useSosFlow } from "@/components/student/sos-flow";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { CAMPUS, isPlaceholderPhone, SECURITY_LINE } from "@/lib/campus";
@@ -47,6 +47,7 @@ type HistoryRow = {
 function StudentHome() {
   const viewer = useViewer();
   const location = useLiveLocation();
+  const { guide } = useSafeWalk();
   const { shareLiveLocation } = useSosFlow();
   const [sosList, setSosList] = useState<SosAlert[] | null>(null);
   const [incidents, setIncidents] = useState<Incident[] | null>(null);
@@ -143,6 +144,7 @@ function StudentHome() {
       >
         <MyLocationMap
           location={location}
+          guide={guide}
           className="h-[clamp(220px,34dvh,320px)] flex-none rounded-[22px] md:h-[420px] xl:h-auto xl:min-h-0 xl:flex-1"
         />
       </section>
@@ -160,7 +162,7 @@ function StudentHome() {
           <Quick to="/reports" icon={FolderOpen} label="My reports" />
         </nav>
 
-        <SafeWalkCard className="[grid-area:walk]" />
+        <SafeWalkCard className="[grid-area:walk]" location={location} />
 
         <SafetyCard className="[grid-area:safety]" />
 

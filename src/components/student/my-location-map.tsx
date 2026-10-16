@@ -1,9 +1,10 @@
-import { LocateFixed, MapPin, MapPinOff, Navigation } from "lucide-react";
-import { useState } from "react";
+import { CornerUpRight, LocateFixed, MapPin, MapPinOff, Navigation } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import { LiveMap, type MapMarker } from "@/components/shared/live-map";
 import type { LiveLocation } from "@/lib/use-live-location";
 import { cn } from "@/lib/utils";
-import { formatKm } from "@/lib/campus";
+import { distanceM, formatKm, headingLabel, walkMinutes } from "@/lib/campus";
+import { directionsUrl } from "@/lib/responder";
 
 const STATUS_COPY: Record<Exclude<LiveLocation["status"], "live">, string> = {
   locating: "Finding your location…",
@@ -25,16 +26,34 @@ const HELP_COPY: Partial<Record<LiveLocation["status"], string>> = {
  */
 export function MyLocationMap({
   location,
+  guide,
   className,
 }: {
   location: LiveLocation;
+  /** A place to guide the student to (Safe Walk destination): pin, line and directions. */
+  guide?: { name: string; lat: number; lng: number } | null;
   className?: string;
 }) {
   const [follow, setFollow] = useState(true);
   const [recenter, setRecenter] = useState(0);
+  const [refit, setRefit] = useState(0);
   const { fix, status, near, onCampus, proximity } = location;
   const live = status === "live" && fix && !fix.approx;
   const tooFar = live && proximity?.zone === "far";
+  const from = live && fix ? { lat: fix.lat, lng: fix.lng } : null;
+  const fromRef = useRef(from);
+  fromRef.current = from;
+  // Frame you and the destination once per destination (and when GPS first locks),
+  // not on every GPS update, so the map never jumps while you walk.
+  const hasFrom = Boolean(from);
+  const fit = useMemo(() => {
+    if (!guide) return null;
+    const pts = [{ lat: guide.lat, lng: guide.lng }];
+    if (fromRef.current) pts.unshift(fromRef.current);
+    return pts;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guide?.name, hasFrom, refit]);
+  const leg = guide && from ? distanceM(from, guide) : null;
 
   const markers: MapMarker[] = fix
     ? [
@@ -49,13 +68,25 @@ export function MyLocationMap({
         },
       ]
     : [];
-  const focus = follow && fix ? { lat: fix.lat, lng: fix.lng } : null;
+  if (guide) {
+    markers.push({
+      id: "dest",
+      lat: guide.lat,
+      lng: guide.lng,
+      kind: "dest",
+      label: guide.name,
+      labelAlways: true,
+    });
+  }
+  const focus = !guide && follow && fix ? { lat: fix.lat, lng: fix.lng } : null;
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
       <LiveMap
         markers={markers}
         focus={focus}
+        route={guide && from ? [from, { lat: guide.lat, lng: guide.lng }] : null}
+        fit={fit}
         recenter={recenter}
         onUserPan={() => setFollow(false)}
         className="absolute inset-0 h-full w-full"
@@ -106,7 +137,8 @@ export function MyLocationMap({
         <button
           type="button"
           onClick={() => {
-            if (fix) setFollow(true);
+            if (guide) setRefit((n) => n + 1);
+            else if (fix) setFollow(true);
             else setRecenter((n) => n + 1);
           }}
           className={cn(
@@ -119,7 +151,7 @@ export function MyLocationMap({
         </button>
       </div>
 
-      {tooFar && (
+      {tooFar && !guide && (
         <p className="absolute bottom-3 left-3 right-14 z-[500] rounded-xl bg-chrome px-3 py-2 text-xs leading-snug shadow-[var(--neu-raised-xs)]">
           <span className="font-semibold text-sos">
             You&apos;re outside the campus response area.
@@ -130,7 +162,36 @@ export function MyLocationMap({
         </p>
       )}
 
-      {!live && HELP_COPY[status] && (
+      {guide && (
+        <div className="absolute inset-x-3 bottom-3 z-[500] flex md:right-16 items-center gap-3 rounded-2xl bg-chrome py-2 pl-3.5 pr-2 shadow-[var(--neu-raised-sm)]">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold">{guide.name}</p>
+            <p className="truncate text-xs text-muted">
+              {leg != null && from ? (
+                <>
+                  {formatKm(leg)} · ~{walkMinutes(leg)} min walk
+                  <span className="hidden min-[420px]:inline">
+                    {" "}
+                    · head {headingLabel(from, guide)}
+                  </span>
+                </>
+              ) : (
+                "Turn on location to see your way there"
+              )}
+            </p>
+          </div>
+          <a
+            href={directionsUrl(guide.lat, guide.lng)}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-neon min-h-10 shrink-0 rounded-xl px-3.5 text-xs"
+          >
+            <CornerUpRight className="size-4" /> Directions
+          </a>
+        </div>
+      )}
+
+      {!guide && !live && HELP_COPY[status] && (
         <p className="absolute bottom-3 left-3 right-3 z-[500] hidden rounded-xl bg-chrome px-3 py-2 text-xs leading-snug text-muted shadow-[var(--neu-raised-xs)] sm:block sm:right-14">
           {HELP_COPY[status]}
         </p>

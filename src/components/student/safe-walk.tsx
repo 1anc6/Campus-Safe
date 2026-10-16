@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Footprints, LoaderCircle, MapPin, Plus, ShieldCheck, X } from "lucide-react";
+import { CornerUpRight, Footprints, LoaderCircle, Plus, ShieldCheck, X } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -20,7 +20,10 @@ import {
   startWalk,
   type SafeWalk,
 } from "@/backend/functions/walks";
-import { LOCATIONS } from "@/lib/campus";
+import { distanceM, formatKm, LOCATIONS, placeByName, walkMinutes } from "@/lib/campus";
+import { directionsUrl } from "@/lib/responder";
+import type { LiveLocation } from "@/lib/use-live-location";
+import { NeuSelect, placeOptions } from "@/components/shared/neu-select";
 import { getFix, readLastFix } from "@/lib/gps";
 import { cn } from "@/lib/utils";
 
@@ -29,8 +32,15 @@ const CHECK_IN_GRACE_S = 30;
 const DURATIONS = [5, 10, 15, 20, 30];
 const PING_EVERY_MS = 30_000;
 
+type Place = { name: string; lat: number; lng: number };
+
 type WalkState = {
   walk: SafeWalk | null;
+  /** Where to guide the student on the map: the active walk's place, or the one being picked. */
+  guide: Place | null;
+  /** The place picked in the form before the walk starts (location id). */
+  preview: string | null;
+  setPreview: (id: string | null) => void;
   /** Seconds until the deadline (negative once overdue). */
   remaining: number | null;
   busy: boolean;
@@ -68,6 +78,7 @@ export function SafeWalkProvider({ children }: { children: ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [escalating, setEscalating] = useState(false);
   const escalatedFor = useRef<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -149,7 +160,10 @@ export function SafeWalkProvider({ children }: { children: ReactNode }) {
     setBusy(true);
     try {
       const fix = lastFix();
-      setWalk(await startWalk({ data: { destination, minutes, fix } }));
+      const started = await startWalk({ data: { destination, minutes, fix } });
+      if (fix) rememberStart(started.id, fix);
+      setWalk(started);
+      setPreview(null);
       setNow(Date.now());
       toast.success(`Walk started — check in within ${minutes} min`);
     } catch (err) {
@@ -193,9 +207,17 @@ export function SafeWalkProvider({ children }: { children: ReactNode }) {
     [walk],
   );
 
+  const guide = useMemo<Place | null>(() => {
+    const place =
+      walk?.status === "active"
+        ? placeByName(walk.destination)
+        : LOCATIONS.find((l) => l.id === preview);
+    return place ? { name: place.name, lat: place.lat, lng: place.lng } : null;
+  }, [walk, preview]);
+
   const value = useMemo(
-    () => ({ walk, remaining, busy, start, extend, finish }),
-    [walk, remaining, busy, start, extend, finish],
+    () => ({ walk, guide, preview, setPreview, remaining, busy, start, extend, finish }),
+    [walk, guide, preview, remaining, busy, start, extend, finish],
   );
 
   const overdue = active && remaining != null && remaining <= 0;
@@ -215,6 +237,28 @@ export function SafeWalkProvider({ children }: { children: ReactNode }) {
       )}
     </WalkContext.Provider>
   );
+}
+
+/** Where a walk started, kept on this device so progress can be measured by distance. */
+const START_KEY = (id: string) => `campussafe.walk-start.${id}`;
+function rememberStart(id: string, fix: { lat: number; lng: number }) {
+  try {
+    localStorage.setItem(START_KEY(id), JSON.stringify({ lat: fix.lat, lng: fix.lng }));
+  } catch {
+    /* storage blocked: progress falls back to time */
+  }
+}
+function readStart(id: string): { lat: number; lng: number } | null {
+  try {
+    const raw = localStorage.getItem(START_KEY(id));
+    return raw ? (JSON.parse(raw) as { lat: number; lng: number }) : null;
+  } catch {
+    return null;
+  }
+}
+
+function clock(at: string | number) {
+  return new Date(at).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
 
 function formatTimer(totalSeconds: number): string {
@@ -299,89 +343,39 @@ function CheckInOverlay({
 }
 
 /** Home-page card: start a walk, or follow the active one. */
-export function SafeWalkCard({ className }: { className?: string }) {
-  const { walk, remaining, busy, start, extend, finish } = useSafeWalk();
-  const [destination, setDestination] = useState("");
+export function SafeWalkCard({
+  className,
+  location,
+}: {
+  className?: string;
+  /** The home page's live location, used to measure progress toward the destination. */
+  location?: LiveLocation;
+}) {
+  const { walk, guide, preview, setPreview, remaining, busy, start, extend, finish } =
+    useSafeWalk();
   const [minutes, setMinutes] = useState(10);
 
   if (walk?.status === "active" && remaining != null) {
-    const total = Math.max(
-      1,
-      (new Date(walk.dueAt).getTime() - new Date(walk.startedAt).getTime()) / 1000,
-    );
-    const pct = Math.min(100, Math.max(0, (remaining / total) * 100));
-    const low = remaining <= 120;
     return (
-      <section className={cn("card p-4", className)} aria-label="Safe walk in progress">
-        <div className="flex items-center gap-4">
-          <div
-            className="relative grid size-20 shrink-0 place-items-center rounded-full"
-            style={{
-              background: `conic-gradient(${low ? "var(--color-warn)" : "var(--color-accent)"} ${pct}%, var(--color-line) 0)`,
-            }}
-          >
-            <div className="grid size-[68px] place-items-center rounded-full bg-[var(--glass-strong)] backdrop-blur">
-              <span
-                className={cn(
-                  "font-display text-lg font-semibold tabular-nums",
-                  low && "text-warn",
-                )}
-              >
-                {formatTimer(remaining)}
-              </span>
-            </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neon">
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" />
-                <span className="relative inline-flex size-2 rounded-full bg-accent" />
-              </span>
-              Walk with me · active
-            </p>
-            <p className="mt-1 flex items-center gap-1.5 truncate font-medium">
-              <MapPin className="size-4 shrink-0 text-muted" /> {walk.destination}
-            </p>
-            <p className="mt-0.5 text-xs text-muted">
-              Check in before the timer ends, or an SOS is raised for you.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 grid grid-cols-[1fr_auto_auto] gap-2">
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void finish("completed")}
-            className="flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-ok text-sm font-bold text-ink disabled:opacity-60"
-          >
-            <ShieldCheck className="size-4" /> I&apos;m safe
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void extend(5)}
-            className="btn-ghost px-3"
-          >
-            <Plus className="size-4" /> 5 min
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void finish("cancelled")}
-            className="btn-ghost px-3 text-muted"
-            aria-label="Cancel walk"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-      </section>
+      <WalkProgress
+        className={className}
+        walk={walk}
+        remaining={remaining}
+        guide={guide}
+        location={location}
+        busy={busy}
+        onSafe={() => void finish("completed")}
+        onExtend={() => void extend(5)}
+        onCancel={() => void finish("cancelled")}
+      />
     );
   }
 
+  const picked = LOCATIONS.find((l) => l.id === preview);
   return (
     <section className={cn("card p-4", className)} aria-labelledby="walk-title">
       <div className="flex items-center gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-accent/15 text-neon">
+        <span className="neu-raised grid size-11 shrink-0 place-items-center rounded-2xl text-neon">
           <Footprints className="size-5" />
         </span>
         <div className="min-w-0">
@@ -389,7 +383,8 @@ export function SafeWalkCard({ className }: { className?: string }) {
             Walk with me
           </h2>
           <p className="text-xs text-muted">
-            Walking alone? We&apos;ll check on you — miss the check-in and an SOS goes out.
+            Walking alone? We&apos;ll guide you there and check on you. Miss the check-in and an SOS
+            goes out.
           </p>
         </div>
       </div>
@@ -397,26 +392,26 @@ export function SafeWalkCard({ className }: { className?: string }) {
         className="mt-4 space-y-3"
         onSubmit={(e) => {
           e.preventDefault();
-          if (destination.trim().length < 2) {
+          if (!picked) {
             toast("Where are you heading?");
             return;
           }
-          void start(destination.trim(), minutes);
+          void start(picked.name, minutes);
         }}
       >
-        <input
-          className="input"
-          list="walk-destinations"
-          placeholder="Where to? e.g. Boys Hostel"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
+        <NeuSelect
+          value={preview ?? ""}
+          onValueChange={(v) => setPreview(v || null)}
+          options={placeOptions(LOCATIONS)}
+          placeholder="Where to? Pick a campus place"
           aria-label="Destination"
         />
-        <datalist id="walk-destinations">
-          {LOCATIONS.map((l) => (
-            <option key={l.id} value={l.name} />
-          ))}
-        </datalist>
+        {picked && (
+          <p className="flex items-center gap-1.5 px-1 text-xs text-muted">
+            <CornerUpRight className="size-3.5 text-neon" />
+            {picked.name} is marked on the map above.
+          </p>
+        )}
         <div className="flex gap-1.5" role="radiogroup" aria-label="Time limit">
           {DURATIONS.map((m) => (
             <button
@@ -426,10 +421,10 @@ export function SafeWalkCard({ className }: { className?: string }) {
               aria-checked={minutes === m}
               onClick={() => setMinutes(m)}
               className={cn(
-                "min-h-10 flex-1 rounded-xl text-xs font-semibold ring-1 transition-colors",
+                "min-h-10 flex-1 rounded-xl text-xs font-semibold transition-[box-shadow,color]",
                 minutes === m
-                  ? "text-neon ring-transparent shadow-[var(--neu-inset-sm)]"
-                  : "text-muted ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)] hover:text-fg",
+                  ? "text-neon shadow-[var(--neu-inset-sm)]"
+                  : "text-muted shadow-[var(--neu-raised-xs)] hover:text-fg hover:shadow-[var(--neu-raised-sm)]",
               )}
             >
               {m}m
@@ -442,9 +437,196 @@ export function SafeWalkCard({ className }: { className?: string }) {
           ) : (
             <Footprints className="size-4" />
           )}
-          START WALK · {minutes} MIN
+          Start walk · {minutes} min
         </button>
       </form>
+    </section>
+  );
+}
+
+/** Quadratic curve of the progress path, in the arc's 320 × 84 viewBox. */
+const ARC = { x0: 6, y0: 72, cx: 160, cy: 4, x1: 314, y1: 72 };
+function arcPoint(t: number) {
+  const u = 1 - t;
+  return {
+    x: u * u * ARC.x0 + 2 * u * t * ARC.cx + t * t * ARC.x1,
+    y: u * u * ARC.y0 + 2 * u * t * ARC.cy + t * t * ARC.y1,
+  };
+}
+
+/**
+ * Active walk, readable at a glance: from → to, a path with the walker on it,
+ * how far is left and when to check in. Progress is measured by distance when
+ * GPS is on, otherwise by the time limit.
+ */
+function WalkProgress({
+  className,
+  walk,
+  remaining,
+  guide,
+  location,
+  busy,
+  onSafe,
+  onExtend,
+  onCancel,
+}: {
+  className?: string;
+  walk: SafeWalk;
+  remaining: number;
+  guide: { name: string; lat: number; lng: number } | null;
+  location?: LiveLocation;
+  busy: boolean;
+  onSafe: () => void;
+  onExtend: () => void;
+  onCancel: () => void;
+}) {
+  const total = Math.max(
+    1,
+    (new Date(walk.dueAt).getTime() - new Date(walk.startedAt).getTime()) / 1000,
+  );
+  const fix = location?.fix && !location.fix.approx ? location.fix : null;
+  const startPt = readStart(walk.id);
+  const left = guide && fix ? distanceM(fix, guide) : null;
+  const span = guide && startPt ? distanceM(startPt, guide) : null;
+  const byDistance = left != null && span != null && span > 25;
+  const progress = Math.min(1, Math.max(0, byDistance ? 1 - left! / span! : 1 - remaining / total));
+  const arrived = left != null && left < 25;
+  const low = remaining <= 120;
+  const dot = arcPoint(progress);
+
+  return (
+    <section className={cn("card p-2", className)} aria-label="Safe walk in progress">
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-[20px] px-5 pb-4 pt-5 text-white",
+          "bg-[radial-gradient(120%_80%_at_50%_120%,rgb(77_141_255/0.35),transparent_60%),linear-gradient(165deg,#0d1730,#132650_55%,#183166)]",
+        )}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/55">From</p>
+            <p className="mt-1 font-display text-2xl font-semibold leading-none">You</p>
+            <p className="mt-1.5 text-sm text-white/75">{clock(walk.startedAt)}</p>
+          </div>
+          <div className="min-w-0 text-right">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/55">To</p>
+            <p className="mt-1 truncate font-display text-2xl font-semibold leading-none">
+              {walk.destination}
+            </p>
+            <p className="mt-1.5 text-sm text-white/75">by {clock(walk.dueAt)}</p>
+          </div>
+        </div>
+
+        <div className="relative mt-2 aspect-[320/84] w-full">
+          <svg viewBox="0 0 320 84" className="absolute inset-0 size-full" aria-hidden="true">
+            <defs>
+              <linearGradient id={`walk-arc-${walk.id}`} x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+                <stop offset="100%" stopColor={low ? "#f0b75e" : "#6f9bff"} />
+              </linearGradient>
+            </defs>
+            <path
+              d={`M ${ARC.x0} ${ARC.y0} Q ${ARC.cx} ${ARC.cy} ${ARC.x1} ${ARC.y1}`}
+              fill="none"
+              stroke="rgb(255 255 255 / 0.16)"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <path
+              d={`M ${ARC.x0} ${ARC.y0} Q ${ARC.cx} ${ARC.cy} ${ARC.x1} ${ARC.y1}`}
+              fill="none"
+              stroke={`url(#walk-arc-${walk.id})`}
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              pathLength={100}
+              strokeDasharray={`${progress * 100} 100`}
+              className="transition-[stroke-dasharray] duration-700 ease-[var(--ease-smooth-out)]"
+            />
+            <circle
+              cx={ARC.x1}
+              cy={ARC.y1}
+              r="4"
+              fill={arrived ? "#5fd3a5" : "rgb(255 255 255 / 0.5)"}
+            />
+          </svg>
+          <span
+            className="absolute grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#2d6ade] shadow-[0_0_0_6px_rgb(77_141_255/0.25),0_0_24px_6px_rgb(77_141_255/0.45)] transition-[left,top] duration-700 ease-[var(--ease-smooth-out)]"
+            style={{ left: `${(dot.x / 320) * 100}%`, top: `${(dot.y / 84) * 100}%` }}
+          >
+            <Footprints className="size-4" />
+          </span>
+        </div>
+
+        <div className="mt-1 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/55">
+              Check in
+            </p>
+            <p
+              className={cn(
+                "font-display text-xl font-semibold tabular-nums",
+                low && "text-[#f0b75e]",
+              )}
+              role="timer"
+              aria-label={`${formatTimer(remaining)} left to check in`}
+            >
+              {formatTimer(remaining)}
+            </p>
+          </div>
+          <p className="text-right text-sm font-semibold text-[#9cbcff]">
+            {arrived
+              ? "You've arrived"
+              : left != null
+                ? `Arriving in ~${walkMinutes(left)} min`
+                : `${Math.round(progress * 100)}% of your time used`}
+          </p>
+        </div>
+      </div>
+
+      <dl className="grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-1.5 px-3 pb-1 pt-4 text-sm">
+        <dt className="text-muted">Distance</dt>
+        <dd className="font-medium">
+          {left != null ? `${formatKm(left)} to go` : "Turn on location to track"}
+        </dd>
+        <dt className="text-muted">Check in by</dt>
+        <dd className="font-medium">{clock(walk.dueAt)}</dd>
+        <dt className="text-muted">If you don&apos;t</dt>
+        <dd className="font-medium">Campus command gets an SOS</dd>
+      </dl>
+
+      <div className="mt-3 grid grid-cols-[1fr_auto_auto_auto] gap-2 px-2 pb-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={onSafe}
+          className="flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-ok text-sm font-bold text-ink shadow-[var(--neu-raised-xs)] disabled:opacity-60"
+        >
+          <ShieldCheck className="size-4" /> I&apos;m safe
+        </button>
+        {guide && (
+          <a
+            href={directionsUrl(guide.lat, guide.lng)}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-ghost px-3 text-neon"
+            aria-label={`Walking directions to ${guide.name}`}
+          >
+            <CornerUpRight className="size-4" />
+          </a>
+        )}
+        <button type="button" disabled={busy} onClick={onExtend} className="btn-ghost px-3">
+          <Plus className="size-4" /> 5 min
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={onCancel}
+          className="btn-ghost px-3 text-muted"
+          aria-label="Cancel walk"
+        >
+          <X className="size-4" />
+        </button>
+      </div>
     </section>
   );
 }

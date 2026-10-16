@@ -6,13 +6,15 @@ export type MapMarker = {
   id: string;
   lat: number;
   lng: number;
-  kind: "sos" | "incident" | "anonymous" | "self" | "unit" | "resolved";
+  kind: "sos" | "incident" | "anonymous" | "self" | "unit" | "resolved" | "dest";
   label?: string;
   severity?: Severity;
   /** GPS accuracy radius in metres; drawn as a translucent circle. */
   accuracyM?: number | null;
   /** No real GPS fix (e.g. blocked on http): drawn hollow with a dashed radius. */
   approx?: boolean;
+  /** Keep the label visible (e.g. the place a student is walking to). */
+  labelAlways?: boolean;
 };
 
 type LatLng = { lat: number; lng: number };
@@ -29,6 +31,8 @@ export function LiveMap({
   trail,
   trails,
   focus,
+  route,
+  fit,
   recenter,
   onUserPan,
   className,
@@ -39,6 +43,10 @@ export function LiveMap({
   /** Several paths at once (live SOS board). */
   trails?: { id: string; points: LatLng[]; highlight?: boolean }[];
   focus?: LatLng | null;
+  /** A guide line drawn on top of everything (e.g. you → destination). */
+  route?: LatLng[] | null;
+  /** Frame these points whenever the set changes (overrides `focus` while set). */
+  fit?: LatLng[] | null;
   /** Change this number to fly back to the whole campus. */
   recenter?: number;
   /** Called when the person drags the map (e.g. to pause "follow me"). */
@@ -52,8 +60,9 @@ export function LiveMap({
   const resizeObs = useRef<ResizeObserver | null>(null);
   // Latest props for draw(): the map initialises asynchronously, so the first draw
   // must use current data, not the (possibly empty) props from the first render.
-  const latest = useRef({ markers, trail, trails, focus, onUserPan });
-  latest.current = { markers, trail, trails, focus, onUserPan };
+  const latest = useRef({ markers, trail, trails, focus, route, fit, onUserPan });
+  latest.current = { markers, trail, trails, focus, route, fit, onUserPan };
+  const lastFit = useRef<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,7 +107,7 @@ export function LiveMap({
 
   useEffect(() => {
     void import("leaflet").then(draw);
-  }, [markers, trail, trails, focus]);
+  }, [markers, trail, trails, focus, route, fit]);
 
   useEffect(() => {
     if (!recenter || !mapRef.current) return;
@@ -110,7 +119,7 @@ export function LiveMap({
     const map = mapRef.current;
     const layer = layerRef.current;
     if (!map || !layer) return;
-    const { markers, trail, trails, focus } = latest.current;
+    const { markers, trail, trails, focus, route, fit } = latest.current;
     layer.clearLayers();
 
     const paths = [
@@ -130,6 +139,21 @@ export function LiveMap({
           dashArray: p.highlight ? undefined : "4 6",
         },
       ).addTo(layer);
+    }
+
+    if (route && route.length > 1) {
+      const pts = route.map((pt) => [pt.lat, pt.lng] as [number, number]);
+      // A light casing under the line keeps it readable over any tile colour.
+      L.polyline(pts, { color: "#ffffff", weight: 9, opacity: 0.85, lineCap: "round" }).addTo(
+        layer,
+      );
+      L.polyline(pts, {
+        color: accentColor,
+        weight: 5,
+        opacity: 0.95,
+        lineCap: "round",
+        dashArray: "1 10",
+      }).addTo(layer);
     }
 
     for (const m of markers) {
@@ -153,7 +177,9 @@ export function LiveMap({
               ? "marker-dot ok"
               : m.kind === "self"
                 ? "marker-self"
-                : "marker-pulse neon";
+                : m.kind === "dest"
+                  ? "marker-dest"
+                  : "marker-pulse neon";
       const cls = m.approx ? `${base} approx` : base;
       // Build pins and tooltips as DOM nodes with textContent: labels can carry
       // user-supplied names and must never be interpreted as HTML.
@@ -163,12 +189,35 @@ export function LiveMap({
       const tip = document.createElement("span");
       tip.textContent = m.label ?? m.kind;
       L.marker([m.lat, m.lng], {
-        icon: L.divIcon({ className: "", html: pin, iconSize: [18, 18], iconAnchor: [9, 9] }),
-        zIndexOffset: m.kind === "sos" || m.kind === "self" ? 1000 : 0,
+        icon:
+          m.kind === "dest"
+            ? L.divIcon({ className: "", html: pin, iconSize: [28, 36], iconAnchor: [14, 34] })
+            : L.divIcon({ className: "", html: pin, iconSize: [18, 18], iconAnchor: [9, 9] }),
+        zIndexOffset: m.kind === "sos" || m.kind === "self" ? 1000 : m.kind === "dest" ? 900 : 0,
       })
         .addTo(layer)
-        .bindTooltip(tip, { direction: "top", className: "font-sans" });
+        .bindTooltip(tip, {
+          direction: "top",
+          className: m.labelAlways ? "font-sans map-label" : "font-sans",
+          permanent: m.labelAlways,
+          offset: m.kind === "dest" ? [0, -30] : [0, 0],
+        });
     }
+
+    const fitKey = fit && fit.length ? fit.map((p) => `${p.lat},${p.lng}`).join("|") : null;
+    if (fit && fit.length && fitKey !== lastFit.current) {
+      lastFit.current = fitKey;
+      lastFocus.current = null;
+      if (fit.length === 1) map.flyTo([fit[0]!.lat, fit[0]!.lng], 18, { duration: 0.6 });
+      else
+        map.flyToBounds(
+          fit.map((p) => [p.lat, p.lng] as [number, number]),
+          { padding: [56, 56], maxZoom: 18, duration: 0.6 },
+        );
+      return;
+    }
+    if (!fit) lastFit.current = null;
+    if (fit && fit.length) return;
 
     // Fly only when the focus target changes, so polling redraws never fight a
     // user who is panning around the map.
