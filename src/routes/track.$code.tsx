@@ -42,9 +42,7 @@ function TrackPage() {
 
   return (
     <AdaptiveShell anon>
-      <p className="text-xs font-semibold uppercase tracking-wider text-violet">
-        Anonymous track
-      </p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-violet">Anonymous track</p>
       <p className="mt-2 break-all font-mono text-xl font-semibold tracking-wide text-neon">
         {code.toUpperCase()}
       </p>
@@ -75,7 +73,7 @@ function TrackPage() {
           </div>
           <div className="space-y-2">
             {messages.map((m) => (
-              <div key={m.id} className="rounded-xl bg-panel p-3 text-sm ring-1 ring-line">
+              <div key={m.id} className="rounded-xl p-3 text-sm neu-raised">
                 <p className="text-[11px] uppercase tracking-wider text-muted">
                   {m.authorRole === "reporter" ? "You" : m.authorRole} · {formatClock(m.createdAt)}
                 </p>

@@ -30,12 +30,7 @@ export function SkeletonGroup({
 /** A list row: tag/icon, two lines of text, a status pill. */
 export function SkeletonRow({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        "flex min-h-14 items-center gap-3 rounded-2xl bg-panel-2 p-3 ring-1 ring-line",
-        className,
-      )}
-    >
+    <div className={cn("flex min-h-14 items-center gap-3 rounded-2xl p-3 neu-well", className)}>
       <Skeleton className="h-5 w-11 shrink-0 rounded-full" />
       <span className="min-w-0 flex-1 space-y-2">
         <Skeleton className="h-3.5 w-2/5" />

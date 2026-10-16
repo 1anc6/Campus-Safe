@@ -88,8 +88,8 @@ function AlertCard({ alert, now }: { alert: SosAlert; now: number }) {
   return (
     <article
       className={cn(
-        "card glass-hover flex h-full flex-col ring-1",
-        urgent ? "ring-sos/40 shadow-[0_0_0_4px_rgb(255_59_78/0.06)]" : "ring-line",
+        "card glass-hover flex h-full flex-col ring-1 shadow-[var(--neu-raised)]",
+        urgent ? "ring-sos/40" : "ring-transparent",
       )}
     >
       <Link to="/staff/$id" params={{ id: alert.id }} className="block flex-1 p-4">

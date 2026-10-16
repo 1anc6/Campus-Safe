@@ -118,7 +118,7 @@ function SosCase() {
 
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-4">
-          <div className="h-72 overflow-hidden rounded-2xl ring-1 ring-line sm:h-96">
+          <div className="h-72 overflow-hidden rounded-2xl neu-raised-xs sm:h-96">
             <LiveMap
               markers={
                 pos

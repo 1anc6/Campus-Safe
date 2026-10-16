@@ -236,7 +236,7 @@ export function CommandPalette({
             onKeyDown={onKeyDown}
             className="h-full min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-dim"
           />
-          <kbd className="hidden shrink-0 rounded-md px-1.5 py-0.5 font-mono text-xs text-muted ring-1 ring-line sm:inline">
+          <kbd className="hidden shrink-0 rounded-md px-1.5 py-0.5 font-mono text-xs text-muted neu-raised-xs sm:inline">
             Esc
           </kbd>
         </div>
@@ -296,7 +296,7 @@ export function CommandPalette({
                       {item.shortcut.map((key) => (
                         <kbd
                           key={key}
-                          className="flex h-5 min-w-5 items-center justify-center rounded-md px-1 font-mono text-xs text-muted ring-1 ring-line"
+                          className="flex h-5 min-w-5 items-center justify-center rounded-md px-1 font-mono text-xs text-muted neu-raised-xs"
                         >
                           {key}
                         </kbd>
@@ -364,7 +364,7 @@ export function PaletteShortcutKeys({ className }: { className?: string }) {
   return (
     <span className={cn("items-center gap-1", className)} aria-hidden="true">
       {PALETTE_SHORTCUT.map((k) => (
-        <kbd key={k} className="rounded-md px-1.5 py-0.5 font-mono text-xs ring-1 ring-line">
+        <kbd key={k} className="rounded-md px-1.5 py-0.5 font-mono text-xs neu-raised-xs">
           {k}
         </kbd>
       ))}

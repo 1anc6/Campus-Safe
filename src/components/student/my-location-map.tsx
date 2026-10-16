@@ -111,7 +111,7 @@ export function MyLocationMap({
             else setRecenter((n) => n + 1);
           }}
           className={cn(
-            "pointer-events-auto grid size-11 shrink-0 place-items-center rounded-full bg-chrome/90 shadow-lg ring-1 ring-line backdrop-blur transition-colors hover:text-neon",
+            "pointer-events-auto grid size-11 shrink-0 place-items-center rounded-full neu-raised transition-colors hover:text-neon",
             fix && !follow ? "text-neon" : "text-muted",
           )}
           aria-label={fix ? "Re-centre on my location" : "Show campus"}

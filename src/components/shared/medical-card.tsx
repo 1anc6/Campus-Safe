@@ -6,9 +6,7 @@ import { cn } from "@/lib/utils";
 export function MedicalCard({ info, className }: { info: MedicalInfo | null; className?: string }) {
   if (!info) {
     return (
-      <div
-        className={cn("rounded-xl bg-panel-2 p-3 text-xs text-muted ring-1 ring-line", className)}
-      >
+      <div className={cn("rounded-xl p-3 text-xs text-muted neu-well", className)}>
         No medical ID shared.
       </div>
     );
@@ -27,7 +25,7 @@ export function MedicalCard({ info, className }: { info: MedicalInfo | null; cla
         {info.emergencyPhone && (
           <a
             href={`tel:${info.emergencyPhone.replace(/\s/g, "")}`}
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm text-neon ring-1 ring-line hover:bg-panel-2"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm text-neon neu-raised-xs hover:bg-panel-2"
           >
             <Phone className="size-3.5" />
             {info.emergencyName ? `${info.emergencyName} · ` : "Emergency contact · "}

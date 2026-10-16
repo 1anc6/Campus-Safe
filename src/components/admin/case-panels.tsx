@@ -54,7 +54,7 @@ export function ThreadList({
         <li
           key={m.id}
           className={cn(
-            "rounded-lg p-3 text-sm ring-1 ring-line",
+            "rounded-lg p-3 text-sm neu-raised-xs",
             m.authorRole === "system" ? "bg-chrome/60 text-muted" : "bg-panel-2",
           )}
         >
@@ -172,10 +172,10 @@ export function ResponderPicker({
               className={cn(
                 "min-h-10 rounded-full px-3 text-xs font-semibold ring-1 transition-colors disabled:opacity-50",
                 on
-                  ? "bg-fg text-panel ring-fg"
+                  ? "text-neon ring-transparent shadow-[var(--neu-inset-sm)]"
                   : r.id === suggested?.id
-                    ? "ring-2 ring-accent hover:bg-panel-2"
-                    : "ring-line hover:bg-panel-2",
+                    ? "ring-2 ring-accent shadow-[var(--neu-raised-xs)]"
+                    : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
               )}
             >
               {r.name}
@@ -226,8 +226,8 @@ export function StatusButtons({
             className={cn(
               "min-h-9 rounded-full px-3 text-[11px] font-medium ring-1 transition-colors",
               on
-                ? "bg-neon-dim text-neon ring-neon/40"
-                : "ring-line hover:bg-panel-2 disabled:opacity-50",
+                ? "text-neon ring-transparent shadow-[var(--neu-inset-sm)]"
+                : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)] disabled:opacity-50",
             )}
           >
             {s.label}

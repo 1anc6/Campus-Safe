@@ -219,7 +219,7 @@ function Active() {
       </header>
 
       <div className="md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-start md:gap-2">
-        <div className="mx-5 mt-5 h-56 overflow-hidden rounded-2xl ring-1 ring-line sm:h-72 md:h-[28rem]">
+        <div className="mx-5 mt-5 h-56 overflow-hidden rounded-2xl neu-raised-xs sm:h-72 md:h-[28rem]">
           <LiveMap
             markers={
               alert.lat != null && alert.lng != null
@@ -268,7 +268,7 @@ function Active() {
 
           <ul className="mt-4 space-y-2">
             {messages.map((m) => (
-              <li key={m.id} className="rounded-xl bg-panel px-3 py-2 text-sm ring-1 ring-line">
+              <li key={m.id} className="rounded-xl px-3 py-2 text-sm neu-raised">
                 <span className="text-[11px] text-muted">
                   {m.authorRole} · {formatClock(m.createdAt)}
                 </span>

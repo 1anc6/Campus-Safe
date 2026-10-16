@@ -25,7 +25,7 @@ export function DashCard({
         <h2 className="flex items-center gap-2 text-sm font-semibold">
           {title}
           {badge && (
-            <span className="rounded-full bg-panel-2 px-2 py-0.5 font-mono text-[11px] text-muted ring-1 ring-line">
+            <span className="rounded-full px-2 py-0.5 font-mono text-[11px] text-muted neu-well">
               {badge}
             </span>
           )}

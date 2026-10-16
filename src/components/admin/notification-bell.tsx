@@ -54,7 +54,7 @@ export function NotificationBell({ unseen, onSeen }: { unseen: number; onSeen: (
           align="end"
           sideOffset={8}
           collisionPadding={12}
-          className="z-[1200] w-[min(92vw,380px)] overflow-hidden rounded-2xl border border-line bg-chrome shadow-2xl data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
+          className="z-[1200] w-[min(92vw,380px)] overflow-hidden rounded-2xl bg-chrome shadow-[var(--neu-raised)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
         >
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <p className="text-sm font-semibold">Critical alerts</p>

@@ -138,8 +138,8 @@ function ReportForm() {
                     className={cn(
                       "flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-xl px-1 text-center text-xs font-semibold ring-1 transition-colors",
                       on
-                        ? "bg-neon-dim text-neon ring-neon/60"
-                        : "bg-panel-2/50 text-fg ring-line hover:bg-panel-2",
+                        ? "text-neon ring-transparent shadow-[var(--neu-inset-sm)]"
+                        : "text-fg ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
                     )}
                   >
                     <Icon className="size-5" />
@@ -209,8 +209,8 @@ function ReportForm() {
                   className={cn(
                     "rounded-xl p-3 text-left ring-1 transition-colors",
                     severity === s.id
-                      ? "bg-panel-2 ring-neon/50"
-                      : "bg-panel-2/40 ring-line hover:bg-panel-2",
+                      ? "ring-transparent shadow-[var(--neu-inset-sm)]"
+                      : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
                   )}
                 >
                   <span className={cn("font-display text-sm font-bold", SEVERITY_TONE[s.id])}>
@@ -251,7 +251,7 @@ function ReportForm() {
                   <img
                     src={photo}
                     alt="Attached"
-                    className="size-14 rounded-lg object-cover ring-1 ring-line"
+                    className="size-14 rounded-lg object-cover neu-raised-xs"
                   />
                   <button
                     type="button"
@@ -323,7 +323,7 @@ function GpsPin({ onFix }: { onFix: (fix: GpsFix | null) => void }) {
   useEffect(() => onFix(fix), [fix, onFix]);
   return (
     <div className="sm:col-span-2">
-      <MyLocationMap location={location} className="h-56 rounded-xl ring-1 ring-line" />
+      <MyLocationMap location={location} className="h-56 rounded-xl neu-raised-xs" />
       <p className="mt-2 flex items-center gap-1.5 text-xs text-muted">
         <MapPin className="size-3.5 text-neon" />
         {fix

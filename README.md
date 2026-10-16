@@ -13,22 +13,22 @@ Built for Graphic Era (Deemed to be) University, Dehradun.
 
 ## Who uses it
 
-| Role        | Lands on | What they can do |
-| ----------- | -------- | ---------------- |
+| Role        | Lands on | What they can do                                                                                       |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------------ |
 | `student`   | `/`      | Hold SOS (live location), report incidents, anonymous reports, track their cases, profile & medical ID |
-| `responder` | `/staff` | See SOS alerts assigned to them, navigate, call the student, update status |
-| `admin`     | `/admin` | Live dashboard, SOS / incidents / anonymous queues, users, responders, analytics |
+| `responder` | `/staff` | See SOS alerts assigned to them, navigate, call the student, update status                             |
+| `admin`     | `/admin` | Live dashboard, SOS / incidents / anonymous queues, users, responders, analytics                       |
 
 No account needed: `/anonymous` (file an anonymous report) and `/track/<code>` (follow it).
 
 ## Tech stack
 
-| Layer | Technology |
-| ----- | ---------- |
+| Layer    | Technology                                                                                |
+| -------- | ----------------------------------------------------------------------------------------- |
 | Frontend | React 19, TanStack Router (pages), Tailwind CSS (styling), Leaflet + OpenStreetMap (maps) |
-| Backend | TanStack Start server functions on Node.js, Better Auth (sign-in, sessions) |
-| Database | PostgreSQL — **Neon** in production, embedded **PGLite** for local development |
-| Hosting | Vercel |
+| Backend  | TanStack Start server functions on Node.js, Better Auth (sign-in, sessions)               |
+| Database | PostgreSQL — **Neon** in production, embedded **PGLite** for local development            |
+| Hosting  | Vercel                                                                                    |
 
 ## Project structure (short version)
 
@@ -53,9 +53,13 @@ Full map with every file: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 Light and dark themes are equal peers; the moon/sun button switches them and the
 choice is remembered on the device.
 
-- **Light:** frosted-glass panels over a soft colour gradient, cyan for actions.
-- **Dark:** warm charcoal greys with a soft warm gradient and a clay accent for
-  actions (no blue tints).
+Both use soft UI (neumorphism): every panel and control is the same colour as the
+page and is shaped only by a soft light and shadow pair. Raised means you can press
+it; pressed in means it is selected or you are typing into it.
+
+- **Light:** a soft blue-grey surface with a blue accent for actions.
+- **Dark:** the same raised and pressed shapes on a deep slate blue, with the same
+  blue accent.
 - In both themes **red means SOS only**, violet marks anonymous flows, and on maps
   only an SOS pin is ever red.
 
@@ -91,24 +95,24 @@ node --env-file=.env.local scripts/run.mjs vite dev --host 0.0.0.0 --port 8080
 
 ## Environment variables
 
-| Variable | Needed for | Purpose |
-| -------- | ---------- | ------- |
-| `DATABASE_URL` | production | Neon Postgres connection string (use the *pooled* one) |
-| `BETTER_AUTH_SECRET` | production | Long random string that signs sessions |
-| `BETTER_AUTH_URL` | production | Public site URL, e.g. `https://campus-safe.vercel.app` |
-| `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | first run | Creates the first admin account |
-| `SIGNUP_ALLOWED_DOMAINS` | optional | Comma-separated email domains allowed to sign up |
-| `SEED_SAMPLE_DATA` | optional | `true` loads demo incidents into a real database |
+| Variable                                            | Needed for | Purpose                                                |
+| --------------------------------------------------- | ---------- | ------------------------------------------------------ |
+| `DATABASE_URL`                                      | production | Neon Postgres connection string (use the _pooled_ one) |
+| `BETTER_AUTH_SECRET`                                | production | Long random string that signs sessions                 |
+| `BETTER_AUTH_URL`                                   | production | Public site URL, e.g. `https://campus-safe.vercel.app` |
+| `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | first run  | Creates the first admin account                        |
+| `SIGNUP_ALLOWED_DOMAINS`                            | optional   | Comma-separated email domains allowed to sign up       |
+| `SEED_SAMPLE_DATA`                                  | optional   | `true` loads demo incidents into a real database       |
 
 ## Commands
 
-| Command | What it does |
-| ------- | ------------ |
+| Command                             | What it does                                                       |
+| ----------------------------------- | ------------------------------------------------------------------ |
 | `npm run dev` / `npm run dev:local` | Start the dev server on port 8080 (`dev:local` adds test accounts) |
-| `npm run build` | Production build for Vercel, then applies database migrations |
-| `npm run typecheck` | TypeScript type check |
-| `npm run lint` | ESLint |
-| `npm test` | Unit tests |
+| `npm run build`                     | Production build for Vercel, then applies database migrations      |
+| `npm run typecheck`                 | TypeScript type check                                              |
+| `npm run lint`                      | ESLint                                                             |
+| `npm test`                          | Unit tests                                                         |
 
 ## Deploy (GitHub → Vercel)
 

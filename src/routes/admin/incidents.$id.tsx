@@ -114,12 +114,12 @@ function IncidentCase() {
               <img
                 src={incident.photoData}
                 alt="Photo attached to the report"
-                className="mt-4 max-h-72 w-full rounded-xl object-cover ring-1 ring-line"
+                className="mt-4 max-h-72 w-full rounded-xl object-cover neu-raised-xs"
               />
             )}
           </Panel>
           {incident.lat != null && incident.lng != null && (
-            <div className="h-64 overflow-hidden rounded-2xl ring-1 ring-line">
+            <div className="h-64 overflow-hidden rounded-2xl neu-raised-xs">
               <LiveMap
                 markers={[
                   {

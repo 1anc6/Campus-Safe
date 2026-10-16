@@ -32,7 +32,7 @@ export function GpsStrip({
     <button
       type="button"
       onClick={state === "off" ? onEnable : undefined}
-      className="flex items-center gap-2 rounded-full bg-panel px-3 py-1.5 text-xs font-medium ring-1 ring-line"
+      className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium neu-raised"
     >
       <span
         className={cn(

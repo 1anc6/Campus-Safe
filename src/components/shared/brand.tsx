@@ -16,11 +16,11 @@ export function BrandMark({ size = "md" }: { size?: keyof typeof SIZES }) {
     <span
       aria-hidden="true"
       className={cn(
-        "grid shrink-0 place-items-center bg-accent shadow-[0_0_14px_var(--neon-glow)]",
+        "grid shrink-0 place-items-center bg-[image:var(--accent-fill)] shadow-[inset_1px_1px_0_rgb(255_255_255/0.25),var(--accent-lift)]",
         s.tile,
       )}
     >
-      <Shield className={cn("text-ink", s.icon)} strokeWidth={2.25} />
+      <Shield className={cn("text-on-accent", s.icon)} strokeWidth={2.25} />
     </span>
   );
 }
@@ -48,9 +48,7 @@ export function Wordmark({
             {BRAND.name}
           </span>
           {caption && (
-            <span className="block truncate font-mono text-[10px] tracking-wider text-dim">
-              {caption}
-            </span>
+            <span className="neu-caps block truncate text-[10px] tracking-[0.18em]">{caption}</span>
           )}
         </span>
       )}

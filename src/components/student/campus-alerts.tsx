@@ -23,7 +23,7 @@ const LEVEL = {
   info: {
     icon: Info,
     ring: "ring-[var(--color-neon)]/30",
-    chip: "bg-accent text-ink",
+    chip: "bg-accent text-on-accent",
     tint: "bg-accent/10",
     label: "Notice",
   },
@@ -77,7 +77,7 @@ export function CampusAlertBanners() {
             key={a.id}
             role={a.level === "critical" ? "alert" : "status"}
             className={cn(
-              "glass flex gap-3 p-3.5 ring-1 animate-in fade-in-0 slide-in-from-top-2",
+              "glass flex gap-3 p-3.5 ring-1 shadow-[var(--neu-raised-sm)] animate-in fade-in-0 slide-in-from-top-2",
               L.ring,
             )}
           >

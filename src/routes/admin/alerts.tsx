@@ -96,8 +96,8 @@ function BroadcastsPage() {
                 className={cn(
                   "flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl text-xs font-semibold ring-1 transition-colors",
                   level === l.id
-                    ? "bg-panel-3 text-fg ring-line-strong"
-                    : "bg-panel-2 text-muted ring-line hover:text-fg",
+                    ? "text-neon ring-transparent shadow-[var(--neu-inset-sm)]"
+                    : "text-muted ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)] hover:text-fg",
                 )}
               >
                 <l.icon className={cn("size-4", l.tone)} /> {l.label}
@@ -199,9 +199,7 @@ function AlertRow({
   const pct = students ? Math.min(100, Math.round((alert.seenCount / students) * 100)) : 0;
   const [ending, setEnding] = useState(false);
   return (
-    <li
-      className={cn("rounded-2xl bg-panel-2 p-3.5 ring-1 ring-line", !alert.live && "opacity-70")}
-    >
+    <li className={cn("rounded-2xl p-3.5 neu-well", !alert.live && "opacity-70")}>
       <div className="flex items-start gap-3">
         <L.icon className={cn("mt-0.5 size-4 shrink-0", L.tone)} />
         <div className="min-w-0 flex-1">

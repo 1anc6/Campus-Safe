@@ -428,8 +428,8 @@ export function SafeWalkCard({ className }: { className?: string }) {
               className={cn(
                 "min-h-10 flex-1 rounded-xl text-xs font-semibold ring-1 transition-colors",
                 minutes === m
-                  ? "bg-accent/15 text-neon ring-[var(--color-neon)]/40"
-                  : "bg-panel-2 text-muted ring-line hover:text-fg",
+                  ? "text-neon ring-transparent shadow-[var(--neu-inset-sm)]"
+                  : "text-muted ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)] hover:text-fg",
               )}
             >
               {m}m

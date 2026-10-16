@@ -48,7 +48,7 @@ function RespondersPage() {
         {units?.map((u) => (
           <li key={u.id} className="card flex flex-col gap-2 p-4">
             <div className="flex items-start gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-panel-2 ring-1 ring-line">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl neu-well">
                 <Truck className="size-4 text-neon" />
               </span>
               <div className="min-w-0 flex-1">

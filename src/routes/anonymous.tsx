@@ -99,8 +99,8 @@ function AnonymousPage() {
                       className={cn(
                         "min-h-12 rounded-xl px-2 text-xs font-semibold ring-1 transition-colors",
                         role === id
-                          ? "bg-violet/15 text-violet ring-violet/60"
-                          : "bg-panel-2/40 ring-line hover:bg-panel-2",
+                          ? "text-violet ring-transparent shadow-[var(--neu-inset-sm)]"
+                          : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
                       )}
                     >
                       {label}
@@ -163,8 +163,8 @@ function AnonymousPage() {
                       className={cn(
                         "min-h-14 rounded-xl px-1 text-xs ring-1 transition-colors",
                         severity === s.id
-                          ? "bg-violet/15 text-violet ring-violet/60"
-                          : "bg-panel-2/40 ring-line hover:bg-panel-2",
+                          ? "text-violet ring-transparent shadow-[var(--neu-inset-sm)]"
+                          : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
                       )}
                     >
                       <span className="block font-bold">{s.id}</span>
@@ -283,7 +283,7 @@ function CodeCard({ code }: { code: string }) {
           onClick={() => {
             void navigator.clipboard?.writeText(code).then(() => setCopied(true));
           }}
-          className="grid size-10 place-items-center rounded-lg text-muted ring-1 ring-line hover:text-fg"
+          className="grid size-10 place-items-center rounded-lg text-muted neu-raised-xs hover:text-fg"
           aria-label="Copy tracking code"
         >
           {copied ? <Check className="size-4 text-ok" /> : <Copy className="size-4" />}
