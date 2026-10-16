@@ -143,7 +143,7 @@ function StudentHome() {
       >
         <MyLocationMap
           location={location}
-          className="rounded-[22px] h-[calc(100dvh-17rem-var(--safe-top)-var(--safe-bottom))] min-h-[340px] flex-none md:h-[440px] xl:h-auto xl:min-h-0 xl:flex-1"
+          className="h-[clamp(220px,34dvh,320px)] flex-none rounded-[22px] md:h-[420px] xl:h-auto xl:min-h-0 xl:flex-1"
         />
       </section>
 

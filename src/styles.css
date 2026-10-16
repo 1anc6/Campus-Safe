@@ -474,6 +474,12 @@ html.anon[data-theme="dark"] {
   background: var(--neu-surface) !important;
   color: var(--color-fg) !important;
 }
+/* Phones pinch to zoom; the +/- buttons only crowd a small map. */
+@media (pointer: coarse) and (max-width: 767px) {
+  .leaflet-control-zoom {
+    display: none;
+  }
+}
 .leaflet-bar a {
   width: 36px !important;
   height: 36px !important;

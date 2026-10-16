@@ -217,7 +217,7 @@ function TabLink({ tab, on }: { tab: (typeof TABS)[number]; on: boolean }) {
         to={tab.to}
         aria-current={on ? "page" : undefined}
         className={cn(
-          "flex min-h-[62px] flex-col items-center justify-center gap-0.5 text-[10.5px] font-medium transition-colors duration-200",
+          "flex min-h-[62px] flex-col items-center justify-center gap-0.5 rounded-2xl text-[10.5px] font-medium transition-colors duration-200 focus-visible:outline-offset-[-4px]",
           on ? "text-neon" : "text-muted",
         )}
       >

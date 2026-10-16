@@ -8,7 +8,7 @@ import { formatKm } from "@/lib/campus";
 const STATUS_COPY: Record<Exclude<LiveLocation["status"], "live">, string> = {
   locating: "Finding your location…",
   insecure: "Live GPS needs a secure (https) link",
-  denied: "Location permission is off",
+  denied: "Location off · check settings",
   unsupported: "This browser can't share location",
   unavailable: "GPS signal unavailable",
 };
@@ -64,8 +64,7 @@ export function MyLocationMap({
       <div className="pointer-events-none absolute inset-x-3 top-3 z-[500] flex items-start justify-between gap-2">
         <div
           className={cn(
-            "pointer-events-auto flex max-w-[78%] items-center gap-2 rounded-full bg-chrome/90 py-2 pl-2.5 pr-3.5 text-xs font-medium shadow-lg ring-1 backdrop-blur",
-            tooFar ? "ring-sos/40" : live ? "ring-neon/30" : "ring-warn/30",
+            "pointer-events-auto flex max-w-[82%] items-center gap-2 rounded-full bg-chrome py-1.5 pl-1.5 pr-3 text-xs font-medium shadow-[var(--neu-raised-xs)]",
           )}
           role="status"
         >
@@ -121,7 +120,7 @@ export function MyLocationMap({
       </div>
 
       {tooFar && (
-        <p className="absolute bottom-3 left-3 right-14 z-[500] rounded-xl bg-chrome/90 px-3 py-2 text-xs ring-1 ring-sos/30 backdrop-blur">
+        <p className="absolute bottom-3 left-3 right-14 z-[500] rounded-xl bg-chrome px-3 py-2 text-xs leading-snug shadow-[var(--neu-raised-xs)]">
           <span className="font-semibold text-sos">
             You&apos;re outside the campus response area.
           </span>{" "}
@@ -132,7 +131,7 @@ export function MyLocationMap({
       )}
 
       {!live && HELP_COPY[status] && (
-        <p className="absolute bottom-3 left-3 right-14 z-[500] rounded-xl bg-chrome/90 px-3 py-2 text-xs text-muted ring-1 ring-warn/25 backdrop-blur">
+        <p className="absolute bottom-3 left-3 right-3 z-[500] hidden rounded-xl bg-chrome px-3 py-2 text-xs leading-snug text-muted shadow-[var(--neu-raised-xs)] sm:block sm:right-14">
           {HELP_COPY[status]}
         </p>
       )}
