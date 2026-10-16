@@ -74,17 +74,7 @@ function RootDocument() {
       <body className="bg-bg text-fg min-h-dvh">
         <AuthProvider>
           <Outlet />
-          <Toaster
-            theme={theme}
-            position="top-center"
-            toastOptions={{
-              style: {
-                background: "var(--color-panel)",
-                border: "1px solid var(--color-line)",
-                color: "var(--color-fg)",
-              },
-            }}
-          />
+          <Toaster theme={theme} position="top-center" gap={10} />
         </AuthProvider>
         <Scripts />
       </body>

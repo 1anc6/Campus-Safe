@@ -91,12 +91,12 @@ export function ProfilePanelProvider({ children }: { children: ReactNode }) {
       {children}
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-[1100] bg-black/50 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+          <Dialog.Overlay className="fixed inset-0 z-[1100] bg-black/50 backdrop-blur-[2px] duration-200 ease-[var(--ease-out)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
           <Dialog.Content
             className={cn(
               "glass-bar fixed inset-0 z-[1101] flex flex-col outline-none",
               "md:inset-y-0 md:left-auto md:right-0 md:w-[440px] md:border-l md:border-line md:shadow-2xl",
-              "data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
+              "duration-300 ease-[var(--ease-drawer)] data-[state=open]:animate-in data-[state=open]:slide-in-from-right data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=closed]:duration-200",
             )}
             aria-describedby={undefined}
           >

@@ -54,6 +54,8 @@ export function ChatThread({
   const scroller = useRef<HTMLDivElement>(null);
   const atBottom = useRef(true);
   const lastCount = useRef(messages.length);
+  /** Messages on screen when the thread opened: only later arrivals animate in. */
+  const initialIds = useRef(new Set(messages.map((m) => m.id)));
 
   const scrollToEnd = (smooth: boolean) => {
     const el = scroller.current;
@@ -118,6 +120,7 @@ export function ChatThread({
                     mine={selfRoles.includes(m.authorRole)}
                     label={labels[m.authorRole] ?? m.authorRole}
                     grouped={Boolean(grouped)}
+                    fresh={!initialIds.current.has(m.id)}
                   />
                 );
               })}
@@ -222,15 +225,18 @@ function Bubble({
   mine,
   label,
   grouped,
+  fresh,
 }: {
   message: ThreadMessage;
   mine: boolean;
   label: string;
   grouped: boolean;
+  /** Arrived after the thread opened: rises in instead of just appearing. */
+  fresh: boolean;
 }) {
   if (m.authorRole === "system") {
     return (
-      <li className="flex justify-center">
+      <li className={cn("flex justify-center", fresh && "chat-enter")}>
         <p className="neu-well max-w-[90%] rounded-2xl px-3 py-1.5 text-center text-[11px] leading-snug text-muted">
           {m.body} <span className="text-dim">· {chatTime(m.createdAt)}</span>
         </p>
@@ -238,7 +244,14 @@ function Bubble({
     );
   }
   return (
-    <li className={cn("flex flex-col", mine ? "items-end" : "items-start", grouped && "-mt-1")}>
+    <li
+      className={cn(
+        "flex flex-col",
+        mine ? "items-end origin-bottom-right" : "items-start origin-bottom-left",
+        grouped && "-mt-1",
+        fresh && "chat-enter",
+      )}
+    >
       {!grouped && (
         <span
           className={cn("mb-1 px-1 text-[11px] font-semibold text-muted", mine && "text-right")}

@@ -55,7 +55,12 @@
   --radius-2xl: 32px;
 
   --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Motion (after Emil Kowalski): a strong ease-out for anything entering or
+     responding to a press; ease-in-out only for things already on screen that
+     move; the drawer curve for sheets. UI motion stays under 300ms. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* `dark:` utilities follow the app theme attribute, not the OS setting. */
@@ -215,6 +220,20 @@ html.anon[data-theme="dark"] {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+
+  /* Every press answers the finger: a quick 3% shrink, released on the same
+     curve. Uses the standalone "scale" property so it never fights a
+     component's own transform. The SOS button has its own, deeper press. */
+  :where(button, [role="button"], a.btn-neon, a.btn-ghost, a.btn-auth) {
+    transition: scale 160ms var(--ease-out);
+  }
+  :where(button, [role="button"], a.btn-neon, a.btn-ghost, a.btn-auth):not(
+      :disabled,
+      [aria-disabled="true"],
+      .sos-btn
+    ):active {
+    scale: 0.97;
   }
 
   h1,
@@ -610,7 +629,7 @@ html.sos-flash .bg-chrome {
       transform 220ms var(--ease-smooth-out),
       box-shadow 220ms var(--ease-smooth-out);
   }
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     .glass-hover:hover {
       transform: translateY(-2px);
     }
@@ -638,15 +657,16 @@ html.sos-flash .bg-chrome {
       inset 1px 1px 0 rgb(255 255 255 / 0.22),
       var(--accent-lift);
     transition:
-      transform 160ms var(--ease-out),
+      scale 160ms var(--ease-out),
       box-shadow 160ms var(--ease-out),
       filter 160ms var(--ease-out);
   }
-  .btn-neon:hover:not(:disabled) {
-    filter: brightness(1.06);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-neon:hover:not(:disabled) {
+      filter: brightness(1.06);
+    }
   }
   .btn-neon:active:not(:disabled) {
-    transform: scale(0.98);
     box-shadow:
       inset 3px 3px 7px rgb(0 0 0 / 0.22),
       inset -2px -2px 6px rgb(255 255 255 / 0.12);
@@ -672,12 +692,15 @@ html.sos-flash .bg-chrome {
     font-weight: 600;
     box-shadow: var(--neu-raised-xs);
     transition:
+      scale 160ms var(--ease-out),
       box-shadow 160ms var(--ease-out),
       color 160ms var(--ease-out);
   }
-  .btn-ghost:hover:not(:disabled) {
-    color: var(--color-neon);
-    box-shadow: var(--neu-raised-sm);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-ghost:hover:not(:disabled) {
+      color: var(--color-neon);
+      box-shadow: var(--neu-raised-sm);
+    }
   }
   .btn-ghost:active:not(:disabled) {
     box-shadow: var(--neu-inset-sm);
@@ -739,14 +762,17 @@ html.sos-flash .bg-chrome {
     padding: 6px 14px;
     border-radius: 11px;
     transition:
-      box-shadow 220ms var(--ease-smooth-out),
-      color 200ms var(--ease-smooth-out);
+      scale 160ms var(--ease-out),
+      box-shadow 200ms var(--ease-out),
+      color 200ms var(--ease-out);
     color: var(--color-muted);
     font-size: 0.75rem;
     font-weight: 600;
   }
-  .seg > button:hover {
-    color: var(--color-fg);
+  @media (hover: hover) and (pointer: fine) {
+    .seg > button:hover {
+      color: var(--color-fg);
+    }
   }
   .seg > button[aria-pressed="true"] {
     background: var(--neu-concave);
@@ -987,15 +1013,16 @@ html.theme-transition *::after {
       inset 1px 1px 0 rgb(255 255 255 / 0.22),
       var(--accent-lift);
     transition:
-      filter 150ms var(--ease-out),
-      transform 150ms var(--ease-out),
-      box-shadow 150ms var(--ease-out);
+      filter 160ms var(--ease-out),
+      scale 160ms var(--ease-out),
+      box-shadow 160ms var(--ease-out);
   }
-  .btn-auth:hover:not(:disabled) {
-    filter: brightness(1.06);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-auth:hover:not(:disabled) {
+      filter: brightness(1.06);
+    }
   }
   .btn-auth:active:not(:disabled) {
-    transform: scale(0.99);
     box-shadow:
       inset 3px 3px 7px rgb(0 0 0 / 0.22),
       inset -2px -2px 6px rgb(255 255 255 / 0.12);
@@ -1120,10 +1147,12 @@ html.theme-transition *::after {
 
 /* ============ Command palette (admin, Ctrl/⌘ K) ============ */
 .palette-layer > [aria-hidden="true"] {
-  animation: palette-fade 200ms var(--ease-out) both;
+  animation: palette-fade 120ms var(--ease-out) both;
 }
+/* Opened from the keyboard many times a day, so the panel itself appears
+   instantly; animation there would only slow a power user down. */
 .palette-panel {
-  animation: palette-in 260ms var(--ease-smooth-out) both;
+  animation: none;
 }
 @keyframes palette-fade {
   from {
@@ -1134,5 +1163,39 @@ html.theme-transition *::after {
   from {
     opacity: 0;
     transform: translateY(12px) scale(0.96);
+  }
+}
+
+/* ============ Chat: a new message rises out of a soft blur ============ */
+.chat-enter {
+  animation: chat-in 240ms var(--ease-out) both;
+}
+@keyframes chat-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+    scale: 0.98;
+    filter: blur(4px);
+  }
+}
+
+/* Sonner toasts, cut from the same soft surface. */
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] {
+  background: var(--color-chrome);
+  color: var(--color-fg);
+  border: 0;
+  border-radius: 18px;
+  box-shadow: var(--neu-raised-sm);
+}
+[data-sonner-toaster] [data-sonner-toast] [data-description] {
+  color: var(--color-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-enter {
+    animation: none;
+  }
+  :where(button, [role="button"], a.btn-neon, a.btn-ghost, a.btn-auth):active {
+    scale: none;
   }
 }

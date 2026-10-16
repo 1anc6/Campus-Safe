@@ -385,6 +385,21 @@ The admin dashboard's live feed, grouped by day. Each row has a 28px round marke
 
 Loading placeholders are a faint pressed fill (12px corners) with a soft light sweep; the sweep is removed under reduced motion.
 
+## Motion
+
+Interaction motion follows Emil Kowalski's craft rules (the author of Sonner and Vaul, both used here):
+
+- **Curves.** `--ease-out` (`cubic-bezier(0.23, 1, 0.32, 1)`) for anything entering or answering a press; `--ease-in-out` (`cubic-bezier(0.77, 0, 0.175, 1)`) only for things already on screen that move; `--ease-drawer` (`cubic-bezier(0.32, 0.72, 0, 1)`) for sheets and the profile panel. Never linear, never the browser's default `ease`.
+- **Speed.** Presses 160ms, popovers 150ms in and 100ms out, toasts and sheets under 300ms. Exits are faster than entrances.
+- **Press.** Every button shrinks to `scale: 0.97` while held and springs back on the same curve, using the standalone `scale` property so it never fights a component's own transform. The SOS button keeps its own deeper press.
+- **Origin.** Popovers and dropdown lists grow out of their trigger (`transform-origin` from Radix), from 95% and transparent, never from zero.
+- **Hover is for mice.** Hover lifts and colour changes only apply under `(hover: hover) and (pointer: fine)`, so a tap on a phone never leaves a stuck hover state.
+- **Frequent actions don't animate.** The command palette is opened from the keyboard many times a day, so its panel appears instantly; only the backdrop fades (120ms).
+- **Phones get sheets.** On touch phones, `NeuSelect` opens a Vaul bottom sheet (drag or flick down to close, opens scrolled to the chosen option) instead of an anchored list.
+- **Arrivals, not history.** In the SOS chat only messages that arrive after the thread opened rise in (8px, 98% scale, out of a 4px blur, 240ms); the existing history renders still.
+- **Toasts** are Sonner, styled as raised soft-UI pills on `chrome`.
+- **Reduced motion** removes the press shrink and the chat entrance along with every other animation.
+
 ## Do's and Don'ts
 
 ### Do:
