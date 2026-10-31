@@ -1,5 +1,16 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { CornerUpRight, Footprints, LoaderCircle, Plus, ShieldCheck, X } from "lucide-react";
+import {
+  ChevronDown,
+  CornerUpRight,
+  Footprints,
+  LoaderCircle,
+  Minus,
+  Plus,
+  ShieldCheck,
+  Timer,
+  TriangleAlert,
+  X,
+} from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -21,15 +32,21 @@ import {
   type SafeWalk,
 } from "@/backend/functions/walks";
 import { distanceM, formatKm, LOCATIONS, placeByName, walkMinutes } from "@/lib/campus";
-import { directionsUrl } from "@/lib/responder";
+import { directionsUrl, useNow } from "@/lib/responder";
 import type { LiveLocation } from "@/lib/use-live-location";
+import type { WalkRouteState } from "@/lib/use-walk-route";
+import { routePace, suggestedCheckInMinutes } from "@/lib/walk-route";
+import { RouteSteps, TurnIcon } from "@/components/student/route-steps";
 import { NeuSelect, placeOptions } from "@/components/shared/neu-select";
 import { getFix, readLastFix } from "@/lib/gps";
 import { cn } from "@/lib/utils";
 
 /** After the deadline, the phone asks "Are you safe?" for this long before raising SOS. */
 const CHECK_IN_GRACE_S = 30;
-const DURATIONS = [5, 10, 15, 20, 30];
+/** Check-in time when there's no route to size it from. */
+const DEFAULT_MINUTES = 15;
+const MIN_MINUTES = 5;
+const MAX_MINUTES = 60;
 const PING_EVERY_MS = 30_000;
 
 type Place = { name: string; lat: number; lng: number };
@@ -44,7 +61,8 @@ type WalkState = {
   /** Seconds until the deadline (negative once overdue). */
   remaining: number | null;
   busy: boolean;
-  start: (destination: string, minutes: number) => Promise<void>;
+  /** `routeM`: length of the walking route, so progress can be measured along it. */
+  start: (destination: string, minutes: number, routeM?: number) => Promise<void>;
   extend: (minutes: number) => Promise<void>;
   finish: (outcome: "completed" | "cancelled") => Promise<void>;
 };
@@ -156,12 +174,12 @@ export function SafeWalkProvider({ children }: { children: ReactNode }) {
     }
   }, [walk, navigate]);
 
-  const start = useCallback(async (destination: string, minutes: number) => {
+  const start = useCallback(async (destination: string, minutes: number, routeM?: number) => {
     setBusy(true);
     try {
       const fix = lastFix();
       const started = await startWalk({ data: { destination, minutes, fix } });
-      if (fix) rememberStart(started.id, fix);
+      if (fix) rememberStart(started.id, fix, routeM);
       setWalk(started);
       setPreview(null);
       setNow(Date.now());
@@ -241,17 +259,18 @@ export function SafeWalkProvider({ children }: { children: ReactNode }) {
 
 /** Where a walk started, kept on this device so progress can be measured by distance. */
 const START_KEY = (id: string) => `campussafe.walk-start.${id}`;
-function rememberStart(id: string, fix: { lat: number; lng: number }) {
+type WalkStart = { lat: number; lng: number; routeM?: number };
+function rememberStart(id: string, fix: { lat: number; lng: number }, routeM?: number) {
   try {
-    localStorage.setItem(START_KEY(id), JSON.stringify({ lat: fix.lat, lng: fix.lng }));
+    localStorage.setItem(START_KEY(id), JSON.stringify({ lat: fix.lat, lng: fix.lng, routeM }));
   } catch {
     /* storage blocked: progress falls back to time */
   }
 }
-function readStart(id: string): { lat: number; lng: number } | null {
+function readStart(id: string): WalkStart | null {
   try {
     const raw = localStorage.getItem(START_KEY(id));
-    return raw ? (JSON.parse(raw) as { lat: number; lng: number }) : null;
+    return raw ? (JSON.parse(raw) as WalkStart) : null;
   } catch {
     return null;
   }
@@ -346,14 +365,27 @@ function CheckInOverlay({
 export function SafeWalkCard({
   className,
   location,
+  walkRoute,
 }: {
   className?: string;
   /** The home page's live location, used to measure progress toward the destination. */
   location?: LiveLocation;
+  /** Walking route to the picked / active destination (shared with the map). */
+  walkRoute?: WalkRouteState;
 }) {
   const { walk, guide, preview, setPreview, remaining, busy, start, extend, finish } =
     useSafeWalk();
-  const [minutes, setMinutes] = useState(10);
+  // null = use the time suggested from the route; a number once the student adjusts it.
+  const [chosen, setChosen] = useState<number | null>(null);
+  const [showSteps, setShowSteps] = useState(false);
+  const now = useNow(15_000);
+  // The clock time is locale- and time-dependent: render it only on the client.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    setChosen(null);
+    setShowSteps(false);
+  }, [preview]);
 
   if (walk?.status === "active" && remaining != null) {
     return (
@@ -363,6 +395,7 @@ export function SafeWalkCard({
         remaining={remaining}
         guide={guide}
         location={location}
+        walkRoute={walkRoute}
         busy={busy}
         onSafe={() => void finish("completed")}
         onExtend={() => void extend(5)}
@@ -372,6 +405,27 @@ export function SafeWalkCard({
   }
 
   const picked = LOCATIONS.find((l) => l.id === preview);
+  const fix =
+    location?.status === "live" && location.fix && !location.fix.approx ? location.fix : null;
+  const route = picked ? (walkRoute?.route ?? null) : null;
+  const routeStatus = picked && fix ? (walkRoute?.status ?? "idle") : "idle";
+  const straight = picked && fix ? distanceM(fix, picked) : null;
+  // How long the walk takes: along the route, else a padded straight-line estimate.
+  const etaMin = route
+    ? Math.max(1, Math.round(route.durationS / 60))
+    : straight != null && routeStatus === "error"
+      ? walkMinutes(straight * 1.3)
+      : null;
+  const suggested = Math.min(
+    MAX_MINUTES,
+    etaMin != null ? suggestedCheckInMinutes(etaMin) : DEFAULT_MINUTES,
+  );
+  const minutes = chosen ?? suggested;
+  const tooShort = etaMin != null && minutes < etaMin + 2;
+  const step = (d: number) =>
+    setChosen(Math.min(MAX_MINUTES, Math.max(MIN_MINUTES, Math.round((minutes + d) / 5) * 5)));
+  const dueBy = hydrated ? `by ${clock(now + minutes * 60_000)}` : `within ${minutes} min`;
+
   return (
     <section className={cn("card p-4", className)} aria-labelledby="walk-title">
       <div className="flex items-center gap-3">
@@ -396,7 +450,7 @@ export function SafeWalkCard({
             toast("Where are you heading?");
             return;
           }
-          void start(picked.name, minutes);
+          void start(picked.name, minutes, route?.distanceM);
         }}
       >
         <NeuSelect
@@ -406,38 +460,126 @@ export function SafeWalkCard({
           placeholder="Where to? Pick a campus place"
           aria-label="Destination"
         />
+
         {picked && (
-          <p className="flex items-center gap-1.5 px-1 text-xs text-muted">
-            <CornerUpRight className="size-3.5 text-neon" />
-            {picked.name} is marked on the map above.
-          </p>
+          <div className="rounded-2xl p-3 neu-well" aria-live="polite">
+            {!fix ? (
+              <p className="text-xs text-muted">
+                Turn on location to get the walking route to {picked.name}.
+              </p>
+            ) : routeStatus === "loading" && !route ? (
+              <p className="flex items-center gap-2 text-xs text-muted">
+                <LoaderCircle className="size-3.5 animate-spin text-neon" /> Finding the shortest
+                walking route…
+              </p>
+            ) : route ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">
+                      {etaMin} min walk{" "}
+                      <span className="font-normal text-muted">· {formatKm(route.distanceM)}</span>
+                    </p>
+                    <p className="truncate text-[11px] text-muted">
+                      Shortest path{route.via ? ` via ${route.via}` : ""}
+                    </p>
+                  </div>
+                  {route.steps.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowSteps((v) => !v)}
+                      aria-expanded={showSteps}
+                      className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-medium text-neon hover:bg-panel-2"
+                    >
+                      {showSteps ? "Hide steps" : "Steps"}
+                      <ChevronDown
+                        className={cn("size-3.5 transition-transform", showSteps && "rotate-180")}
+                      />
+                    </button>
+                  )}
+                </div>
+                {showSteps && <RouteSteps steps={route.steps} className="mt-2" />}
+              </>
+            ) : (
+              <p className="text-xs text-muted">
+                Couldn&apos;t load a walking route right now
+                {straight != null && (
+                  <> — it&apos;s {formatKm(straight)} in a straight line</>
+                )}.{" "}
+                <a
+                  href={directionsUrl(picked.lat, picked.lng)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-neon"
+                >
+                  Open in Maps
+                </a>
+              </p>
+            )}
+          </div>
         )}
-        <div className="flex gap-1.5" role="radiogroup" aria-label="Time limit">
-          {DURATIONS.map((m) => (
-            <button
-              key={m}
-              type="button"
-              role="radio"
-              aria-checked={minutes === m}
-              onClick={() => setMinutes(m)}
-              className={cn(
-                "min-h-10 flex-1 rounded-xl text-xs font-semibold transition-[box-shadow,color]",
-                minutes === m
-                  ? "text-neon shadow-[var(--neu-inset-sm)]"
-                  : "text-muted shadow-[var(--neu-raised-xs)] hover:text-fg hover:shadow-[var(--neu-raised-sm)]",
+
+        <div className="flex items-center gap-3 rounded-2xl px-3 py-2.5 shadow-[var(--neu-raised-xs)]">
+          <Timer className="size-4 shrink-0 text-neon" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">Check in {dueBy}</p>
+            <p className={cn("text-[11px]", tooShort ? "text-warn" : "text-muted")}>
+              <span className="font-semibold tabular-nums">{minutes} min</span>
+              {" · "}
+              {tooShort
+                ? `shorter than your ${etaMin} min walk, risk of a false alarm`
+                : etaMin != null
+                  ? `${etaMin} min walk + ${minutes - etaMin} spare`
+                  : picked
+                    ? "set how long you need"
+                    : "pick a place for a suggestion"}
+              {chosen != null && chosen !== suggested && etaMin != null && (
+                <>
+                  {" · "}
+                  <button
+                    type="button"
+                    onClick={() => setChosen(null)}
+                    className="font-medium text-neon"
+                  >
+                    Use {suggested} min
+                  </button>
+                </>
               )}
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-1.5">
+            <button
+              type="button"
+              onClick={() => step(-5)}
+              disabled={minutes <= MIN_MINUTES}
+              aria-label="5 minutes less"
+              className="grid size-9 place-items-center rounded-xl text-muted shadow-[var(--neu-raised-xs)] hover:text-fg disabled:opacity-40"
             >
-              {m}m
+              <Minus className="size-4" />
             </button>
-          ))}
+            <button
+              type="button"
+              onClick={() => step(5)}
+              disabled={minutes >= MAX_MINUTES}
+              aria-label="5 minutes more"
+              className="grid size-9 place-items-center rounded-xl text-muted shadow-[var(--neu-raised-xs)] hover:text-fg disabled:opacity-40"
+            >
+              <Plus className="size-4" />
+            </button>
+          </div>
         </div>
+        <p className="px-1 text-[11px] leading-snug text-muted">
+          Not checked in by then? Your phone asks if you&apos;re safe. No answer in{" "}
+          {CHECK_IN_GRACE_S} s and campus security gets an SOS with your location.
+        </p>
+
         <button type="submit" disabled={busy} className="btn-neon w-full">
           {busy ? (
             <LoaderCircle className="size-4 animate-spin" />
           ) : (
             <Footprints className="size-4" />
           )}
-          Start walk · {minutes} min
+          Start walk · check in {dueBy}
         </button>
       </form>
     </section>
@@ -456,8 +598,8 @@ function arcPoint(t: number) {
 
 /**
  * Active walk, readable at a glance: from → to, a path with the walker on it,
- * how far is left and when to check in. Progress is measured by distance when
- * GPS is on, otherwise by the time limit.
+ * how far is left and when to check in. Progress is measured along the walking
+ * route when GPS is on, otherwise by the time limit.
  */
 function WalkProgress({
   className,
@@ -465,6 +607,7 @@ function WalkProgress({
   remaining,
   guide,
   location,
+  walkRoute,
   busy,
   onSafe,
   onExtend,
@@ -475,6 +618,7 @@ function WalkProgress({
   remaining: number;
   guide: { name: string; lat: number; lng: number } | null;
   location?: LiveLocation;
+  walkRoute?: WalkRouteState;
   busy: boolean;
   onSafe: () => void;
   onExtend: () => void;
@@ -486,13 +630,41 @@ function WalkProgress({
   );
   const fix = location?.fix && !location.fix.approx ? location.fix : null;
   const startPt = readStart(walk.id);
-  const left = guide && fix ? distanceM(fix, guide) : null;
-  const span = guide && startPt ? distanceM(startPt, guide) : null;
+  const route = walkRoute?.route ?? null;
+  const onRoute = walkRoute?.progress ?? null;
+  const crow = guide && fix ? distanceM(fix, guide) : null;
+  // Distance left along the walking route; straight line when there's no route.
+  const left = onRoute ? onRoute.remainingM : crow;
+  const span = startPt?.routeM ?? (guide && startPt ? distanceM(startPt, guide) : null);
   const byDistance = left != null && span != null && span > 25;
-  const progress = Math.min(1, Math.max(0, byDistance ? 1 - left! / span! : 1 - remaining / total));
-  const arrived = left != null && left < 25;
+  const progress = Math.min(
+    1,
+    Math.max(0, byDistance ? 1 - left! / Math.max(span!, left!) : 1 - remaining / total),
+  );
+  const arrived = crow != null && crow < 30;
   const low = remaining <= 120;
   const dot = arcPoint(progress);
+  const etaS = left != null ? left / routePace(route) : null;
+  // At walking pace you won't make the check-in: suggest more time before it alarms.
+  const late = !arrived && etaS != null && remaining > 0 && etaS > remaining + 20;
+  const next = onRoute?.next ?? null;
+
+  // Nudge once on arrival so the walk gets closed instead of timing out into an SOS.
+  const nudged = useRef<string | null>(null);
+  useEffect(() => {
+    if (!arrived || nudged.current === walk.id) return;
+    nudged.current = walk.id;
+    try {
+      navigator.vibrate?.(120);
+    } catch {
+      /* vibration unsupported */
+    }
+    toast.success(`You've arrived at ${walk.destination}`, {
+      description: "Tap I'm safe to end your walk.",
+      action: { label: "I'm safe", onClick: onSafe },
+      duration: 20_000,
+    });
+  }, [arrived, walk.id, walk.destination, onSafe]);
 
   return (
     <section className={cn("card p-2", className)} aria-label="Safe walk in progress">
@@ -576,23 +748,75 @@ function WalkProgress({
           <p className="text-right text-sm font-semibold text-[#9cbcff]">
             {arrived
               ? "You've arrived"
-              : left != null
-                ? `Arriving in ~${walkMinutes(left)} min`
+              : etaS != null
+                ? `Arriving in ~${Math.max(1, Math.round(etaS / 60))} min`
                 : `${Math.round(progress * 100)}% of your time used`}
           </p>
         </div>
       </div>
 
+      {late && (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={onExtend}
+          className="mx-2 mt-3 flex w-[calc(100%-1rem)] items-center gap-2.5 rounded-2xl bg-warn/12 px-3 py-2.5 text-left text-xs disabled:opacity-60"
+        >
+          <TriangleAlert className="size-4 shrink-0 text-warn" />
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">
+              You need about {Math.ceil(etaS! / 60)} more min
+            </span>
+            <span className="text-muted">Add time so we don&apos;t raise a false alarm.</span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-1 font-semibold text-warn">
+            <Plus className="size-3.5" /> 5 min
+          </span>
+        </button>
+      )}
+
       <dl className="grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-1.5 px-3 pb-1 pt-4 text-sm">
         <dt className="text-muted">Distance</dt>
         <dd className="font-medium">
-          {left != null ? `${formatKm(left)} to go` : "Turn on location to track"}
+          {left != null
+            ? `${formatKm(left)} to go${onRoute ? "" : " (straight line)"}`
+            : "Turn on location to track"}
         </dd>
+        {!arrived && (walkRoute?.offRoute || next) && (
+          <>
+            <dt className="text-muted">Next</dt>
+            <dd className="flex min-w-0 items-start gap-1.5 font-medium leading-snug">
+              {walkRoute?.offRoute ? (
+                <span className="text-warn">Off the route — finding a new way…</span>
+              ) : (
+                next && (
+                  <>
+                    <TurnIcon kind={next.step.kind} className="mt-0.5 size-4 shrink-0 text-neon" />
+                    <span className="min-w-0">
+                      {next.step.text}
+                      <span className="text-muted"> · {formatKm(next.inM)}</span>
+                    </span>
+                  </>
+                )
+              )}
+            </dd>
+          </>
+        )}
         <dt className="text-muted">Check in by</dt>
         <dd className="font-medium">{clock(walk.dueAt)}</dd>
         <dt className="text-muted">If you don&apos;t</dt>
         <dd className="font-medium">Campus command gets an SOS</dd>
       </dl>
+
+      {route && route.steps.length > 1 && !arrived && (
+        <details className="group mx-2 mt-2 rounded-2xl px-1">
+          <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 px-2 text-xs font-medium text-neon">
+            All directions
+            <ChevronDown className="size-3.5 transition-transform group-open:rotate-180" />
+          </summary>
+          <RouteSteps steps={route.steps} next={next?.step} className="pb-2" />
+        </details>
+      )}
 
       <div className="mt-3 grid grid-cols-[1fr_auto_auto_auto] gap-2 px-2 pb-2">
         <button

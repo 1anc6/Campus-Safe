@@ -23,6 +23,7 @@ import { listMyIncidents } from "@/backend/functions/reports";
 import { listMySos } from "@/backend/functions/sos";
 import type { Incident, SosAlert } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
+import { useWalkRoute } from "@/lib/use-walk-route";
 import { cn, formatClock } from "@/lib/utils";
 import { Skeleton as SkeletonBlock, SkeletonList } from "@/components/shared/skeleton";
 
@@ -48,6 +49,8 @@ function StudentHome() {
   const viewer = useViewer();
   const location = useLiveLocation();
   const { guide } = useSafeWalk();
+  // One route shared by the map (line + next turn) and the walk card (steps, ETA).
+  const walkRoute = useWalkRoute(location, guide);
   const { shareLiveLocation } = useSosFlow();
   const [sosList, setSosList] = useState<SosAlert[] | null>(null);
   const [incidents, setIncidents] = useState<Incident[] | null>(null);
@@ -145,6 +148,7 @@ function StudentHome() {
         <MyLocationMap
           location={location}
           guide={guide}
+          walkRoute={walkRoute}
           className="h-[clamp(220px,34dvh,320px)] flex-none rounded-[22px] md:h-[420px] xl:h-auto xl:min-h-0 xl:flex-1"
         />
       </section>
@@ -162,7 +166,7 @@ function StudentHome() {
           <Quick to="/reports" icon={FolderOpen} label="My reports" />
         </nav>
 
-        <SafeWalkCard className="[grid-area:walk]" location={location} />
+        <SafeWalkCard className="[grid-area:walk]" location={location} walkRoute={walkRoute} />
 
         <SafetyCard className="[grid-area:safety]" />
 

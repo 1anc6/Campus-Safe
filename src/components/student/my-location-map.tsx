@@ -5,6 +5,9 @@ import type { LiveLocation } from "@/lib/use-live-location";
 import { cn } from "@/lib/utils";
 import { distanceM, formatKm, headingLabel, walkMinutes } from "@/lib/campus";
 import { directionsUrl } from "@/lib/responder";
+import type { WalkRouteState } from "@/lib/use-walk-route";
+import { routePace } from "@/lib/walk-route";
+import { TurnIcon } from "@/components/student/route-steps";
 
 const STATUS_COPY: Record<Exclude<LiveLocation["status"], "live">, string> = {
   locating: "Finding your location…",
@@ -27,11 +30,14 @@ const HELP_COPY: Partial<Record<LiveLocation["status"], string>> = {
 export function MyLocationMap({
   location,
   guide,
+  walkRoute,
   className,
 }: {
   location: LiveLocation;
   /** A place to guide the student to (Safe Walk destination): pin, line and directions. */
   guide?: { name: string; lat: number; lng: number } | null;
+  /** The walking route to `guide`, drawn along real paths instead of a straight line. */
+  walkRoute?: WalkRouteState;
   className?: string;
 }) {
   const [follow, setFollow] = useState(true);
@@ -43,17 +49,42 @@ export function MyLocationMap({
   const from = live && fix ? { lat: fix.lat, lng: fix.lng } : null;
   const fromRef = useRef(from);
   fromRef.current = from;
-  // Frame you and the destination once per destination (and when GPS first locks),
-  // not on every GPS update, so the map never jumps while you walk.
+  const route = guide ? (walkRoute?.route ?? null) : null;
+  const progress = route ? (walkRoute?.progress ?? null) : null;
+  const routeRef = useRef(route);
+  routeRef.current = route;
+  // Frame you, the route and the destination once per destination (and when GPS
+  // first locks or the route arrives), not on every GPS update, so the map never
+  // jumps while you walk.
   const hasFrom = Boolean(from);
+  const hasRoute = Boolean(route);
   const fit = useMemo(() => {
     if (!guide) return null;
-    const pts = [{ lat: guide.lat, lng: guide.lng }];
+    const pts = [{ lat: guide.lat, lng: guide.lng }, ...(routeRef.current?.points ?? [])];
     if (fromRef.current) pts.unshift(fromRef.current);
     return pts;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guide?.name, hasFrom, refit]);
-  const leg = guide && from ? distanceM(from, guide) : null;
+  }, [guide?.name, hasFrom, hasRoute, refit]);
+  // Distance along the walkable route when we have one; straight line otherwise.
+  const leg = progress ? progress.remainingM : guide && from ? distanceM(from, guide) : null;
+  const legMin =
+    leg == null
+      ? null
+      : progress
+        ? Math.max(1, Math.round(leg / routePace(route) / 60))
+        : walkMinutes(leg);
+  const routing = guide && from && !route && walkRoute?.status === "loading";
+  const line =
+    guide && from
+      ? progress
+        ? // The route still ahead of you, starting from where you stand.
+          [from, ...progress.ahead, { lat: guide.lat, lng: guide.lng }]
+        : routing
+          ? null
+          : [from, { lat: guide.lat, lng: guide.lng }]
+      : null;
+  const arrived = guide && from ? distanceM(from, guide) < 30 : false;
+  const next = arrived ? null : (progress?.next ?? null);
 
   const markers: MapMarker[] = fix
     ? [
@@ -85,7 +116,8 @@ export function MyLocationMap({
       <LiveMap
         markers={markers}
         focus={focus}
-        route={guide && from ? [from, { lat: guide.lat, lng: guide.lng }] : null}
+        route={line}
+        routeStyle={progress ? "path" : "straight"}
         fit={fit}
         recenter={recenter}
         onUserPan={() => setFollow(false)}
@@ -167,18 +199,50 @@ export function MyLocationMap({
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{guide.name}</p>
             <p className="truncate text-xs text-muted">
-              {leg != null && from ? (
+              {arrived ? (
+                <span className="font-medium text-ok">You&apos;ve arrived</span>
+              ) : routing ? (
+                "Finding the walking route…"
+              ) : leg != null && from ? (
                 <>
-                  {formatKm(leg)} · ~{walkMinutes(leg)} min walk
-                  <span className="hidden min-[420px]:inline">
-                    {" "}
-                    · head {headingLabel(from, guide)}
-                  </span>
+                  {formatKm(leg)} · ~{legMin} min walk
+                  {progress ? (
+                    route?.via && (
+                      <span className="hidden min-[420px]:inline"> · via {route.via}</span>
+                    )
+                  ) : (
+                    <span className="hidden min-[420px]:inline">
+                      {" "}
+                      · head {headingLabel(from, guide)}
+                    </span>
+                  )}
                 </>
               ) : (
                 "Turn on location to see your way there"
               )}
             </p>
+            {arrived ? null : walkRoute?.offRoute ? (
+              <p className="mt-0.5 truncate text-xs font-medium text-warn">
+                Off the route — finding a new way…
+              </p>
+            ) : next ? (
+              <p className="mt-0.5 flex items-center gap-1 truncate text-xs font-medium text-neon">
+                <TurnIcon kind={next.step.kind} className="size-3.5 shrink-0" />
+                <span className="truncate">
+                  {next.step.kind === "arrive"
+                    ? `${next.step.text} in ${formatKm(next.inM)}`
+                    : `In ${formatKm(next.inM)}, ${next.step.text.charAt(0).toLowerCase()}${next.step.text.slice(1)}`}
+                </span>
+              </p>
+            ) : (
+              guide &&
+              from &&
+              walkRoute?.status === "error" && (
+                <p className="mt-0.5 truncate text-xs text-warn">
+                  Route unavailable — straight-line distance shown
+                </p>
+              )
+            )}
           </div>
           <a
             href={directionsUrl(guide.lat, guide.lng)}

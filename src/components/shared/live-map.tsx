@@ -32,6 +32,7 @@ export function LiveMap({
   trails,
   focus,
   route,
+  routeStyle = "straight",
   fit,
   recenter,
   onUserPan,
@@ -45,6 +46,8 @@ export function LiveMap({
   focus?: LatLng | null;
   /** A guide line drawn on top of everything (e.g. you → destination). */
   route?: LatLng[] | null;
+  /** "path": a walkable route along real paths (solid) · "straight": as the crow flies (dotted). */
+  routeStyle?: "path" | "straight";
   /** Frame these points whenever the set changes (overrides `focus` while set). */
   fit?: LatLng[] | null;
   /** Change this number to fly back to the whole campus. */
@@ -60,8 +63,8 @@ export function LiveMap({
   const resizeObs = useRef<ResizeObserver | null>(null);
   // Latest props for draw(): the map initialises asynchronously, so the first draw
   // must use current data, not the (possibly empty) props from the first render.
-  const latest = useRef({ markers, trail, trails, focus, route, fit, onUserPan });
-  latest.current = { markers, trail, trails, focus, route, fit, onUserPan };
+  const latest = useRef({ markers, trail, trails, focus, route, routeStyle, fit, onUserPan });
+  latest.current = { markers, trail, trails, focus, route, routeStyle, fit, onUserPan };
   const lastFit = useRef<string | null>(null);
 
   useEffect(() => {
@@ -107,7 +110,7 @@ export function LiveMap({
 
   useEffect(() => {
     void import("leaflet").then(draw);
-  }, [markers, trail, trails, focus, route, fit]);
+  }, [markers, trail, trails, focus, route, routeStyle, fit]);
 
   useEffect(() => {
     if (!recenter || !mapRef.current) return;
@@ -119,7 +122,7 @@ export function LiveMap({
     const map = mapRef.current;
     const layer = layerRef.current;
     if (!map || !layer) return;
-    const { markers, trail, trails, focus, route, fit } = latest.current;
+    const { markers, trail, trails, focus, route, routeStyle, fit } = latest.current;
     layer.clearLayers();
 
     const paths = [
@@ -144,15 +147,21 @@ export function LiveMap({
     if (route && route.length > 1) {
       const pts = route.map((pt) => [pt.lat, pt.lng] as [number, number]);
       // A light casing under the line keeps it readable over any tile colour.
-      L.polyline(pts, { color: "#ffffff", weight: 9, opacity: 0.85, lineCap: "round" }).addTo(
-        layer,
-      );
+      const path = routeStyle === "path";
+      L.polyline(pts, {
+        color: "#ffffff",
+        weight: path ? 10 : 9,
+        opacity: 0.85,
+        lineCap: "round",
+        lineJoin: "round",
+      }).addTo(layer);
       L.polyline(pts, {
         color: accentColor,
-        weight: 5,
+        weight: path ? 6 : 5,
         opacity: 0.95,
         lineCap: "round",
-        dashArray: "1 10",
+        lineJoin: "round",
+        dashArray: path ? undefined : "1 10",
       }).addTo(layer);
     }
 
