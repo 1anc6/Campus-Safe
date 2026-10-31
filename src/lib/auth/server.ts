@@ -72,8 +72,30 @@ const vercelHosts: string[] = [
   env("VERCEL_URL"),
 ].filter((h): h is string => Boolean(h));
 
+/**
+ * Extra public addresses, e.g. a custom domain or another Vercel alias:
+ * `TRUSTED_ORIGINS="https://safety.campus.edu,https://campus-safe-team.vercel.app"`.
+ * Only the origin of each entry is kept (scheme + host + port).
+ */
+const extraOrigins: string[] = (env("TRUSTED_ORIGINS") ?? "")
+  .split(",")
+  .map((entry) => {
+    try {
+      return new URL(entry.trim()).origin;
+    } catch {
+      return "";
+    }
+  })
+  .filter((origin) => origin && origin !== "null");
+
 const baseURL = explicitBaseURL ?? {
-  allowedHosts: [...vercelHosts, "localhost", "127.0.0.1", "[::1]"],
+  allowedHosts: [
+    ...vercelHosts,
+    ...extraOrigins.map((origin) => new URL(origin).host),
+    "localhost",
+    "127.0.0.1",
+    "[::1]",
+  ],
   // `auto` → accept both http:// (local) and https:// (deployed).
   protocol: "auto" as const,
   fallback: vercelHosts[0] ? `https://${vercelHosts[0]}` : "http://localhost:8080",
@@ -103,6 +125,7 @@ function hostnameIsTrusted(hostname: string): boolean {
 
 const STATIC_TRUSTED_ORIGINS: string[] = [
   ...(explicitBaseURL ? [explicitBaseURL.replace(/\/+$/, "")] : []),
+  ...extraOrigins,
   ...vercelHosts.map((h) => `https://${h}`),
   ...LOCAL_DEV_ORIGINS,
   "http://localhost:5173",

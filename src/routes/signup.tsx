@@ -41,8 +41,9 @@ function signUpErrorMessage(error: { status?: number; code?: string; message?: s
     return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
   if (error.code === "INVALID_EMAIL") return "Enter a valid email address.";
   if (error.status === 429) return "Too many attempts. Wait a minute, then try again.";
+  // Better Auth's origin check: the page's web address isn't in `trustedOrigins`.
   if (error.status === 403)
-    return "Sign-up was blocked for this address. Reload the page and try again.";
+    return "Sign-up isn't allowed from this web address. Open the app from its main address, or ask an administrator to allow this one.";
   if (error.status && error.status >= 500)
     return "The server could not create your account right now. Try again shortly.";
   return error.message || "Sign-up failed. Try again.";

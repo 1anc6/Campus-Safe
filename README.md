@@ -100,6 +100,7 @@ node --env-file=.env.local scripts/run.mjs vite dev --host 0.0.0.0 --port 8080
 | `DATABASE_URL`                                      | production | Neon Postgres connection string (use the _pooled_ one) |
 | `BETTER_AUTH_SECRET`                                | production | Long random string that signs sessions                 |
 | `BETTER_AUTH_URL`                                   | production | Public site URL, e.g. `https://campus-safe.vercel.app` |
+| `TRUSTED_ORIGINS`                                   | optional   | Other addresses users open the site from (see below)   |
 | `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | first run  | Creates the first admin account                        |
 | `SIGNUP_ALLOWED_DOMAINS`                            | optional   | Comma-separated email domains allowed to sign up       |
 | `SEED_SAMPLE_DATA`                                  | optional   | `true` loads demo incidents into a real database       |
@@ -125,6 +126,11 @@ node --env-file=.env.local scripts/run.mjs vite dev --host 0.0.0.0 --port 8080
 
 ## Notes
 
+- Sign-in only works from trusted addresses: `BETTER_AUTH_URL`, the Vercel production,
+  branch and current-deploy URLs, `localhost`, and private LAN IPs. If sign-in says
+  _"isn't allowed from this web address"_, the server log shows `Invalid origin: <url>`;
+  add that URL to `TRUSTED_ORIGINS` (comma-separated, e.g.
+  `https://safety.campus.edu,https://campus-safe-team.vercel.app`) and redeploy.
 - Browsers only allow GPS on **HTTPS** (or `localhost`) — test location on phones
   through the deployed site.
 - Campus security phone number: `RESPONDER_UNITS` in `src/lib/campus.ts`.
