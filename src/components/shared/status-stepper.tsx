@@ -17,11 +17,10 @@ export function StatusStepper({
     <ol className="flex flex-col gap-0">
       {steps.map((step, i) => {
         const active = i === idx && !done;
-        const complete =
-          i < idx ||
-          (done && i <= idx) ||
-          (current === "resolved" && i <= steps.length - 1 && step.id !== "cancelled");
-        const reached = i <= idx || (current === "resolved" && step.id !== "cancelled");
+        // Ticks stop at the current step: a resolved incident leaves "Closed" open
+        // until command closes it.
+        const complete = i < idx || (done && i <= idx);
+        const reached = i <= idx;
         return (
           <li key={step.id} className="flex gap-3">
             <div className="flex flex-col items-center">
