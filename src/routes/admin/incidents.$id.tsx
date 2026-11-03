@@ -6,6 +6,8 @@ import {
   Fact,
   Panel,
   ReplyForm,
+  ReporterCard,
+  ReporterViews,
   ResponderPicker,
   StatusButtons,
   ThreadList,
@@ -21,7 +23,7 @@ import {
   postThread,
   staffSetIncidentStatus,
 } from "@/backend/functions/reports";
-import type { Incident, Responder, ThreadMessage } from "@/lib/types";
+import type { Incident, Responder, ReporterView, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
 import { SkeletonDetail } from "@/components/shared/skeleton";
 
@@ -31,6 +33,7 @@ function IncidentCase() {
   const { id } = Route.useParams();
   const [incident, setIncident] = useState<Incident | null>(null);
   const [messages, setMessages] = useState<ThreadMessage[]>([]);
+  const [views, setViews] = useState<ReporterView[]>([]);
   const [responders, setResponders] = useState<Responder[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -39,6 +42,7 @@ function IncidentCase() {
     const d = await getIncident({ data: { id } });
     setIncident(d.incident);
     setMessages(d.messages);
+    setViews(d.reporterViews);
   }, [id]);
 
   useEffect(() => {
@@ -103,16 +107,20 @@ function IncidentCase() {
               <Fact label="Severity">
                 {incident.severity} · {severityLabel}
               </Fact>
-              <Fact label="Reporter">{incident.reporterName}</Fact>
+              <Fact label="Reporter">
+                {incident.reporter?.studentId
+                  ? `${incident.reporterName} · ${incident.reporter.studentId}`
+                  : incident.reporterName}
+              </Fact>
             </div>
           </Panel>
           <Panel title="Description">
             <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
               {incident.description}
             </p>
-            {incident.photoData && (
+            {incident.photoUrl && (
               <img
-                src={incident.photoData}
+                src={incident.photoUrl}
                 alt="Photo attached to the report"
                 className="mt-4 max-h-72 w-full rounded-xl object-cover neu-raised-xs"
               />
@@ -149,6 +157,17 @@ function IncidentCase() {
         </div>
 
         <aside className="space-y-4">
+          {incident.reporter && (
+            <Panel>
+              <ReporterCard
+                reporter={incident.reporter}
+                confidential={incident.visibility === "confidential"}
+              />
+              <div className="mt-4 border-t border-line pt-3">
+                <ReporterViews views={views} />
+              </div>
+            </Panel>
+          )}
           <Panel title="Update status">
             <StatusButtons
               current={incident.status}

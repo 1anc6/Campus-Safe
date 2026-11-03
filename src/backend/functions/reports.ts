@@ -1,7 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/lib/auth/middleware";
 import { getSql } from "@/backend/db";
-import type { AnonymousReport, Incident, IncidentStatus, ThreadMessage } from "@/lib/types";
+import type {
+  AnonymousReport,
+  Incident,
+  IncidentReporter,
+  IncidentStatus,
+  ReporterView,
+  ThreadMessage,
+} from "@/lib/types";
 import { iso, newId, trackingCode } from "@/lib/utils";
 import { z } from "zod";
 import {
@@ -14,11 +21,24 @@ import {
   requireAdmin,
   requireStaff,
 } from "@/backend/core/helpers";
+import {
+  accessToIncident,
+  auditReporterView,
+  loadIncidentViewer,
+} from "@/backend/core/incident-access";
 import { CATEGORIES, LOCATIONS } from "@/lib/campus";
+import {
+  INCIDENT_VISIBILITIES,
+  RESPONDER_INCIDENT_STATUSES,
+  incidentAccess,
+  reporterLabel,
+  type IncidentVisibility,
+} from "@/lib/access";
 import { anonymousCallerKey, rateLimit } from "@/backend/core/rate-limit";
 
 /** ~3 MB of base64 — the report form already downsizes photos well below this. */
 const MAX_PHOTO_CHARS = 4_000_000;
+const PHOTO_DATA_URL = /^data:image\/(png|jpe?g|webp);base64,/;
 
 const incidentSchema = z.object({
   categoryId: z.string().max(64),
@@ -31,11 +51,12 @@ const incidentSchema = z.object({
   photoData: z
     .string()
     .max(MAX_PHOTO_CHARS, "Photo is too large")
-    .regex(/^data:image\/(png|jpe?g|webp);base64,/, "Unsupported photo format")
+    .regex(PHOTO_DATA_URL, "Unsupported photo format")
     .nullable(),
+  visibility: z.enum(INCIDENT_VISIBILITIES).default("identified"),
 });
 
-function mapIncident(row: {
+type IncidentRow = {
   id: string;
   user_id: string;
   category_id: string;
@@ -45,17 +66,58 @@ function mapIncident(row: {
   description: string;
   severity: Incident["severity"];
   status: Incident["status"];
+  visibility: IncidentVisibility;
   occurred_at: unknown;
-  photo_data: string | null;
+  has_photo: boolean;
   assigned_to: string | null;
   created_at: unknown;
   updated_at: unknown;
   reporter_name: string | null;
-}): Incident {
+  reporter_email: string | null;
+  reporter_phone: string | null;
+  reporter_student_id: string | null;
+  reporter_course: string | null;
+  reporter_avatar: string | null;
+};
+
+const INCIDENT_SELECT = `
+  select i.id, i.user_id, i.category_id, i.location_id, i.lat, i.lng, i.description, i.severity,
+         i.status, i.visibility, i.occurred_at, i.assigned_to, i.created_at, i.updated_at,
+         exists (select 1 from incident_photos ph where ph.incident_id = i.id) as has_photo,
+         p.name as reporter_name, p.email as reporter_email, p.phone as reporter_phone,
+         p.student_id as reporter_student_id, p.course as reporter_course,
+         p.avatar_url as reporter_avatar
+  from incidents i
+  left join profiles p on p.user_id = i.user_id`;
+
+/**
+ * `seesReporter` (from the access policy) decides whether the contact card and
+ * real name are included; `isOwner` keeps the student's own name on their view.
+ */
+function mapIncident(row: IncidentRow, seesReporter: boolean, isOwner: boolean): Incident {
+  const reporterName = reporterLabel(
+    { userId: row.user_id, visibility: row.visibility },
+    row.reporter_name,
+    seesReporter,
+    isOwner,
+  );
+  const reporter: IncidentReporter | null = seesReporter
+    ? {
+        name: reporterName,
+        email: row.reporter_email,
+        phone: row.reporter_phone,
+        studentId: row.reporter_student_id,
+        course: row.reporter_course,
+        avatarUrl: row.reporter_avatar,
+      }
+    : null;
   return {
     id: row.id,
-    userId: row.user_id,
-    reporterName: row.reporter_name ?? "Campus member",
+    // Only the owner and those who may see the reporter learn the account id.
+    userId: seesReporter || isOwner ? row.user_id : "",
+    reporterName,
+    reporter,
+    visibility: row.visibility,
     categoryId: row.category_id,
     categoryName: catName(row.category_id),
     locationId: row.location_id,
@@ -66,18 +128,25 @@ function mapIncident(row: {
     severity: row.severity,
     status: row.status,
     occurredAt: iso(row.occurred_at),
-    photoData: row.photo_data,
+    photoUrl: row.has_photo ? `/api/photos/incident/${row.id}` : null,
     assignedTo: row.assigned_to,
     createdAt: iso(row.created_at),
     updatedAt: iso(row.updated_at),
   };
 }
 
+/** `data:image/jpeg;base64,...` → mime + bytes for the incident_photos table. */
+function decodePhoto(dataUrl: string): { mime: string; bytes: Buffer } {
+  const ext = PHOTO_DATA_URL.exec(dataUrl)?.[1] ?? "jpeg";
+  const mime = ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg";
+  return { mime, bytes: Buffer.from(dataUrl.slice(dataUrl.indexOf(",") + 1), "base64") };
+}
+
 export const createIncident = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(incidentSchema)
   .handler(async ({ context, data }) => {
-    rateLimit(`incident:${context.userId}`, 10, 60 * 60_000);
+    await rateLimit(`incident:${context.userId}`, 10, 60 * 60_000);
     await getOrCreateProfile(context.userId);
     if (!CATEGORIES.some((c) => c.id === data.categoryId)) throw new Error("Invalid category");
     if (data.locationId && !LOCATIONS.some((l) => l.id === data.locationId))
@@ -90,15 +159,29 @@ export const createIncident = createServerFn({ method: "POST" })
     const id = newId();
     await sql`
       insert into incidents (
-        id, user_id, category_id, location_id, lat, lng, description, severity, occurred_at, photo_data
+        id, user_id, category_id, location_id, lat, lng, description, severity, occurred_at,
+        visibility
       ) values (
         ${id}, ${context.userId}, ${data.categoryId}, ${data.locationId},
         ${coords.lat}, ${coords.lng}, ${data.description}, ${data.severity},
-        ${data.occurredAt}, ${data.photoData}
+        ${data.occurredAt}, ${data.visibility}
       )
     `;
-    await addSystemMessage("incident", id, "Incident filed with campus command.");
-    await audit(context.userId, "incident.create", "incident", id);
+    if (data.photoData) {
+      const photo = decodePhoto(data.photoData);
+      await sql`
+        insert into incident_photos (incident_id, mime, data)
+        values (${id}, ${photo.mime}, ${photo.bytes})
+      `;
+    }
+    await addSystemMessage(
+      "incident",
+      id,
+      data.visibility === "confidential"
+        ? "Confidential incident filed. Only campus command can see who reported it."
+        : "Incident filed with campus command.",
+    );
+    await audit(context.userId, "incident.create", "incident", id, data.visibility);
     return { id };
   });
 
@@ -106,18 +189,11 @@ export const listMyIncidents = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const sql = await getSql();
-    // Lists never ship photos (they can be megabytes each); the case view loads its own.
-    const rows = await sql`
-      select i.id, i.user_id, i.category_id, i.location_id, i.lat, i.lng, i.description, i.severity,
-             i.status, i.occurred_at, null as photo_data, i.assigned_to, i.created_at, i.updated_at,
-             p.name as reporter_name
-      from incidents i
-      left join profiles p on p.user_id = i.user_id
-      where i.user_id = ${context.userId}
-      order by i.created_at desc
-      limit 100
-    `;
-    return (rows as Parameters<typeof mapIncident>[0][]).map(mapIncident);
+    const rows = await sql.query<IncidentRow>(
+      `${INCIDENT_SELECT} where i.user_id = $1 order by i.created_at desc limit 100`,
+      [context.userId],
+    );
+    return rows.map((r) => mapIncident(r, false, true));
   });
 
 export const getIncident = createServerFn({ method: "GET" })
@@ -125,19 +201,62 @@ export const getIncident = createServerFn({ method: "GET" })
   .validator(z.object({ id: z.string() }))
   .handler(async ({ context, data }) => {
     const sql = await getSql();
-    const profile = await getOrCreateProfile(context.userId);
-    const staff = profile.role === "admin";
-    const rows = await sql`
-      select i.*, p.name as reporter_name
-      from incidents i
-      left join profiles p on p.user_id = i.user_id
-      where i.id = ${data.id}
-    `;
-    const row = (rows as Parameters<typeof mapIncident>[0][])[0];
+    const viewer = await loadIncidentViewer(context.userId);
+    const rows = await sql.query<IncidentRow>(`${INCIDENT_SELECT} where i.id = $1`, [data.id]);
+    const row = rows[0];
     if (!row) throw new Error("Not found");
-    if (row.user_id !== context.userId && !staff) throw new Error("Forbidden");
+    const access = incidentAccess(viewer, {
+      userId: row.user_id,
+      assignedTo: row.assigned_to,
+      visibility: row.visibility,
+    });
+    if (!access.canView) throw new Error("Forbidden");
+    const isOwner = row.user_id === context.userId;
+    if (access.seesReporter) await auditReporterView(context.userId, row.id);
     const messages = await loadThread("incident", data.id);
-    return { incident: mapIncident(row), messages };
+    // Command can see who has looked at the reporter's details on this case.
+    let reporterViews: ReporterView[] = [];
+    if (viewer.role === "admin") {
+      const views = await sql<{ name: string | null; at: unknown }>`
+        select p.name, max(l.created_at) as at
+        from audit_log l left join profiles p on p.user_id = l.actor_id
+        where l.action = 'incident.view_reporter' and l.subject_id = ${row.id}
+        group by l.actor_id, p.name
+        order by at desc
+        limit 20
+      `;
+      reporterViews = views.map((v) => ({ name: v.name ?? "Staff member", at: iso(v.at) }));
+    }
+    return {
+      incident: mapIncident(row, access.seesReporter, isOwner),
+      messages,
+      canWork: access.canWork,
+      reporterViews,
+    };
+  });
+
+/** Open incidents assigned to the caller's responder unit(s), for the field app. */
+export const listAssignedIncidents = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const viewer = await loadIncidentViewer(context.userId);
+    if (viewer.responderIds.length === 0) return [];
+    const sql = await getSql();
+    const rows = await sql.query<IncidentRow>(
+      `${INCIDENT_SELECT}
+       where i.assigned_to = any($1::text[]) and i.status not in ('resolved', 'closed')
+       order by i.severity asc, i.created_at asc`,
+      [viewer.responderIds],
+    );
+    return rows.map((r) => {
+      const access = incidentAccess(viewer, {
+        userId: r.user_id,
+        assignedTo: r.assigned_to,
+        visibility: r.visibility,
+      });
+      return mapIncident(r, access.seesReporter, false);
+    });
   });
 
 export const assignIncident = createServerFn({ method: "POST" })
@@ -185,7 +304,7 @@ export const createAnonymous = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    rateLimit(anonymousCallerKey("anon-create"), 5, 60 * 60_000);
+    await rateLimit(anonymousCallerKey("anon-create"), 5, 60 * 60_000);
     if (!CATEGORIES.some((c) => c.id === data.categoryId)) throw new Error("Invalid category");
     if (!LOCATIONS.some((l) => l.id === data.locationId)) throw new Error("Invalid location");
     const sql = await getSql();
@@ -244,7 +363,7 @@ export const trackAnonymous = createServerFn({ method: "GET" })
   .validator(z.object({ code: z.string().max(32) }))
   .handler(async ({ data }) => {
     // The code is the only credential for an anonymous report: cap guessing.
-    rateLimit(anonymousCallerKey("anon-track"), 30, 10 * 60_000);
+    await rateLimit(anonymousCallerKey("anon-track"), 30, 10 * 60_000);
     const sql = await getSql();
     const code = data.code.trim().toUpperCase();
     const rows = await sql`select * from anonymous_reports where tracking_code = ${code}`;
@@ -257,7 +376,7 @@ export const trackAnonymous = createServerFn({ method: "GET" })
 export const replyAnonymousPublic = createServerFn({ method: "POST" })
   .validator(z.object({ code: z.string().max(32), body: z.string().trim().min(1).max(1000) }))
   .handler(async ({ data }) => {
-    rateLimit(anonymousCallerKey("anon-reply"), 20, 60 * 60_000);
+    await rateLimit(anonymousCallerKey("anon-reply"), 20, 60 * 60_000);
     const sql = await getSql();
     const code = data.code.trim().toUpperCase();
     const rows = await sql<{
@@ -282,7 +401,16 @@ export const staffSetIncidentStatus = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ context, data }) => {
-    await requireAdmin(context.userId);
+    const viewer = await loadIncidentViewer(context.userId);
+    const access = await accessToIncident(viewer, data.id);
+    if (!access) throw new Error("Not found");
+    if (!access.canWork) throw new Error("Forbidden");
+    if (
+      viewer.role !== "admin" &&
+      !(RESPONDER_INCIDENT_STATUSES as readonly string[]).includes(data.status)
+    ) {
+      throw new Error("Only command can set that status");
+    }
     const sql = await getSql();
     const updated = await sql<{ id: string }>`
       update incidents set status = ${data.status} where id = ${data.id} returning id
@@ -325,9 +453,13 @@ export const postThread = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const profile = await requireStaff(context.userId);
     const sql = await getSql();
-    // Responders may only write on SOS alerts assigned to their unit; incident
-    // and anonymous threads are command-only. Admins may write anywhere.
-    if (profile.role !== "admin") {
+    // Responders may only write on SOS alerts and incidents assigned to their
+    // unit; anonymous threads are command-only. Admins may write anywhere.
+    if (profile.role !== "admin" && data.kind === "incident") {
+      const viewer = await loadIncidentViewer(context.userId);
+      const access = await accessToIncident(viewer, data.subjectId);
+      if (!access?.canWork) throw new Error("Forbidden");
+    } else if (profile.role !== "admin") {
       if (data.kind !== "sos") throw new Error("Forbidden");
       const own = await sql<{ id: string }>`
         select s.id from sos_alerts s

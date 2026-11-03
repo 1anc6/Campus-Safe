@@ -1,8 +1,9 @@
 import { useState, type ReactNode } from "react";
-import { LoaderCircle, Send } from "lucide-react";
+import { EyeOff, LoaderCircle, Lock, Mail, Phone, Send } from "lucide-react";
+import { Avatar } from "@/components/shared/account-menu";
 import { INCIDENT_STATUSES, type IncidentStatus } from "@/lib/campus";
 import { MAX_ACTIVE_SOS_PER_RESPONDER, hasFreeSlot, pickResponder } from "@/lib/scheduling";
-import type { Responder, ThreadMessage } from "@/lib/types";
+import type { IncidentReporter, Responder, ReporterView, ThreadMessage } from "@/lib/types";
 import { cn, formatClock } from "@/lib/utils";
 
 /** Titled panel used across the admin case views. */
@@ -244,6 +245,128 @@ export function Fact({ label, children }: { label: string; children: ReactNode }
     <div className="min-w-0">
       <p className="text-[11px] uppercase tracking-wider text-dim">{label}</p>
       <div className="mt-0.5 truncate text-sm text-fg">{children}</div>
+    </div>
+  );
+}
+
+/** Who filed an identified report: command needs to know, and to be able to reach them. */
+export function ReporterCard({
+  reporter,
+  confidential,
+}: {
+  reporter: IncidentReporter;
+  /** Filed as confidential: command sees this card, the assigned responder does not. */
+  confidential?: boolean;
+}) {
+  const detail = [reporter.studentId && `ID ${reporter.studentId}`, reporter.course]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    <div className="rounded-xl p-3 neu-well">
+      <p className="text-[11px] uppercase tracking-wider text-dim">Reported by</p>
+      {confidential && (
+        <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-warn/10 px-2.5 py-2 text-xs text-warn ring-1 ring-warn/25">
+          <Lock className="mt-px size-3.5 shrink-0" />
+          Confidential. Only command sees this. Don&apos;t share it with the field unit.
+        </p>
+      )}
+      <div className="mt-2 flex items-center gap-3">
+        <Avatar
+          profile={{ ...reporter, userId: "", role: "student" }}
+          className="size-10 text-sm"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-medium">{reporter.name}</p>
+          <p className="truncate text-xs text-muted">{detail || "No student ID on file"}</p>
+        </div>
+      </div>
+      {(reporter.email || reporter.phone) && (
+        <dl className="mt-3 space-y-1 text-xs">
+          {reporter.email && (
+            <div className="flex gap-2">
+              <dt className="w-12 shrink-0 text-dim">Email</dt>
+              <dd className="min-w-0 truncate text-fg">{reporter.email}</dd>
+            </div>
+          )}
+          {reporter.phone && (
+            <div className="flex gap-2">
+              <dt className="w-12 shrink-0 text-dim">Phone</dt>
+              <dd className="min-w-0 truncate font-mono text-fg">{reporter.phone}</dd>
+            </div>
+          )}
+        </dl>
+      )}
+      {(reporter.email || reporter.phone) && (
+        <div className="mt-3 flex gap-2">
+          {reporter.phone && (
+            <a href={`tel:${reporter.phone}`} className="btn-ghost min-h-10 flex-1 px-3 text-neon">
+              <Phone className="size-3.5" /> Call
+            </a>
+          )}
+          {reporter.email && (
+            <a href={`mailto:${reporter.email}`} className="btn-ghost min-h-10 flex-1 px-3">
+              <Mail className="size-3.5" /> Email
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Stand-in for ReporterCard on anonymous reports: there is no identity to show. */
+export function AnonymousReporter({ code }: { code: string | null }) {
+  return (
+    <div className="flex gap-3 rounded-xl bg-violet/10 p-3 ring-1 ring-violet/25">
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-violet/15">
+        <EyeOff className="size-4 text-violet" />
+      </span>
+      <div className="min-w-0 text-sm">
+        <p className="font-medium text-violet">Anonymous reporter</p>
+        <p className="mt-0.5 text-xs text-muted">
+          Filed without an account, so no name or contact details were ever collected. Replies reach
+          them through tracking code <span className="font-mono text-violet">{code ?? "…"}</span>.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** Accountability: who on staff has opened this reporter's details, from the audit log. */
+export function ReporterViews({ views }: { views: ReporterView[] }) {
+  return (
+    <div>
+      <p className="text-[11px] uppercase tracking-wider text-dim">Reporter details viewed by</p>
+      {views.length === 0 ? (
+        <p className="mt-1.5 text-xs text-muted">No one yet.</p>
+      ) : (
+        <ul className="mt-1.5 space-y-1 text-xs">
+          {views.map((v) => (
+            <li key={`${v.name}-${v.at}`} className="flex justify-between gap-3">
+              <span className="truncate text-fg">{v.name}</span>
+              <span className="shrink-0 text-dim">{formatClock(v.at)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Field app stand-in for ReporterCard on a confidential case. */
+export function ConfidentialReporter() {
+  return (
+    <div className="flex gap-3 rounded-xl bg-warn/10 p-3 ring-1 ring-warn/25">
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-warn/15">
+        <Lock className="size-4 text-warn" />
+      </span>
+      <div className="min-w-0 text-sm">
+        <p className="font-medium text-warn">Confidential reporter</p>
+        <p className="mt-0.5 text-xs text-muted">
+          The student asked that only command know who they are. Ask command if you need to reach
+          them.
+        </p>
+      </div>
     </div>
   );
 }

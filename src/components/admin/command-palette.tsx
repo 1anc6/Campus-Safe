@@ -356,22 +356,6 @@ const PAGES: {
   { to: "/staff", label: "Responder field app", icon: Smartphone, keywords: "staff field" },
 ];
 
-const IS_MAC = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
-const PALETTE_SHORTCUT = IS_MAC ? ["⌘", "K"] : ["Ctrl", "K"];
-
-/** The palette's keyboard shortcut as key caps (for the header search button). */
-export function PaletteShortcutKeys({ className }: { className?: string }) {
-  return (
-    <span className={cn("items-center gap-1", className)} aria-hidden="true">
-      {PALETTE_SHORTCUT.map((k) => (
-        <kbd key={k} className="rounded-md px-1.5 py-0.5 font-mono text-xs neu-raised-xs">
-          {k}
-        </kbd>
-      ))}
-    </span>
-  );
-}
-
 /** The palette wired to the admin console: pages, open cases (loaded on open) and actions. */
 export function AdminCommandPalette({
   open,

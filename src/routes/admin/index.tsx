@@ -4,6 +4,7 @@ import {
   Check,
   CheckCircle2,
   Inbox,
+  Lock,
   MapPinned,
   Phone,
   Siren,
@@ -12,7 +13,9 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import {
+  AnonymousReporter,
   ReplyForm,
+  ReporterCard,
   ResponderPicker,
   StatusButtons,
   ThreadList,
@@ -24,6 +27,7 @@ import { INCIDENT_STATUSES, SOS_STEPS } from "@/lib/campus";
 import {
   getActivity,
   getLive,
+  getLiveVersion,
   listAnonymousAdmin,
   type ActivityEvent,
 } from "@/backend/functions/admin";
@@ -36,7 +40,13 @@ import {
   trackAnonymous,
 } from "@/backend/functions/reports";
 import { assignSos, getSos, setSosStatus } from "@/backend/functions/sos";
-import type { LivePayload, QueueItem, SosAlert, ThreadMessage } from "@/lib/types";
+import type {
+  IncidentReporter,
+  LivePayload,
+  QueueItem,
+  SosAlert,
+  ThreadMessage,
+} from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
 
@@ -62,6 +72,8 @@ function Command() {
   const [range, setRange] = useState<Range>("week");
   const [kind, setKind] = useState<KindFilter>("all");
   const prevSos = useRef<string[] | null>(null);
+  const liveVersion = useRef<string | null>(null);
+  const lastFullLoad = useRef(0);
   const audio = useRef<AudioContext | null>(null);
 
   const flashAndBeep = useCallback(() => {
@@ -90,6 +102,7 @@ function Command() {
       .catch(() => {});
     try {
       const d = await getLive();
+      lastFullLoad.current = Date.now();
       setLive(d);
       setLoadError(false);
       setUpdatedAt(Date.now());
@@ -113,15 +126,34 @@ function Command() {
     }
   }, [flashAndBeep]);
 
+  // Poll a tiny change fingerprint; download the full payload only when something
+  // changed, or every 30 s (queue aging moves with the clock alone). Never paused
+  // for hidden tabs: a background console must still beep on a new SOS.
+  const poll = useCallback(async () => {
+    try {
+      const v = await getLiveVersion();
+      const fresh = Date.now() - lastFullLoad.current < 30_000;
+      if (v === liveVersion.current && fresh) {
+        setUpdatedAt(Date.now());
+        setLoadError(false);
+        return;
+      }
+      liveVersion.current = v;
+    } catch {
+      /* fall through: a full refresh reports the error state */
+    }
+    await refresh();
+  }, [refresh]);
+
   useEffect(() => {
     void refresh();
-    const p = window.setInterval(() => void refresh(), 5000);
+    const p = window.setInterval(() => void poll(), 5000);
     const t = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
       window.clearInterval(p);
       window.clearInterval(t);
     };
-  }, [refresh]);
+  }, [refresh, poll]);
 
   const queue = useMemo(
     () => (live?.queue ?? []).filter((q) => kind === "all" || q.kind === kind),
@@ -229,6 +261,22 @@ function Command() {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{q.title}</p>
                       <p className="truncate text-xs text-muted">
+                        {q.kind === "anonymous" ? (
+                          <span className="text-violet">Anonymous</span>
+                        ) : (
+                          q.reporterName && (
+                            <span className="text-fg/80">
+                              {q.reporterName}
+                              {q.confidential && (
+                                <Lock
+                                  className="ml-1 inline size-3 -translate-y-px text-warn"
+                                  aria-label="Confidential"
+                                />
+                              )}
+                            </span>
+                          )
+                        )}
+                        {(q.kind === "anonymous" || q.reporterName) && " · "}
                         {q.place}
                         {q.agedTo && (
                           <span
@@ -473,6 +521,8 @@ function Detail({
   const [sos, setSos] = useState<SosAlert | null>(null);
   const [messages, setMessages] = useState<ThreadMessage[]>([]);
   const [desc, setDesc] = useState("");
+  const [reporter, setReporter] = useState<IncidentReporter | null>(null);
+  const [confidential, setConfidential] = useState(false);
   const [anonCode, setAnonCode] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -485,6 +535,8 @@ function Detail({
       const d = await getIncident({ data: { id: item.id } });
       setMessages(d.messages);
       setDesc(d.incident.description);
+      setReporter(d.incident.reporter);
+      setConfidential(d.incident.visibility === "confidential");
     } else {
       const row = (await listAnonymousAdmin()).find((r) => r.id === item.id);
       setDesc(row?.description ?? "");
@@ -547,12 +599,10 @@ function Detail({
           )}
         </div>
       )}
-      {item.kind === "anonymous" && (
-        <p className="rounded-xl bg-violet/10 p-3 text-sm text-violet ring-1 ring-violet/25">
-          Reporter is anonymous. Replies route through{" "}
-          <span className="font-mono">{anonCode ?? "the tracking code"}</span>.
-        </p>
+      {item.kind === "incident" && reporter && (
+        <ReporterCard reporter={reporter} confidential={confidential} />
       )}
+      {item.kind === "anonymous" && <AnonymousReporter code={anonCode} />}
       {desc && <p className="rounded-xl p-3 text-sm leading-relaxed text-fg neu-well">{desc}</p>}
 
       <section>

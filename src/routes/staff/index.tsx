@@ -3,19 +3,22 @@ import {
   ChevronRight,
   Clock,
   Droplet,
+  FileText,
   HeartPulse,
+  Lock,
   MapPin,
   Navigation,
   Phone,
   ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
-import { StatusPill } from "@/components/shared/pills";
+import { SeverityChip, StatusPill } from "@/components/shared/pills";
 import { LiveDot, ResponderShell } from "@/components/responder/responder-shell";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { directionsUrl, useNow } from "@/lib/responder";
 import { listAssignedSos } from "@/backend/functions/sos";
-import type { SosAlert } from "@/lib/types";
+import { listAssignedIncidents } from "@/backend/functions/reports";
+import type { Incident, SosAlert } from "@/lib/types";
 import { cn, waitLabel } from "@/lib/utils";
 import { SkeletonCard, SkeletonGroup } from "@/components/shared/skeleton";
 
@@ -27,6 +30,7 @@ const EN_ROUTE = new Set(["sent", "received", "assigned"]);
 function Assigned() {
   const viewer = useViewer();
   const [rows, setRows] = useState<SosAlert[] | null>(null);
+  const [reports, setReports] = useState<Incident[]>([]);
   const now = useNow(15_000);
 
   useEffect(() => {
@@ -34,9 +38,19 @@ function Assigned() {
       listAssignedSos()
         .then(setRows)
         .catch(() => setRows((r) => r ?? []));
+    // Reports move slower than SOS alerts, so they refresh less often.
+    const loadReports = () =>
+      listAssignedIncidents()
+        .then(setReports)
+        .catch(() => {});
     void load();
+    void loadReports();
     const i = window.setInterval(load, 5000);
-    return () => window.clearInterval(i);
+    const r = window.setInterval(loadReports, 20_000);
+    return () => {
+      window.clearInterval(i);
+      window.clearInterval(r);
+    };
   }, []);
 
   const enRoute = rows?.filter((r) => EN_ROUTE.has(r.status)).length ?? 0;
@@ -77,6 +91,39 @@ function Assigned() {
             </li>
           ))}
         </ul>
+      )}
+
+      {reports.length > 0 && (
+        <section className="mt-8">
+          <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
+            <FileText className="size-3.5" /> Assigned reports
+            <span className="font-mono text-dim">{reports.length}</span>
+          </h2>
+          <ul className="mt-3 grid gap-2.5 md:grid-cols-2">
+            {reports.map((r) => (
+              <li key={r.id}>
+                <Link
+                  to="/staff/incidents/$id"
+                  params={{ id: r.id }}
+                  className="card glass-hover flex items-center gap-3 p-4"
+                >
+                  <SeverityChip value={r.severity} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{r.categoryName}</p>
+                    <p className="flex items-center gap-1 truncate text-xs text-muted">
+                      {r.visibility === "confidential" && (
+                        <Lock className="size-3 shrink-0 text-warn" aria-label="Confidential" />
+                      )}
+                      {r.reporterName} · {r.locationName ?? "Dropped pin"}
+                    </p>
+                  </div>
+                  <StatusPill status={r.status} />
+                  <ChevronRight className="size-4 shrink-0 text-dim" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </ResponderShell>
   );

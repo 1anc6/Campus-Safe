@@ -60,6 +60,7 @@ type BootstrapSpec = { prefix: string; role: UserRole; defaultName: string };
 const BOOTSTRAP_SPECS: BootstrapSpec[] = [
   { prefix: "BOOTSTRAP_ADMIN", role: "admin", defaultName: "Campus Command" },
   { prefix: "BOOTSTRAP_STUDENT", role: "student", defaultName: "Student" },
+  { prefix: "BOOTSTRAP_RESPONDER", role: "responder", defaultName: "Field Responder" },
 ];
 
 function envValue(key: string): string | undefined {

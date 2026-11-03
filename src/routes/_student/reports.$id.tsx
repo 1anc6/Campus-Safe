@@ -66,9 +66,9 @@ function IncidentDetail() {
             <p className="card mt-4 whitespace-pre-wrap break-words p-4 text-sm leading-relaxed">
               {incident.description}
             </p>
-            {incident.photoData && (
+            {incident.photoUrl && (
               <img
-                src={incident.photoData}
+                src={incident.photoUrl}
                 alt="Photo you attached"
                 className="mt-4 max-h-72 w-full rounded-2xl object-cover neu-raised-xs"
               />

@@ -35,7 +35,10 @@ import { Route as AdminIncidentsIdRouteImport } from './routes/admin/incidents.$
 import { Route as AdminSosIndexRouteImport } from './routes/admin/sos.index'
 import { Route as AdminSosIdRouteImport } from './routes/admin/sos.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiCronRetentionRouteImport } from './routes/api/cron/retention'
 import { Route as ApiCronWalksRouteImport } from './routes/api/cron/walks'
+import { Route as StaffIncidentsIdRouteImport } from './routes/staff/incidents.$id'
+import { Route as ApiPhotosIncidentIdRouteImport } from './routes/api/photos/incident.$id'
 
 const StudentRouteRoute = StudentRouteRouteImport.update({
   id: '/_student',
@@ -166,9 +169,24 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronRetentionRoute = ApiCronRetentionRouteImport.update({
+  id: '/api/cron/retention',
+  path: '/api/cron/retention',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCronWalksRoute = ApiCronWalksRouteImport.update({
   id: '/api/cron/walks',
   path: '/api/cron/walks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffIncidentsIdRoute = StaffIncidentsIdRouteImport.update({
+  id: '/incidents/$id',
+  path: '/incidents/$id',
+  getParentRoute: () => StaffRouteRoute,
+} as any)
+const ApiPhotosIncidentIdRoute = ApiPhotosIncidentIdRouteImport.update({
+  id: '/api/photos/incident/$id',
+  path: '/api/photos/incident/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -195,10 +213,13 @@ export interface FileRoutesByFullPath {
   '/admin/incidents/$id': typeof AdminIncidentsIdRoute
   '/admin/sos/$id': typeof AdminSosIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/retention': typeof ApiCronRetentionRoute
   '/api/cron/walks': typeof ApiCronWalksRoute
+  '/staff/incidents/$id': typeof StaffIncidentsIdRoute
   '/reports/': typeof StudentReportsIndexRoute
   '/admin/incidents/': typeof AdminIncidentsIndexRoute
   '/admin/sos/': typeof AdminSosIndexRoute
+  '/api/photos/incident/$id': typeof ApiPhotosIncidentIdRoute
 }
 export interface FileRoutesByTo {
   '/anonymous': typeof AnonymousRoute
@@ -221,10 +242,13 @@ export interface FileRoutesByTo {
   '/admin/incidents/$id': typeof AdminIncidentsIdRoute
   '/admin/sos/$id': typeof AdminSosIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/retention': typeof ApiCronRetentionRoute
   '/api/cron/walks': typeof ApiCronWalksRoute
+  '/staff/incidents/$id': typeof StaffIncidentsIdRoute
   '/reports': typeof StudentReportsIndexRoute
   '/admin/incidents': typeof AdminIncidentsIndexRoute
   '/admin/sos': typeof AdminSosIndexRoute
+  '/api/photos/incident/$id': typeof ApiPhotosIncidentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,10 +275,13 @@ export interface FileRoutesById {
   '/admin/incidents/$id': typeof AdminIncidentsIdRoute
   '/admin/sos/$id': typeof AdminSosIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/retention': typeof ApiCronRetentionRoute
   '/api/cron/walks': typeof ApiCronWalksRoute
+  '/staff/incidents/$id': typeof StaffIncidentsIdRoute
   '/_student/reports/': typeof StudentReportsIndexRoute
   '/admin/incidents/': typeof AdminIncidentsIndexRoute
   '/admin/sos/': typeof AdminSosIndexRoute
+  '/api/photos/incident/$id': typeof ApiPhotosIncidentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -281,10 +308,13 @@ export interface FileRouteTypes {
     | '/admin/incidents/$id'
     | '/admin/sos/$id'
     | '/api/auth/$'
+    | '/api/cron/retention'
     | '/api/cron/walks'
+    | '/staff/incidents/$id'
     | '/reports/'
     | '/admin/incidents/'
     | '/admin/sos/'
+    | '/api/photos/incident/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/anonymous'
@@ -307,10 +337,13 @@ export interface FileRouteTypes {
     | '/admin/incidents/$id'
     | '/admin/sos/$id'
     | '/api/auth/$'
+    | '/api/cron/retention'
     | '/api/cron/walks'
+    | '/staff/incidents/$id'
     | '/reports'
     | '/admin/incidents'
     | '/admin/sos'
+    | '/api/photos/incident/$id'
   id:
     | '__root__'
     | '/_student'
@@ -336,10 +369,13 @@ export interface FileRouteTypes {
     | '/admin/incidents/$id'
     | '/admin/sos/$id'
     | '/api/auth/$'
+    | '/api/cron/retention'
     | '/api/cron/walks'
+    | '/staff/incidents/$id'
     | '/_student/reports/'
     | '/admin/incidents/'
     | '/admin/sos/'
+    | '/api/photos/incident/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -353,7 +389,9 @@ export interface RootRouteChildren {
   SosIdRoute: typeof SosIdRoute
   TrackCodeRoute: typeof TrackCodeRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCronRetentionRoute: typeof ApiCronRetentionRoute
   ApiCronWalksRoute: typeof ApiCronWalksRoute
+  ApiPhotosIncidentIdRoute: typeof ApiPhotosIncidentIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -540,11 +578,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/retention': {
+      id: '/api/cron/retention'
+      path: '/api/cron/retention'
+      fullPath: '/api/cron/retention'
+      preLoaderRoute: typeof ApiCronRetentionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/cron/walks': {
       id: '/api/cron/walks'
       path: '/api/cron/walks'
       fullPath: '/api/cron/walks'
       preLoaderRoute: typeof ApiCronWalksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff/incidents/$id': {
+      id: '/staff/incidents/$id'
+      path: '/incidents/$id'
+      fullPath: '/staff/incidents/$id'
+      preLoaderRoute: typeof StaffIncidentsIdRouteImport
+      parentRoute: typeof StaffRouteRoute
+    }
+    '/api/photos/incident/$id': {
+      id: '/api/photos/incident/$id'
+      path: '/api/photos/incident/$id'
+      fullPath: '/api/photos/incident/$id'
+      preLoaderRoute: typeof ApiPhotosIncidentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -601,11 +660,13 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 interface StaffRouteRouteChildren {
   StaffIdRoute: typeof StaffIdRoute
   StaffIndexRoute: typeof StaffIndexRoute
+  StaffIncidentsIdRoute: typeof StaffIncidentsIdRoute
 }
 
 const StaffRouteRouteChildren: StaffRouteRouteChildren = {
   StaffIdRoute: StaffIdRoute,
   StaffIndexRoute: StaffIndexRoute,
+  StaffIncidentsIdRoute: StaffIncidentsIdRoute,
 }
 
 const StaffRouteRouteWithChildren = StaffRouteRoute._addFileChildren(
@@ -623,7 +684,9 @@ const rootRouteChildren: RootRouteChildren = {
   SosIdRoute: SosIdRoute,
   TrackCodeRoute: TrackCodeRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCronRetentionRoute: ApiCronRetentionRoute,
   ApiCronWalksRoute: ApiCronWalksRoute,
+  ApiPhotosIncidentIdRoute: ApiPhotosIncidentIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

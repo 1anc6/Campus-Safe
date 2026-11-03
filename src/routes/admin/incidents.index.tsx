@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, Clock, Filter, MapPin, Search, X } from "lucide-react";
+import { ArrowRight, Clock, Filter, Lock, MapPin, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { AdminPageHeader } from "@/components/admin/admin-shell";
 import { StatusPill } from "@/components/shared/pills";
@@ -77,8 +77,8 @@ function IncidentsPage() {
     const out = rows.filter(
       (r) =>
         (!q ||
-          [r.categoryName, r.description, r.locationName, r.reporterName].some((v) =>
-            v.toLowerCase().includes(q),
+          [r.categoryName, r.description, r.locationName, r.reporterName, r.reporterStudentId].some(
+            (v) => v?.toLowerCase().includes(q),
           )) &&
         (!search.status || r.status === search.status) &&
         (!search.severity || r.severity === search.severity) &&
@@ -108,7 +108,7 @@ function IncidentsPage() {
               type="search"
               value={term}
               onChange={(e) => setTerm(e.target.value)}
-              placeholder="Search category, place, reporter, details…"
+              placeholder="Search category, place, reporter, student ID…"
               className="input pl-10"
               aria-label="Search incidents"
             />
@@ -235,7 +235,17 @@ function IncidentsPage() {
                   <span className="flex items-center gap-1 text-xs text-muted">
                     <Clock className="size-3" /> {formatClock(inc.createdAt)}
                   </span>
-                  <span className="text-xs text-muted">Reported by {inc.reporterName}</span>
+                  <span className="text-xs text-muted">
+                    Reported by <span className="text-fg/80">{inc.reporterName}</span>
+                    {inc.reporterStudentId && (
+                      <span className="font-mono"> · {inc.reporterStudentId}</span>
+                    )}
+                  </span>
+                  {inc.confidential && (
+                    <span className="flex items-center gap-1 text-xs font-medium text-warn">
+                      <Lock className="size-3" /> Confidential
+                    </span>
+                  )}
                 </div>
               </div>
             </Link>

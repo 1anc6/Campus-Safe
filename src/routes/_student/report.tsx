@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Briefcase,
   Camera,
@@ -6,14 +6,17 @@ import {
   CircleDot,
   Construction,
   Eye,
+  EyeOff,
   Flame,
   HeartPulse,
   ImageOff,
   ListChecks,
   LoaderCircle,
+  Lock,
   MapPin,
   Send,
   ShieldAlert,
+  UserRound,
   UserX,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -25,8 +28,10 @@ import { getFix } from "@/lib/gps";
 import { createIncident } from "@/backend/functions/reports";
 import type { GpsFix } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
+import { useViewer } from "@/lib/auth/use-viewer";
 import { cn } from "@/lib/utils";
 import { NeuSelect, placeOptions } from "@/components/shared/neu-select";
+import type { IncidentVisibility } from "@/lib/access";
 
 export const Route = createFileRoute("/_student/report")({
   staticData: { width: "wide" },
@@ -45,6 +50,26 @@ const ICONS = {
   "circle-dot": CircleDot,
 } as const;
 
+const VISIBILITY_OPTIONS: {
+  id: IncidentVisibility;
+  label: string;
+  hint: string;
+  icon: typeof UserRound;
+}[] = [
+  {
+    id: "identified",
+    label: "Named",
+    hint: "Command and the responder handling it see your name and contact details.",
+    icon: UserRound,
+  },
+  {
+    id: "confidential",
+    label: "Confidential",
+    hint: "Only campus command sees who you are. Responders don't.",
+    icon: Lock,
+  },
+];
+
 const SEVERITY_TONE: Record<Severity, string> = {
   P1: "text-sos",
   P2: "text-high",
@@ -54,6 +79,7 @@ const SEVERITY_TONE: Record<Severity, string> = {
 
 function ReportForm() {
   const navigate = useNavigate();
+  const viewer = useViewer();
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [locationId, setLocationId] = useState<string>(LOCATIONS[0].id);
   const [useGps, setUseGps] = useState(false);
@@ -62,6 +88,7 @@ function ReportForm() {
   const [severity, setSeverity] = useState<Severity>("P3");
   const [occurredAt, setOccurredAt] = useState(() => localNow());
   const [photo, setPhoto] = useState<string | null>(null);
+  const [visibility, setVisibility] = useState<IncidentVisibility>("identified");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -99,6 +126,7 @@ function ReportForm() {
           severity,
           occurredAt: new Date(occurredAt).toISOString(),
           photoData: photo,
+          visibility,
         },
       });
       await navigate({ to: "/reports/$id", params: { id: res.id } });
@@ -259,6 +287,45 @@ function ReportForm() {
               )}
             </div>
           </FormSection>
+
+          <FormSection
+            step={5}
+            title="Who sees your name?"
+            hint="Command may need to reach you to follow up."
+          >
+            <div className="grid gap-2 sm:grid-cols-3">
+              {VISIBILITY_OPTIONS.map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => setVisibility(v.id)}
+                  aria-pressed={visibility === v.id}
+                  className={cn(
+                    "rounded-xl p-3 text-left ring-1 transition-colors",
+                    visibility === v.id
+                      ? "ring-transparent shadow-[var(--neu-inset-sm)]"
+                      : "ring-transparent shadow-[var(--neu-raised-xs)] hover:shadow-[var(--neu-raised-sm)]",
+                  )}
+                >
+                  <span className="flex items-center gap-1.5 text-sm font-semibold">
+                    <v.icon className="size-4 text-neon" /> {v.label}
+                  </span>
+                  <p className="mt-1 text-[11px] text-muted">{v.hint}</p>
+                </button>
+              ))}
+              <Link
+                to="/anonymous"
+                className="rounded-xl p-3 text-left shadow-[var(--neu-raised-xs)] transition-shadow hover:shadow-[var(--neu-raised-sm)]"
+              >
+                <span className="flex items-center gap-1.5 text-sm font-semibold text-violet">
+                  <EyeOff className="size-4" /> Anonymous
+                </span>
+                <p className="mt-1 text-[11px] text-muted">
+                  No one sees who you are. Opens the anonymous form; you track it with a code.
+                </p>
+              </Link>
+            </div>
+          </FormSection>
         </div>
 
         <aside className="space-y-3 lg:sticky lg:top-8">
@@ -282,7 +349,20 @@ function ReportForm() {
                 }
               />
               <SummaryRow label="Photo" value={photo ? "Attached" : "None"} muted={!photo} />
+              <SummaryRow
+                label="Filed as"
+                value={
+                  visibility === "confidential"
+                    ? `${viewer?.name ?? "You"} · confidential`
+                    : (viewer?.name ?? "You")
+                }
+              />
             </div>
+            <p className="mt-2 text-xs text-muted">
+              {visibility === "confidential"
+                ? "Only campus command will see your name, student ID and contact details."
+                : "Campus command and the assigned responder will see your name, student ID and contact details."}
+            </p>
             {error && (
               <p
                 className="mt-3 rounded-lg bg-sos/10 p-2.5 text-sm text-sos ring-1 ring-sos/30"

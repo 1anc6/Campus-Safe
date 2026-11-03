@@ -5,6 +5,7 @@ import { CAMPUS, locationById, type Severity } from "@/lib/campus";
 import { agedSeverity, compareQueueItems } from "@/lib/scheduling";
 import type { LivePayload, QueueItem, RecentSos, Responder, SosAlert } from "@/lib/types";
 import { iso } from "@/lib/utils";
+import { reporterLabel, type IncidentVisibility } from "@/lib/access";
 import { catName, locName, requireAdmin } from "@/backend/core/helpers";
 import { ensureSeedData } from "@/backend/core/seed";
 import { fetchSos } from "@/backend/functions/sos";
@@ -285,11 +286,16 @@ export const getLive = createServerFn({ method: "GET" })
       lat: number | null;
       lng: number | null;
       created_at: unknown;
+      reporter_name: string | null;
+      visibility: string;
     }>`
-      select id, category_id, location_id, severity, status, lat, lng, created_at
-      from incidents
-      where status not in ('resolved','closed')
-      order by created_at asc
+      select i.id, i.category_id, i.location_id, i.severity, i.status, i.lat, i.lng, i.created_at,
+             i.visibility, case i.user_id when 'seed-campus' then 'Campus archive' when 'redacted' then 'Removed (retention)' else p.name end
+               as reporter_name
+      from incidents i
+      left join profiles p on p.user_id = i.user_id
+      where i.status not in ('resolved','closed')
+      order by i.created_at asc
     `;
 
     const anonOpen = await sql<{
@@ -317,6 +323,7 @@ export const getLive = createServerFn({ method: "GET" })
         startedAt: iso(s.started_at),
         lat: s.lat,
         lng: s.lng,
+        reporterName: s.reporter_name ?? "Campus member",
       })),
       ...incidentsOpen.map((i) => ({
         id: i.id,
@@ -328,6 +335,8 @@ export const getLive = createServerFn({ method: "GET" })
         startedAt: iso(i.created_at),
         lat: i.lat,
         lng: i.lng,
+        reporterName: i.reporter_name ?? "Campus member",
+        confidential: i.visibility === "confidential",
       })),
       ...anonOpen.map((a) => {
         const loc = locationById(a.location_id);
@@ -528,6 +537,31 @@ export const getLive = createServerFn({ method: "GET" })
     };
   });
 
+/**
+ * A cheap fingerprint of everything the live console shows. The console polls
+ * this every few seconds and only downloads the full `getLive` payload when it
+ * changes (plus every 30 s, since queue aging moves with the clock alone).
+ */
+export const getLiveVersion = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }): Promise<string> => {
+    await requireAdmin(context.userId);
+    const sql = await getSql();
+    const rows = await sql<{ v: string | null }>`
+      select concat_ws('|',
+        (select count(*) || ':' || coalesce(max(updated_at)::text, '') from incidents),
+        (select count(*) || ':' || coalesce(max(updated_at)::text, '') from anonymous_reports),
+        (select count(*) || ':' || coalesce(max(greatest(started_at, received_at, assigned_at,
+                arrived_at, resolved_at))::text, '') from sos_alerts),
+        (select max(recorded_at)::text from sos_locations),
+        (select max(created_at)::text from threads),
+        (select max(created_at)::text from audit_log),
+        (select string_agg(id || '=' || status, ',' order by id) from responders)
+      ) as v
+    `;
+    return rows[0]?.v ?? "";
+  });
+
 export const listIncidentsAdmin = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
@@ -535,7 +569,8 @@ export const listIncidentsAdmin = createServerFn({ method: "GET" })
     const sql = await getSql();
     const rows = await sql`
       select i.id, i.category_id, i.location_id, i.severity, i.status, i.description,
-             i.created_at, i.user_id, p.name as reporter_name
+             i.created_at, i.user_id, i.visibility, p.name as reporter_name,
+             p.student_id as reporter_student_id
       from incidents i
       left join profiles p on p.user_id = i.user_id
       order by i.created_at desc
@@ -552,6 +587,8 @@ export const listIncidentsAdmin = createServerFn({ method: "GET" })
         created_at: unknown;
         user_id: string;
         reporter_name: string | null;
+        reporter_student_id: string | null;
+        visibility: string;
       }[]
     ).map((r) => ({
       id: r.id,
@@ -564,7 +601,14 @@ export const listIncidentsAdmin = createServerFn({ method: "GET" })
       description: r.description,
       createdAt: iso(r.created_at),
       userId: r.user_id,
-      reporterName: r.user_id === "seed-campus" ? "Campus archive" : (r.reporter_name ?? "Member"),
+      reporterName: reporterLabel(
+        { userId: r.user_id, visibility: r.visibility as IncidentVisibility },
+        r.reporter_name,
+        true,
+        false,
+      ),
+      reporterStudentId: r.reporter_student_id,
+      confidential: r.visibility === "confidential",
     }));
   });
 
@@ -713,7 +757,7 @@ export const getActivity = createServerFn({ method: "GET" })
         where s.resolved_at is not null and s.status in ('resolved', 'cancelled')
         union all
         select 'inc-' || i.id, i.created_at, 'incident.create', i.id, null,
-               case when i.user_id = 'seed-campus' then 'Campus archive' else p.name end,
+               case i.user_id when 'seed-campus' then 'Campus archive' when 'redacted' then 'Removed (retention)' else p.name end,
                i.category_id, i.location_id, i.severity, null, null
         from incidents i left join profiles p on p.user_id = i.user_id
         union all

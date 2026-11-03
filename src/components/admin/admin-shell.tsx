@@ -19,7 +19,7 @@ import { useViewer } from "@/lib/auth/use-viewer";
 import { cn } from "@/lib/utils";
 import { IdentityCard, SignOutButton } from "@/components/shared/account-menu";
 import { NotificationBell } from "@/components/admin/notification-bell";
-import { AdminCommandPalette, PaletteShortcutKeys } from "@/components/admin/command-palette";
+import { AdminCommandPalette } from "@/components/admin/command-palette";
 import { Wordmark } from "@/components/shared/brand";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
@@ -251,10 +251,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 onClick={() => setPaletteOpen(true)}
                 aria-label="Search pages, cases and actions"
                 aria-keyshortcuts="Control+K Meta+K"
-                className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-2xl px-2.5 text-muted transition-colors hover:bg-panel-2 hover:text-fg"
+                className="flex min-h-11 min-w-11 items-center justify-center rounded-2xl px-2.5 text-muted transition-colors hover:bg-panel-2 hover:text-fg"
               >
                 <Search className="size-[18px]" aria-hidden="true" />
-                <PaletteShortcutKeys className="hidden xl:flex" />
               </button>
               <ThemeToggle className="rounded-2xl ring-0 hover:bg-panel-2" />
               <NotificationBell

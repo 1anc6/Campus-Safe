@@ -1,4 +1,5 @@
 import type { AnonRole, IncidentStatus, Severity, SosStatus, UserRole } from "./campus";
+import type { IncidentVisibility } from "./access";
 export type { IncidentStatus };
 
 export type Profile = {
@@ -74,10 +75,23 @@ export type SosPoint = {
   recordedAt: string;
 };
 
+/** Who filed an identified (non-anonymous) incident, as command sees them. */
+export type IncidentReporter = {
+  name: string;
+  email: string | null;
+  phone: string | null;
+  studentId: string | null;
+  course: string | null;
+  avatarUrl: string | null;
+};
+
 export type Incident = {
   id: string;
   userId: string;
   reporterName: string;
+  /** Reporter's contact card — only sent to staff the policy allows (lib/access.ts). */
+  reporter: IncidentReporter | null;
+  visibility: IncidentVisibility;
   categoryId: string;
   categoryName: string;
   locationId: string | null;
@@ -88,7 +102,8 @@ export type Incident = {
   severity: Severity;
   status: IncidentStatus;
   occurredAt: string;
-  photoData: string | null;
+  /** Signed-in photo endpoint, or null when no photo was attached. */
+  photoUrl: string | null;
   assignedTo: string | null;
   createdAt: string;
   updatedAt: string;
@@ -131,6 +146,10 @@ export type QueueItem = {
   startedAt: string;
   lat: number | null;
   lng: number | null;
+  /** Who filed it, for SOS and identified incidents. Anonymous reports never carry one. */
+  reporterName?: string;
+  /** Incident filed as confidential: command sees the name, the field unit does not. */
+  confidential?: boolean;
   /** Set when aging has raised this case above its own severity (lib/scheduling.ts). */
   agedTo?: Severity;
 };
@@ -182,6 +201,18 @@ export type RecentSos = {
   lat: number | null;
   lng: number | null;
   isApproximate: boolean;
+};
+
+/** A staff member who opened a case's reporter details (from the audit log). */
+export type ReporterView = { name: string; at: string };
+
+/** An update on one of the student's own reports, for their notification bell. */
+export type StudentNotification = {
+  id: string;
+  incidentId: string;
+  title: string;
+  body: string;
+  at: string;
 };
 
 export type ActivityItem = {

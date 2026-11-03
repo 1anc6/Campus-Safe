@@ -378,7 +378,7 @@ export const replySos = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(z.object({ id: z.string(), body: z.string().trim().min(1).max(1000) }))
   .handler(async ({ context, data }) => {
-    rateLimit(`sos-reply:${context.userId}`, 30, 10 * 60_000);
+    await rateLimit(`sos-reply:${context.userId}`, 30, 10 * 60_000);
     const sql = await getSql();
     const own = await sql<{ id: string }>`
       select id from sos_alerts

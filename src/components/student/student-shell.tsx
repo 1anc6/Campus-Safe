@@ -12,6 +12,7 @@ import { StudentOnboarding } from "@/components/student/onboarding";
 import { SafeWalkPill, SafeWalkProvider } from "@/components/student/safe-walk";
 import { SosFlowProvider, SosTrigger } from "@/components/student/sos-flow";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { StudentBell } from "@/components/student/student-bell";
 
 const TABS = [
   { to: "/", label: "Home", icon: Home },
@@ -111,6 +112,11 @@ export function StudentShell({
                   </div>
                 </nav>
                 <div className="space-y-1.5 p-3">
+                  {!anon && (
+                    <span className="flex justify-center 2xl:justify-start">
+                      <StudentBell side="right" />
+                    </span>
+                  )}
                   <a
                     href={`tel:${SECURITY_LINE.phone.replaceAll(" ", "")}`}
                     title={`Call ${SECURITY_LINE.label}: ${SECURITY_LINE.phone}${isPlaceholderPhone(SECURITY_LINE.phone) ? " (placeholder number)" : ""}`}
@@ -161,6 +167,7 @@ export function StudentShell({
                   <Wordmark to="/" />
                   {/* Sign-out and settings live in the profile panel behind the avatar. */}
                   <div className="flex items-center gap-1">
+                    {!anon && <StudentBell />}
                     <ThemeToggle className="rounded-2xl ring-0 hover:bg-panel-2" />
                     <ProfileButton className="rounded-2xl" />
                   </div>
