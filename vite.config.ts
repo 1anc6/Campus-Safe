@@ -72,7 +72,16 @@ export default defineConfig(({ command, isPreview }) => ({
     pgliteBootstrapPlugin(),
     tailwindcss(),
     tanstackStart(),
-    ...(command === "build" || isPreview ? [nitro({ preset: "vercel" })] : []),
+    ...(command === "build" || isPreview
+      ? [
+          nitro({
+            preset: "vercel",
+            // Vercel Cron sends `Authorization: Bearer <CRON_SECRET>`. Hobby allows
+            // daily jobs only, so the every-minute walks watchdog stays external.
+            vercel: { config: { crons: [{ path: "/api/cron/retention", schedule: "0 3 * * *" }] } },
+          }),
+        ]
+      : []),
     viteReact(),
   ],
 }));

@@ -3,7 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { purgeExpiredReports } from "@/backend/core/retention";
 
 /**
- * Data retention: an external scheduler (e.g. cron-job.org, once a day) calls
+ * Data retention: Vercel Cron (vite.config.ts, daily at 03:00 UTC) calls
  * `GET /api/cron/retention` with `Authorization: Bearer <CRON_SECRET>`. Closed
  * reports older than RETENTION_DAYS (default 365) are de-identified — see
  * src/backend/core/retention.ts. Disabled unless CRON_SECRET is set.
