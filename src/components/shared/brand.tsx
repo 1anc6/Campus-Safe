@@ -39,7 +39,8 @@ export function Wordmark({
     <Link
       to={to}
       className="flex min-w-0 items-center gap-2.5 py-1"
-      aria-label={`${BRAND.name} home`}
+      // The name starts with the visible words (WCAG 2.5.3 label in name).
+      aria-label={compact || !caption ? `${BRAND.name} home` : `${BRAND.name} ${caption} home`}
     >
       <BrandMark size={compact ? "sm" : "md"} />
       {!compact && (

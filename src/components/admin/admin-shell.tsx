@@ -309,19 +309,17 @@ function CounterPill({
         "flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 shadow-[var(--neu-inset-sm)] sm:gap-2",
         TONES[tone],
       )}
-      aria-label={`${value} ${label}`}
     >
-      <span className="font-mono text-sm font-bold tabular-nums" aria-hidden="true">
-        {value}
-      </span>
-      <span
-        className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider"
-        aria-hidden="true"
-      >
+      {/* Read as "2 New SOS": the full label stays available to screen readers
+          on phones, where only the short one is shown. */}
+      <span className="font-mono text-sm font-bold tabular-nums">{value}</span>
+      <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider">
         {short ? (
           <>
-            <span className="sm:hidden">{short}</span>
-            <span className="hidden sm:inline">{label}</span>
+            <span className="sm:hidden" aria-hidden="true">
+              {short}
+            </span>
+            <span className="sr-only sm:not-sr-only">{label}</span>
           </>
         ) : (
           label

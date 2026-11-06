@@ -1,6 +1,6 @@
 import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { Drawer } from "vaul";
 import { cn } from "@/lib/utils";
 
@@ -74,6 +74,8 @@ function PopoverSelect({
   "aria-label": ariaLabel,
 }: NeuSelectProps) {
   const current = options.find((o) => o.value === value);
+  const labelId = useId();
+  const valueId = useId();
   // With no matching option (nothing picked yet) Radix needs "" to show the placeholder.
   const rootValue = current ? enc(value) : "";
   const groups = groupOptions(options);
@@ -83,10 +85,15 @@ function PopoverSelect({
       <Select.Trigger
         id={id}
         title={title}
-        aria-label={ariaLabel}
+        aria-labelledby={ariaLabel ? `${labelId} ${valueId}` : undefined}
         className={cn(TRIGGER, size === "sm" && TRIGGER_SM, className)}
       >
-        <span className="min-w-0 truncate">
+        {ariaLabel && (
+          <span id={labelId} hidden>
+            {ariaLabel}
+          </span>
+        )}
+        <span id={valueId} className="min-w-0 truncate">
           <Select.Value placeholder={placeholder}>
             {current ? (
               <>
@@ -167,6 +174,8 @@ function SheetSelect({
 }: NeuSelectProps) {
   const [open, setOpen] = useState(false);
   const chosen = useRef<HTMLButtonElement>(null);
+  const labelId = useId();
+  const valueId = useId();
   const current = options.find((o) => o.value === value);
   const groups = groupOptions(options);
   const heading = ariaLabel ?? placeholder;
@@ -186,12 +195,20 @@ function SheetSelect({
           id={id}
           title={title}
           disabled={disabled}
-          aria-label={ariaLabel}
+          // Named "<label> <current value>", so the visible text is part of the
+          // name (WCAG 2.5.3) and the choice is announced.
+          aria-labelledby={ariaLabel ? `${labelId} ${valueId}` : undefined}
           aria-haspopup="listbox"
+          aria-expanded={open}
           data-state={open ? "open" : "closed"}
           className={cn(TRIGGER, size === "sm" && TRIGGER_SM, className)}
         >
-          <span className={cn("min-w-0 truncate", !current && "text-dim")}>
+          {ariaLabel && (
+            <span id={labelId} hidden>
+              {ariaLabel}
+            </span>
+          )}
+          <span id={valueId} className={cn("min-w-0 truncate", !current && "text-dim")}>
             {current ? (
               <>
                 {current.label}

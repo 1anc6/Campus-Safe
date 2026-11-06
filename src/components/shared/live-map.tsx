@@ -201,7 +201,13 @@ export function LiveMap({
         icon:
           m.kind === "dest"
             ? L.divIcon({ className: "", html: pin, iconSize: [28, 36], iconAnchor: [14, 34] })
-            : L.divIcon({ className: "", html: pin, iconSize: [18, 18], iconAnchor: [9, 9] }),
+            : // 24px hit area around the 18px dot (WCAG 2.5.8 target size).
+              L.divIcon({
+                className: "marker-hit",
+                html: pin,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+              }),
         zIndexOffset: m.kind === "sos" || m.kind === "self" ? 1000 : m.kind === "dest" ? 900 : 0,
       })
         .addTo(layer)

@@ -134,13 +134,45 @@ function GlassTooltip({
   );
 }
 
+/**
+ * Chart drawing hidden from screen readers (Recharts marks every slice as an
+ * unlabelled image), with the same numbers as a visually hidden table.
+ */
+function ChartFrame({
+  className,
+  rows,
+  children,
+}: {
+  className: string;
+  rows: [string, number][];
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={className}>
+      <div className="size-full" aria-hidden="true">
+        {children}
+      </div>
+      <table className="sr-only">
+        <tbody>
+          {rows.map(([label, value]) => (
+            <tr key={label}>
+              <th scope="row">{label}</th>
+              <td>{value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------------ bars */
 
 export function DailyBars({ data }: { data: { day: string; count: number; isToday: boolean }[] }) {
   const c = useChartColors();
   const id = useId().replace(/:/g, "");
   return (
-    <div className="h-56">
+    <ChartFrame className="h-56" rows={data.map((d) => [d.day, d.count])}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
@@ -174,7 +206,7 @@ export function DailyBars({ data }: { data: { day: string; count: number; isToda
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   );
 }
 
@@ -183,7 +215,7 @@ export function HotspotBars({ data }: { data: { name: string; count: number }[] 
   const id = useId().replace(/:/g, "");
   if (!data.some((d) => d.count > 0)) return <EmptyChart />;
   return (
-    <div className="h-44">
+    <ChartFrame className="h-44" rows={data.map((d) => [d.name, d.count])}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ left: 4, right: 12 }}>
           <defs>
@@ -210,7 +242,7 @@ export function HotspotBars({ data }: { data: { name: string; count: number }[] 
           />
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   );
 }
 
@@ -230,7 +262,7 @@ export function SeverityBars({ data }: { data: { severity: string; count: number
     name: `${d.severity} ${SEVERITY_LABELS[d.severity] ?? ""}`,
   }));
   return (
-    <div className="h-44">
+    <ChartFrame className="h-44" rows={rows.map((d) => [d.name, d.count])}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={rows} barCategoryGap="32%" margin={{ top: 8 }}>
           <defs>
@@ -268,7 +300,7 @@ export function SeverityBars({ data }: { data: { severity: string; count: number
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   );
 }
 
@@ -278,7 +310,7 @@ export function ResponseLine({ data }: { data: { day: string; count: number }[] 
   const c = useChartColors();
   const id = useId().replace(/:/g, "");
   return (
-    <div className="h-44">
+    <ChartFrame className="h-44" rows={data.map((d) => [d.day, d.count])}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 10, right: 6, left: 6, bottom: 0 }}>
           <defs>
@@ -305,7 +337,7 @@ export function ResponseLine({ data }: { data: { day: string; count: number }[] 
           />
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   );
 }
 
@@ -349,7 +381,8 @@ function GlassDonut({
   const total = items.reduce((s, i) => s + i.value, 0);
   return (
     <>
-      <div className={cn("relative", height)}>
+      {/* The legend below lists every value as text; the drawing is decoration. */}
+      <div className={cn("relative", height)} aria-hidden={legend || undefined}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <defs>
@@ -369,6 +402,7 @@ function GlassDonut({
               paddingAngle={4}
               cornerRadius={8}
               stroke="none"
+              rootTabIndex={-1}
               {...ANIM}
             >
               {items.map((i, n) => (

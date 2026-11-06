@@ -22,8 +22,8 @@ export function StatusStepper({
         const complete = i < idx || (done && i <= idx);
         const reached = i <= idx;
         return (
-          <li key={step.id} className="flex gap-3">
-            <div className="flex flex-col items-center">
+          <li key={step.id} className="flex gap-3" aria-current={active ? "step" : undefined}>
+            <div className="flex flex-col items-center" aria-hidden="true">
               <span
                 className={cn(
                   "grid size-6 place-items-center rounded-full text-[10px] font-bold",
@@ -48,6 +48,10 @@ export function StatusStepper({
                 )}
               >
                 {step.label}
+                {/* The tick and colour show progress visually; say it in words too. */}
+                <span className="sr-only">
+                  {complete ? " (done)" : active ? " (current step)" : " (not yet)"}
+                </span>
               </p>
             </div>
           </li>
