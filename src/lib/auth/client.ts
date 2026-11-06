@@ -68,6 +68,8 @@ export function applySessionToken(token: string | null): void {
  * did not happen; the caller re-enables its button so the visitor can retry.
  */
 export async function signOut(redirectTo = "/"): Promise<void> {
+  // While still signed in: stop this device getting this account's phone alerts.
+  await import("@/lib/push-client").then((m) => m.forgetPushOnSignOut()).catch(() => {});
   await runSignOut({
     // Better Auth resolves with `{ error }` instead of rejecting, so surface a
     // failed response as a rejection for the sequence to act on.

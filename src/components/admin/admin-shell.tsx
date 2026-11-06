@@ -22,6 +22,7 @@ import { NotificationBell } from "@/components/admin/notification-bell";
 import { AdminCommandPalette } from "@/components/admin/command-palette";
 import { Wordmark } from "@/components/shared/brand";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { PushNotifications, PushSettingsRow } from "@/components/shared/push-notifications";
 
 type NavItem = {
   to: string;
@@ -187,6 +188,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <Smartphone className="size-3.5" />
             Responder field app
           </Link>
+          <PushSettingsRow compact className="px-2 py-2" />
           {viewer && <IdentityCard profile={viewer} />}
           <SignOutButton className="w-full rounded-2xl" />
         </div>
@@ -275,6 +277,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <main className="flex min-w-0 flex-1 flex-col pb-safe">{children}</main>
       </div>
       <AdminCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <PushNotifications audience="admin" />
     </div>
   );
 }

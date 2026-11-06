@@ -13,6 +13,7 @@ import { SafeWalkPill, SafeWalkProvider } from "@/components/student/safe-walk";
 import { SosFlowProvider, SosTrigger } from "@/components/student/sos-flow";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { StudentBell } from "@/components/student/student-bell";
+import { PushNotifications } from "@/components/shared/push-notifications";
 
 const TABS = [
   { to: "/", label: "Home", icon: Home },
@@ -189,6 +190,7 @@ export function StudentShell({
             {/* Active safe walk: floating reminder (the home page shows the full card). */}
             <SafeWalkPill hidden={pathname === "/"} />
             <StudentOnboarding />
+            <PushNotifications audience="student" />
 
             {/* Phone: a floating glass pill tab bar with SOS raised in the middle. */}
             <nav

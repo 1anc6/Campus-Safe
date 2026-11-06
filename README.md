@@ -104,6 +104,8 @@ node --env-file=.env.local scripts/run.mjs vite dev --host 0.0.0.0 --port 8080
 | `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | first run  | Creates the first admin account                        |
 | `SIGNUP_ALLOWED_DOMAINS`                            | optional   | Comma-separated email domains allowed to sign up       |
 | `SEED_SAMPLE_DATA`                                  | optional   | `true` loads demo incidents into a real database       |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`             | optional   | Phone push notifications; make a pair with `node scripts/vapid-keys.mjs`. Unset = push off |
+| `VAPID_SUBJECT`                                     | optional   | Contact for push services (`mailto:` or `https:`); defaults to `BETTER_AUTH_URL` |
 
 ## Commands
 
@@ -133,6 +135,12 @@ node --env-file=.env.local scripts/run.mjs vite dev --host 0.0.0.0 --port 8080
   `https://safety.campus.edu,https://campus-safe-team.vercel.app`) and redeploy.
 - Browsers only allow GPS on **HTTPS** (or `localhost`) — test location on phones
   through the deployed site.
+- **Phone notifications** use standard Web Push (`public/sw.js` + VAPID keys). Each
+  person turns them on from the card the app offers or from settings; the browser only
+  asks for permission after they press **Turn on**. Locally they work on
+  `http://localhost:8080` with the test keys in `.env.local.example`; phones need the
+  HTTPS site, and iPhones need CampusSafe added to the Home Screen first (iOS 16.4+).
+  Generate your own keys for production and never reuse the test ones.
 - Campus security phone number: `RESPONDER_UNITS` in `src/lib/campus.ts`.
 - Map tiles are free OpenStreetMap tiles; heavy production traffic should use a tile
   provider with an API key.

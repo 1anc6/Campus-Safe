@@ -35,6 +35,8 @@ import {
   type IncidentVisibility,
 } from "@/lib/access";
 import { anonymousCallerKey, rateLimit } from "@/backend/core/rate-limit";
+import { notify, notifyCaseOwner } from "@/backend/core/push";
+import { adminNewAnonymous, adminNewIncident, studentCaseReply } from "@/lib/push-messages";
 
 /** ~3 MB of base64 — the report form already downsizes photos well below this. */
 const MAX_PHOTO_CHARS = 4_000_000;
@@ -182,6 +184,7 @@ export const createIncident = createServerFn({ method: "POST" })
         : "Incident filed with campus command.",
     );
     await audit(context.userId, "incident.create", "incident", id, data.visibility);
+    notify({ role: "admin" }, adminNewIncident(id, data.severity));
     return { id };
   });
 
@@ -324,6 +327,8 @@ export const createAnonymous = createServerFn({ method: "POST" })
       id,
       "Anonymous report received. Identity was never stored.",
     );
+    // Severity only: nothing in the notification may point back to the reporter.
+    notify({ role: "admin" }, adminNewAnonymous(data.severity));
     return { id, code };
   });
 
@@ -484,6 +489,10 @@ export const postThread = createServerFn({ method: "POST" })
         ${context.userId}, ${data.body.trim()}
       )
     `;
+    // Tell the student who owns the case (anonymous reporters have no device on file).
+    if (data.kind !== "anonymous") {
+      notifyCaseOwner(data.kind, data.subjectId, studentCaseReply(data.kind, data.subjectId));
+    }
     return { ok: true };
   });
 

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { SignOutButton } from "@/components/shared/account-menu";
 import { Wordmark } from "@/components/shared/brand";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { PushMenuButton, PushNotifications } from "@/components/shared/push-notifications";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ export function ResponderShell({
                 {viewer.name}
               </span>
             )}
+            <PushMenuButton />
             <ThemeToggle className="rounded-2xl ring-0 hover:bg-panel-2" />
             <SignOutButton compact className="size-11 justify-center rounded-2xl px-0" />
           </div>
@@ -42,6 +44,7 @@ export function ResponderShell({
       >
         {children}
       </main>
+      <PushNotifications audience={viewer?.role === "admin" ? "admin" : "responder"} />
     </div>
   );
 }

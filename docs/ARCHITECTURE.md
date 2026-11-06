@@ -82,11 +82,14 @@ campus-safe/
 │   │   │   ├── reports.ts           incidents, anonymous reports, case messages
 │   │   │   ├── profile.ts           student profile, medical ID, admin user management
 │   │   │   ├── admin.ts             dashboard data, counters, notifications, analytics
+│   │   │   ├── push.ts              phone notifications: save/remove a device, send a test
 │   │   │   └── viewer.ts            "who is signed in and what is their role?"
 │   │   ├── core/                    Internal building blocks (never called directly)
 │   │   │   ├── helpers.ts           role checks (requireAdmin…), audit log
 │   │   │   ├── accounts.ts          creating password accounts
 │   │   │   ├── rate-limit.ts        anti-abuse limits
+│   │   │   ├── push.ts              who gets which phone notification; sends in the background
+│   │   │   ├── web-push.ts          Web Push encryption (RFC 8291) + VAPID signing (RFC 8292)
 │   │   │   └── seed.ts              demo data for local development
 │   │   └── db.ts                    Database connection (Neon or PGLite) + migrations
 │   │
@@ -113,7 +116,8 @@ campus-safe/
 │   ├── 0006_notifications_and_indexes.sql   bell "seen" state + performance indexes
 │   ├── 0007_safe_walks_and_campus_alerts.sql  "walk with me" + campus broadcasts
 │   ├── 0008_sos_scheduling.sql      one open SOS per student, responder semaphore count
-│   └── 0009_view_trigger_foreign_keys.sql   foreign keys, updated_at trigger, open_cases view
+│   ├── 0009_view_trigger_foreign_keys.sql   foreign keys, updated_at trigger, open_cases view
+│   └── 0012_push_subscriptions.sql  one row per device that turned phone notifications on
 │
 ├── public/                          Static files served as-is (favicon, icons)
 ├── scripts/                         migrate.mjs (applies migrations), dev/build helpers
@@ -176,6 +180,7 @@ Every backend function follows the same pattern:
 | `threads` | Messages on a case (student ↔ command ↔ responder) |
 | `responders` | Responder units |
 | `audit_log` | Who did what, when — the evidence trail |
+| `push_subscriptions` | Devices that turned phone notifications on (push-service URL + encryption keys) |
 | `campus_locations`, `incident_categories` | Reference data |
 | `_migrations` | Which migration files are already applied (schema versioning) |
 
@@ -231,6 +236,9 @@ The scheduling rules live in one small, unit-tested file:
 | Process creation & signals | `scripts/run.mjs` | Starts the dev server as a child process, forwards SIGINT/SIGTERM and passes on its exit code |
 | Atomic file write | `scripts/write-atomic.mjs` | Write to a temp file, then `rename()` (atomic) so nobody sees a half-written file |
 | Power management | Wake Lock during SOS | Asks the phone not to sleep while sending |
+| Asynchronous I/O (fire-and-forget) | `notify` in `backend/core/push.ts` | Phone notifications are sent in the background, so a slow or failing push service never delays an SOS |
+| Bounded worker pool (semaphore) | `mapWithLimit` in `backend/core/web-push.ts` | A campus-wide alert goes out with at most 16 requests in flight at once |
+| Background process woken by events | `public/sw.js` (service worker) | The browser wakes it when a push arrives, even with the app closed, to show the notification |
 
 Algorithms elsewhere: **Haversine** distance, a circular **geofence** and a
 **nearest-neighbour** search in `lib/campus.ts`; a **top-N-per-group** query

@@ -20,6 +20,8 @@ import {
   requireAdmin,
   requireStaff,
 } from "@/backend/core/helpers";
+import { notify, notifyCaseOwner } from "@/backend/core/push";
+import { adminNewSos, responderSosAssigned, studentSosUpdate } from "@/lib/push-messages";
 
 type SosRow = {
   id: string;
@@ -244,6 +246,9 @@ export async function openSosForUser(
   );
   await audit(userId, "sos.create", "sos", id, reason);
   await sql`update sos_alerts set status = ${"received"} where id = ${id}`;
+  // Phone notifications go out in the background: they never delay this SOS.
+  notify({ role: "admin" }, adminNewSos(id, Boolean(reason)));
+  notify({ userIds: [userId] }, studentSosUpdate(id, "received"));
   return (await fetchSos(id))!;
 }
 
@@ -436,6 +441,8 @@ export const assignSos = createServerFn({ method: "POST" })
     await releaseResponderSlot(sql, previous);
     await addSystemMessage("sos", data.id, `${r[0]?.name ?? "Responder"} assigned.`);
     await audit(context.userId, "sos.assign", "sos", data.id, data.responderId);
+    notify({ responderId: data.responderId }, responderSosAssigned(data.id));
+    notifyCaseOwner("sos", data.id, studentSosUpdate(data.id, "assigned"));
     return fetchSos(data.id);
   });
 
@@ -464,9 +471,11 @@ export const setSosStatus = createServerFn({ method: "POST" })
         where id = ${data.id} and status not in ('resolved', 'cancelled')
       `;
       await addSystemMessage("sos", data.id, `${profile.name} marked arrived.`);
+      notify({ userIds: [current.userId] }, studentSosUpdate(data.id, "arrived"));
     } else if (data.status === "resolved") {
       if (await closeSos(sql, data.id, "resolved")) {
         await addSystemMessage("sos", data.id, "Alert resolved.");
+        notify({ userIds: [current.userId] }, studentSosUpdate(data.id, "resolved"));
       }
     } else if (data.status === "cancelled") {
       await closeSos(sql, data.id, "cancelled");

@@ -23,6 +23,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { Avatar, SignOutButton } from "@/components/shared/account-menu";
+import { PushSettingsRow } from "@/components/shared/push-notifications";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { authClient } from "@/lib/auth/client";
 import { changeMyEmail, getMyProfile, updateMyProfile } from "@/backend/functions/profile";
@@ -383,6 +384,7 @@ function PanelBody({
 
           <Section icon={ShieldCheck} title="Preferences">
             <ThemeToggle withLabel className="ring-line" />
+            <PushSettingsRow />
             <SignOutButton className="w-full justify-center neu-raised-xs" />
           </Section>
         </div>

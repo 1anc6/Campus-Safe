@@ -5,6 +5,8 @@ import { getSql } from "@/backend/db";
 import { audit, requireAdmin } from "@/backend/core/helpers";
 import { iso, newId } from "@/lib/utils";
 import { escalateOverdueWalks } from "./walks";
+import { notify } from "@/backend/core/push";
+import { campusAlert } from "@/lib/push-messages";
 
 /**
  * Campus-wide broadcasts: command posts an alert ("Avoid Gate 2 — fire drill"),
@@ -78,6 +80,7 @@ export const createCampusAlert = createServerFn({ method: "POST" })
       )
     `;
     await audit(context.userId, "alert.create", "alert", id, data.level);
+    notify({ role: "student" }, campusAlert({ id, ...data }));
     return { id };
   });
 
