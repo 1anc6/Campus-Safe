@@ -11,6 +11,7 @@ import type { SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
 import { ArrowLeft, Crosshair, MapPinOff, Phone, ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 /** Minimum gap between GPS uploads, and the heartbeat that re-sends the last fix. */
 const PING_EVERY_MS = 7000;
@@ -178,16 +179,18 @@ function Active() {
       }
     }, 5000);
     const tick = window.setInterval(() => setNow(Date.now()), 1000);
-    const poll = window.setInterval(() => void refresh().catch(() => {}), 5000);
     return () => {
       live = false;
-      window.clearInterval(poll);
       window.clearInterval(heartbeat);
       window.clearInterval(tick);
       if (watchRef.current != null) navigator.geolocation.clearWatch(watchRef.current);
       void wake.current?.release();
     };
   }, [id, refresh]);
+
+  // Command receiving, assigning and replying shows up within a second; polls
+  // every 5 s only while the live stream is down.
+  useLiveUpdates({ kinds: ["sos"], id }, refresh, { fallbackMs: 5000 });
 
   async function safe() {
     await markSosSafe({ data: { id } });

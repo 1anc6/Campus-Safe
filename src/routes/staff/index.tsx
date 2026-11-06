@@ -11,7 +11,7 @@ import {
   Phone,
   ShieldCheck,
 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { SeverityChip, StatusPill } from "@/components/shared/pills";
 import { LiveDot, ResponderShell } from "@/components/responder/responder-shell";
 import { useViewer } from "@/lib/auth/use-viewer";
@@ -21,6 +21,7 @@ import { listAssignedIncidents } from "@/backend/functions/reports";
 import type { Incident, SosAlert } from "@/lib/types";
 import { cn, waitLabel } from "@/lib/utils";
 import { SkeletonCard, SkeletonGroup } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/staff/")({ component: Assigned });
 
@@ -33,25 +34,28 @@ function Assigned() {
   const [reports, setReports] = useState<Incident[]>([]);
   const now = useNow(15_000);
 
-  useEffect(() => {
-    const load = () =>
+  const load = useCallback(
+    () =>
       listAssignedSos()
         .then(setRows)
-        .catch(() => setRows((r) => r ?? []));
-    // Reports move slower than SOS alerts, so they refresh less often.
-    const loadReports = () =>
+        .catch(() => setRows((r) => r ?? [])),
+    [],
+  );
+  const loadReports = useCallback(
+    () =>
       listAssignedIncidents()
         .then(setReports)
-        .catch(() => {});
+        .catch(() => {}),
+    [],
+  );
+  useEffect(() => {
     void load();
     void loadReports();
-    const i = window.setInterval(load, 5000);
-    const r = window.setInterval(loadReports, 20_000);
-    return () => {
-      window.clearInterval(i);
-      window.clearInterval(r);
-    };
-  }, []);
+  }, [load, loadReports]);
+  // A new assignment (or one taken away) shows up within a second. While the
+  // live stream is down: SOS every 5 s, reports (which move slower) every 20 s.
+  useLiveUpdates({ kinds: ["sos"] }, load, { fallbackMs: 5000 });
+  useLiveUpdates({ kinds: ["incident"] }, loadReports, { fallbackMs: 20_000 });
 
   const enRoute = rows?.filter((r) => EN_ROUTE.has(r.status)).length ?? 0;
   const onScene = rows?.filter((r) => r.status === "arrived").length ?? 0;

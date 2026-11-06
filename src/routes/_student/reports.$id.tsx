@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SeverityChip, StatusPill } from "@/components/shared/pills";
 import { StatusStepper } from "@/components/shared/status-stepper";
 import { INCIDENT_STATUSES } from "@/lib/campus";
@@ -8,6 +8,7 @@ import { getIncident } from "@/backend/functions/reports";
 import type { Incident, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
 import { SkeletonDetail } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/_student/reports/$id")({
   staticData: { width: "wide" },
@@ -27,14 +28,19 @@ function IncidentDetail() {
   const [messages, setMessages] = useState<ThreadMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    getIncident({ data: { id } })
-      .then((r) => {
+  const load = useCallback(
+    () =>
+      getIncident({ data: { id } }).then((r) => {
         setIncident(r.incident);
         setMessages(r.messages);
-      })
-      .catch(() => setError("This report could not be found."));
-  }, [id]);
+      }),
+    [id],
+  );
+  useEffect(() => {
+    load().catch(() => setError("This report could not be found."));
+  }, [load]);
+  // Status changes and replies from command appear while the page is open.
+  useLiveUpdates({ kinds: ["incident"], id }, load, { fallbackMs: 30_000 });
 
   return (
     <>

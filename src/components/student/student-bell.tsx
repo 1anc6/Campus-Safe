@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getMyNotifications, markMyNotificationsSeen } from "@/backend/functions/notifications";
 import type { StudentNotification } from "@/lib/types";
 import { cn, waitLabel } from "@/lib/utils";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 /**
  * Student bell: updates command or a responder made on the student's own
@@ -32,11 +33,16 @@ export function StudentBell({
 
   useEffect(() => {
     void load().catch(() => {});
-    const i = window.setInterval(() => {
-      if (document.visibilityState === "visible") void load().catch(() => {});
-    }, 60_000);
-    return () => window.clearInterval(i);
   }, [load]);
+  // An update on one of the student's own reports rings the bell straight away.
+  // While the live stream is down it polls once a minute (visible tabs only).
+  useLiveUpdates({ kinds: ["incident"] }, load, {
+    fallbackMs: 60_000,
+    minGapMs: 2000,
+    fallback: () => {
+      if (document.visibilityState === "visible") void load().catch(() => {});
+    },
+  });
 
   async function onOpenChange(open: boolean) {
     if (!open) return;

@@ -24,6 +24,7 @@ import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as AdminAnonymousRouteImport } from './routes/admin/anonymous'
 import { Route as AdminRespondersRouteImport } from './routes/admin/responders'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as ApiLiveRouteImport } from './routes/api/live'
 import { Route as SosIdRouteImport } from './routes/sos.$id'
 import { Route as StaffIndexRouteImport } from './routes/staff/index'
 import { Route as StaffIdRouteImport } from './routes/staff/$id'
@@ -113,6 +114,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const ApiLiveRoute = ApiLiveRouteImport.update({
+  id: '/api/live',
+  path: '/api/live',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SosIdRoute = SosIdRouteImport.update({
   id: '/sos/$id',
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/admin/anonymous': typeof AdminAnonymousRoute
   '/admin/responders': typeof AdminRespondersRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/live': typeof ApiLiveRoute
   '/sos/$id': typeof SosIdRoute
   '/staff/$id': typeof StaffIdRoute
   '/track/$code': typeof TrackCodeRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/admin/anonymous': typeof AdminAnonymousRoute
   '/admin/responders': typeof AdminRespondersRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/live': typeof ApiLiveRoute
   '/sos/$id': typeof SosIdRoute
   '/staff/$id': typeof StaffIdRoute
   '/track/$code': typeof TrackCodeRoute
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/admin/anonymous': typeof AdminAnonymousRoute
   '/admin/responders': typeof AdminRespondersRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/live': typeof ApiLiveRoute
   '/sos/$id': typeof SosIdRoute
   '/staff/$id': typeof StaffIdRoute
   '/track/$code': typeof TrackCodeRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/admin/anonymous'
     | '/admin/responders'
     | '/admin/users'
+    | '/api/live'
     | '/sos/$id'
     | '/staff/$id'
     | '/track/$code'
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/admin/anonymous'
     | '/admin/responders'
     | '/admin/users'
+    | '/api/live'
     | '/sos/$id'
     | '/staff/$id'
     | '/track/$code'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/admin/anonymous'
     | '/admin/responders'
     | '/admin/users'
+    | '/api/live'
     | '/sos/$id'
     | '/staff/$id'
     | '/track/$code'
@@ -386,6 +398,7 @@ export interface RootRouteChildren {
   ForbiddenRoute: typeof ForbiddenRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  ApiLiveRoute: typeof ApiLiveRoute
   SosIdRoute: typeof SosIdRoute
   TrackCodeRoute: typeof TrackCodeRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -500,6 +513,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/api/live': {
+      id: '/api/live'
+      path: '/api/live'
+      fullPath: '/api/live'
+      preLoaderRoute: typeof ApiLiveRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/sos/$id': {
       id: '/sos/$id'
@@ -681,6 +701,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForbiddenRoute: ForbiddenRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  ApiLiveRoute: ApiLiveRoute,
   SosIdRoute: SosIdRoute,
   TrackCodeRoute: TrackCodeRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

@@ -67,7 +67,8 @@ campus-safe/
 │   │   │   ├── users.tsx            create accounts, change roles, reset passwords
 │   │   │   ├── responders.tsx       responder units
 │   │   │   └── analytics.tsx        charts
-│   │   └── api/auth/$.ts            BACKEND endpoint for sign-in/sign-up/sessions
+│   │   ├── api/auth/$.ts            BACKEND endpoint for sign-in/sign-up/sessions
+│   │   └── api/live.ts              BACKEND real-time updates stream (Server-Sent Events)
 │   │
 │   ├── components/                  ── FRONTEND: REUSABLE UI ──
 │   │   ├── shared/                  Used everywhere: logo, map, SOS button, pills…
@@ -113,7 +114,8 @@ campus-safe/
 │   ├── 0006_notifications_and_indexes.sql   bell "seen" state + performance indexes
 │   ├── 0007_safe_walks_and_campus_alerts.sql  "walk with me" + campus broadcasts
 │   ├── 0008_sos_scheduling.sql      one open SOS per student, responder semaphore count
-│   └── 0009_view_trigger_foreign_keys.sql   foreign keys, updated_at trigger, open_cases view
+│   ├── 0009_view_trigger_foreign_keys.sql   foreign keys, updated_at trigger, open_cases view
+│   └── 0012_live_events.sql         change log + triggers that feed real-time updates
 │
 ├── public/                          Static files served as-is (favicon, icons)
 ├── scripts/                         migrate.mjs (applies migrations), dev/build helpers
@@ -225,7 +227,8 @@ The scheduling rules live in one small, unit-tested file:
 | Resource limits / throttling | `backend/core/rate-limit.ts`, GPS ping throttle | Sliding-window limits; pings < 2 s apart are merged |
 | Timers & interrupts | `components/shared/sos-button.tsx` | 2-second hold uses a real timer; releasing early cancels it |
 | Buffering / spooling | `components/student/sos-flow.tsx` | Offline SOS is queued locally and retried with exponential backoff (4 s, 8 s, 15 s, 30 s) |
-| Event-driven I/O | `components/admin/admin-shell.tsx` | Refreshes when the tab becomes visible instead of polling constantly |
+| Event-driven I/O | `lib/use-live-updates.ts`, `routes/api/live.ts` | Screens wait for pushed change events instead of polling; polling is only the fallback |
+| Producer–consumer log | `live_events` + triggers (migration 0012), `backend/core/live.ts` | Triggers append changes; one reader per server instance fans them out to open streams |
 | Volatile vs persistent storage | PGLite (RAM) vs Neon (disk) | Why local data resets but production data doesn't |
 | Protection / access control | Roles + server checks | Like OS permission levels; passwords hashed |
 | Process creation & signals | `scripts/run.mjs` | Starts the dev server as a child process, forwards SIGINT/SIGTERM and passes on its exit code |
@@ -238,7 +241,37 @@ Algorithms elsewhere: **Haversine** distance, a circular **geofence** and a
 
 ---
 
-## 6. Where to change common things
+## 6. Real-time updates
+
+Live screens (admin console, responder app, student SOS screen, bell, campus
+broadcasts) update within about a second instead of polling.
+
+```mermaid
+flowchart LR
+  W["Any write<br/>(SOS, GPS, report, message, broadcast)"] --> T["Triggers<br/>(migration 0012)"]
+  T --> L[("live_events<br/>change log")]
+  L -- "read ~1×/s per server instance" --> H["Hub<br/>backend/core/live.ts"]
+  H -- "SSE /api/live<br/>only events this user may see" --> B["useLiveUpdates<br/>lib/use-live-updates.ts"]
+  B -- "re-fetch via normal server function" --> F["Server functions"]
+```
+
+- **Why SSE + a change-log table, not LISTEN/NOTIFY:** production uses Neon's
+  pooled (PgBouncer transaction-mode) connection, where `LISTEN` does not work,
+  and Vercel functions are short-lived. A trigger-fed table works on every
+  connection type, needs no extra service, and its ids let a reconnecting
+  browser resume with `Last-Event-ID` without missing anything.
+- **Security:** an event is only `{ kind, id }`. `canSeeLiveEvent` in
+  `lib/live.ts` (unit-tested) applies the same rules as the server functions
+  (admin: all; responder: their unit's cases; student: their own cases;
+  everyone: broadcasts). The screen then re-fetches through its usual,
+  access-checked server function.
+- **Cost:** one reader loop per server instance, not per browser. Each stream
+  closes after 25 s and the browser reconnects at once (inside any Vercel time
+  limit; also re-checks the session). Rows older than an hour are pruned.
+- **Fallback:** if the stream is down, refused or silent for 25 s, each screen
+  polls on its old interval, so nothing is worse than before.
+
+## 7. Where to change common things
 
 | I want to… | Edit |
 | ---------- | ---- |

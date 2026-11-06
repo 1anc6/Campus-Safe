@@ -14,7 +14,7 @@
     "build:dev": "node scripts/run.mjs vite build --mode development",
     "preview": "node scripts/run.mjs vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/roles.test.ts src/lib/access.test.ts src/lib/scheduling.test.ts src/lib/walk-route.test.ts",
+    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/roles.test.ts src/lib/access.test.ts src/lib/scheduling.test.ts src/lib/walk-route.test.ts src/lib/live.test.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

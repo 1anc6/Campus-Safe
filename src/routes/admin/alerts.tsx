@@ -12,6 +12,7 @@ import {
 } from "@/backend/functions/alerts";
 import { cn, formatClock } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/admin/alerts")({ component: BroadcastsPage });
 
@@ -46,9 +47,10 @@ function BroadcastsPage() {
 
   useEffect(() => {
     void load();
-    const t = window.setInterval(() => void load(), 10_000);
-    return () => window.clearInterval(t);
   }, [load]);
+  // Pushed when a broadcast changes or a student acknowledges one; polls every
+  // 10 s only while the live stream is down.
+  useLiveUpdates({ kinds: ["alert", "alert_ack"] }, load, { fallbackMs: 10_000, minGapMs: 2000 });
 
   async function send(e: React.FormEvent) {
     e.preventDefault();

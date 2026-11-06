@@ -11,7 +11,7 @@ import {
   SignalLow,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DashCard } from "@/components/admin/dash-card";
 import { LiveMap, type MapMarker } from "@/components/shared/live-map";
@@ -21,6 +21,10 @@ import { getLive } from "@/backend/functions/admin";
 import type { LivePayload, RecentSos, SosAlert } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
+import type { LiveKind } from "@/lib/live";
+
+const BOARD_KINDS: LiveKind[] = ["sos", "incident", "anonymous"];
 
 export const Route = createFileRoute("/admin/sos/")({ component: SosBoard });
 
@@ -82,8 +86,8 @@ function SosBoard() {
   const seen = useRef<Set<string> | null>(null);
   const announced = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
-    const load = () =>
+  const load = useCallback(
+    () =>
       getLive()
         .then((d) => {
           setLive(d);
@@ -107,15 +111,18 @@ function SosBoard() {
           }
           seen.current = new Set(ids);
         })
-        .catch(() => setError(true));
+        .catch(() => setError(true)),
+    [],
+  );
+
+  useEffect(() => {
     void load();
-    const i = window.setInterval(load, 5000);
     const t = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => {
-      window.clearInterval(i);
-      window.clearInterval(t);
-    };
-  }, []);
+    return () => window.clearInterval(t);
+  }, [load]);
+  // Pushed on every alert, GPS point and status change; polls every 5 s only
+  // while the live stream is down.
+  useLiveUpdates({ kinds: BOARD_KINDS }, load, { fallbackMs: 5000 });
 
   const alerts = live?.sos ?? null;
   const recent = live?.recentSos ?? [];

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Clock, Filter, Lock, MapPin, Search, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AdminPageHeader } from "@/components/admin/admin-shell";
 import { StatusPill } from "@/components/shared/pills";
 import { CATEGORIES, INCIDENT_STATUSES, SEVERITIES, type Severity } from "@/lib/campus";
@@ -8,6 +8,7 @@ import { listIncidentsAdmin } from "@/backend/functions/admin";
 import { cn, formatClock } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
 import { NeuSelect } from "@/components/shared/neu-select";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 type IncidentSearch = {
   q?: string;
@@ -52,11 +53,23 @@ function IncidentsPage() {
     Boolean(search.status || search.severity || search.category),
   );
 
+  const load = useCallback(
+    () =>
+      listIncidentsAdmin()
+        .then((r) => {
+          setRows(r);
+          setError(null);
+        })
+        .catch((e: unknown) =>
+          setError(e instanceof Error ? e.message : "Could not load incidents"),
+        ),
+    [],
+  );
   useEffect(() => {
-    listIncidentsAdmin()
-      .then(setRows)
-      .catch((e: unknown) => setError(e instanceof Error ? e.message : "Could not load incidents"));
-  }, []);
+    void load();
+  }, [load]);
+  // New reports and status changes appear as they happen.
+  useLiveUpdates({ kinds: ["incident"] }, load, { fallbackMs: 30_000, minGapMs: 2000 });
 
   // Debounce the search box into the URL.
   useEffect(() => {
