@@ -70,7 +70,8 @@ function usePush() {
     try {
       const next = await action();
       if (next) setPushState(next);
-    } catch {
+    } catch (err) {
+      console.warn("[push]", err);
       setNote("Something went wrong. Check your connection and try again.");
     } finally {
       setBusy(false);
@@ -94,7 +95,13 @@ function usePush() {
     state,
     busy,
     note,
-    turnOn: () => run(enablePush),
+    /** `onResult` runs in the same update as the new state, so the card never flickers out. */
+    turnOn: (onResult?: (s: PushState) => void) =>
+      run(async () => {
+        const next = await enablePush();
+        onResult?.(next);
+        return next;
+      }),
     turnOff: () => run(disablePush),
     test,
   };
@@ -234,9 +241,9 @@ export function PushNotifications({ audience }: { audience: PushAudience }) {
                 className="btn-neon h-10 px-4"
                 disabled={busy}
                 onClick={() =>
-                  void turnOn().then(() => {
-                    if (snapshot.state === "on") setJustEnabled(true);
-                    else if (snapshot.state === "denied") close();
+                  void turnOn((next) => {
+                    if (next === "on") setJustEnabled(true);
+                    else if (next === "denied") close();
                   })
                 }
               >

@@ -24,6 +24,24 @@ export type PushState =
   | "on";
 
 const SW_URL = "/sw.js";
+/** The browser's push-service handshake can stall on a bad network: give up and let them retry. */
+const SUBSCRIBE_TIMEOUT_MS = 30_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(message)), ms);
+    promise.then(
+      (v) => {
+        clearTimeout(t);
+        resolve(v);
+      },
+      (e) => {
+        clearTimeout(t);
+        reject(e);
+      },
+    );
+  });
+}
 
 export function pushSupported(): boolean {
   return (
@@ -113,7 +131,11 @@ export async function enablePush(): Promise<PushState> {
   if (!key) return "unconfigured";
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return permission === "denied" ? "denied" : "off";
-  const reg = await registration();
+  const reg = await withTimeout(
+    registration(),
+    SUBSCRIBE_TIMEOUT_MS,
+    "Service worker didn't start",
+  );
   const appKey = keyBytes(key);
   let sub = await reg.pushManager.getSubscription();
   // Subscribed under an old server key (keys were rotated): start over.
@@ -121,7 +143,11 @@ export async function enablePush(): Promise<PushState> {
     await sub.unsubscribe().catch(() => false);
     sub = null;
   }
-  sub ??= await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: appKey });
+  sub ??= await withTimeout(
+    reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: appKey }),
+    SUBSCRIBE_TIMEOUT_MS,
+    "Push service didn't answer",
+  );
   await saveToServer(sub);
   return "on";
 }
