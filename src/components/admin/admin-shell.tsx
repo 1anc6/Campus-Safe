@@ -317,6 +317,8 @@ function CounterPill({
         "flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 shadow-[var(--neu-inset-sm)] sm:gap-2",
         TONES[tone],
       )}
+      // A new SOS changes the count in place on every admin page: announce it.
+      role={tone === "sos" ? "status" : undefined}
     >
       {/* Read as "2 New SOS": the full label stays available to screen readers
           on phones, where only the short one is shown. */}

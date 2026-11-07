@@ -26,7 +26,7 @@
      clear 4.5:1 as small text on a 15% tint of themselves (the chip recipe), not
      only on the bare surface. Checked by scripts/a11y-audit.mjs. */
   --color-muted: #48566e;
-  --color-dim: #586885;
+  --color-dim: #536380;
   /* Accent for text/icons (readable on the surface) vs the blue fill. */
   --color-neon: #1d55ba;
   --color-neon-dim: rgb(45 106 222 / 0.14);
@@ -73,7 +73,8 @@
   color-scheme: light;
   --neon-glow: rgb(45 106 222 / 0.32);
   --sos-glow: rgb(212 44 67 / 0.32);
-  --sos-fill: #e02f47;
+  /* White text sits on this fill (badges, banners): #dd2d45 keeps it at 4.6:1. */
+  --sos-fill: #dd2d45;
   --sos-fill-hi: #ff7f8c;
   --scrollbar: rgb(79 95 121 / 0.22);
   /* Non-SOS map pins (incidents, units, "you are here"): must never read as SOS red. */

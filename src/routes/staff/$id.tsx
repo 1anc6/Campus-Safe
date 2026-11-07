@@ -103,7 +103,9 @@ function AssignedAlert() {
         {error ? (
           <div className="grid min-h-[60dvh] place-items-center text-center text-sm">
             <div>
-              <p className="text-sos">{error}</p>
+              <p className="text-sos" role="alert">
+                {error}
+              </p>
               <Link to="/staff" className="btn-ghost mt-4">
                 <ArrowLeft className="size-4" /> Assigned alerts
               </Link>

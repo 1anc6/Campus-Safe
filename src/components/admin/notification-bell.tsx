@@ -51,6 +51,7 @@ export function NotificationBell({ unseen, onSeen }: { unseen: number; onSeen: (
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
+          aria-label="Critical alerts"
           align="end"
           sideOffset={8}
           collisionPadding={12}

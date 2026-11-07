@@ -13,9 +13,11 @@
  *   A11Y_ONLY       comma-separated filter on page names, e.g. "admin,login"
  *   A11Y_THEMES     "light,dark" (default both)
  *   A11Y_WIDTHS     "360,1280" (default both)
+ *   A11Y_PREPARE    "0" skips creating the test SOS, report and assignment
  *
  * Test accounts come from .env.local.example (BOOTSTRAP_*); the npm script loads
- * that file. Exits with status 1 when a serious or critical violation remains.
+ * that file. Exits with status 1 when a serious or critical violation remains,
+ * other than the documented exceptions in EXCEPTIONS (still printed).
  */
 import { createRequire } from "node:module";
 import { writeFileSync } from "node:fs";
@@ -31,6 +33,22 @@ const ONLY = process.env.A11Y_ONLY?.split(",").filter(Boolean) ?? [];
 /** On campus, so maps, Safe Walk and the SOS countdown behave as for a real student. */
 const CAMPUS = { latitude: 30.26815, longitude: 77.99575, accuracy: 15 };
 
+/**
+ * Findings reviewed and accepted, with the reason (docs/ACCESSIBILITY.md).
+ * They are listed in the output but do not fail the run.
+ */
+const EXCEPTIONS = [
+  {
+    rule: "target-size",
+    target: /leaflet-marker-icon/,
+    why:
+      "map pins at almost the same spot overlap; each pin is 24px and the same alert " +
+      "is reachable from the list beside the map (WCAG 2.5.8 'equivalent' exception)",
+  },
+];
+const excepted = (ruleId, target) =>
+  EXCEPTIONS.find((e) => e.rule === ruleId && e.target.test(target));
+
 const ACCOUNTS = {
   student: [process.env.BOOTSTRAP_STUDENT_EMAIL, process.env.BOOTSTRAP_STUDENT_PASSWORD],
   responder: [process.env.BOOTSTRAP_RESPONDER_EMAIL, process.env.BOOTSTRAP_RESPONDER_PASSWORD],
@@ -42,6 +60,9 @@ const ACCOUNTS = {
  * page (first matching link). `state` runs after load to open a dialog, panel
  * or menu so axe sees it too.
  */
+/** Filled in by prepare(): the open SOS every SOS detail page shows. */
+const prepared = { sosId: null };
+
 const PAGES = {
   public: [
     { name: "login", path: "/login" },
@@ -61,15 +82,11 @@ const PAGES = {
     { name: "student report errors", path: "/report", state: submitEmpty },
     { name: "student my reports", path: "/reports" },
     { name: "student report detail", path: firstLink("/reports", /^\/reports\/[^/]+$/) },
-    { name: "student live SOS", path: firstLink("/", /^\/sos\/[^/]+$/), optional: true },
+    { name: "student live SOS", path: () => prepared.sosId && `/sos/${prepared.sosId}` },
   ],
   responder: [
     { name: "responder alerts", path: "/staff" },
-    {
-      name: "responder alert detail",
-      path: firstLink("/staff", /^\/staff\/(?!incidents)[^/]+$/),
-      optional: true,
-    },
+    { name: "responder alert detail", path: () => prepared.sosId && `/staff/${prepared.sosId}` },
     {
       name: "responder incident",
       path: firstLink("/staff", /^\/staff\/incidents\/[^/]+$/),
@@ -80,11 +97,7 @@ const PAGES = {
     { name: "admin dashboard", path: "/admin" },
     { name: "admin command palette", path: "/admin", state: commandPalette, desktopOnly: true },
     { name: "admin SOS", path: "/admin/sos" },
-    {
-      name: "admin SOS detail",
-      path: firstLink("/admin/sos", /^\/admin\/sos\/[^/]+$/),
-      optional: true,
-    },
+    { name: "admin SOS detail", path: () => prepared.sosId && `/admin/sos/${prepared.sosId}` },
     { name: "admin incidents", path: "/admin/incidents" },
     {
       name: "admin incident detail",
@@ -191,6 +204,17 @@ async function audit(page) {
 }
 
 const results = [];
+let failures = 0;
+
+function withTimeout(promise, ms) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`timed out after ${ms / 1000}s`)), ms);
+    }),
+  ]).finally(() => clearTimeout(timer));
+}
 // Playwright's own Chromium if installed (`npx playwright install chromium`),
 // otherwise the system Chrome or Edge.
 async function launch() {
@@ -205,8 +229,64 @@ async function launch() {
   }
   throw lastError;
 }
+/**
+ * Make sure there is something behind every detail page: an open SOS from the
+ * test student (sent with the keyboard double-press, which also exercises the
+ * no-long-press path), one incident report, and the SOS assigned to the test
+ * responder. Safe to repeat: the server keeps one open SOS per student.
+ */
+async function prepare() {
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 860 },
+    geolocation: CAMPUS,
+    permissions: ["geolocation"],
+  });
+  const studentId = await signIn(context, "student");
+  await context.addInitScript((id) => localStorage.setItem(`cs-onboarded:${id}`, "1"), studentId);
+  const page = await context.newPage();
+  try {
+    await goto(page, "/reports");
+    const hasReport = await page.locator('a[href^="/reports/"]').count();
+    if (!hasReport) {
+      await goto(page, "/report");
+      await page.locator("main form button[aria-pressed]").first().click();
+      await page.locator("main form textarea").first().fill("Accessibility audit test report.");
+      await page.locator("main form button[type=submit]").click();
+      await page.waitForURL(/\/reports?\b/, { timeout: 10000 }).catch(() => {});
+    }
+    await goto(page, "/");
+    await page.locator(".sos-btn:visible").first().focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(150);
+    await page.keyboard.press("Enter");
+    await page.waitForURL(/\/sos\//, { timeout: 25000 });
+    const sosPath = new URL(page.url()).pathname;
+    prepared.sosId = sosPath.split("/").pop();
+    await context.clearCookies();
+    await signIn(context, "admin");
+    await goto(page, `/admin${sosPath}`);
+    // The account's own unit carries its full name (seeded units can share a first name).
+    const responderName = process.env.BOOTSTRAP_RESPONDER_NAME ?? "";
+    const unit = page
+      .locator("aside button[aria-pressed]:not([disabled])", { hasText: responderName })
+      .first();
+    if ((await unit.count()) && (await unit.getAttribute("aria-pressed")) === "false") {
+      await unit.click();
+      await page.waitForTimeout(1200);
+    }
+    if (!(await unit.count()) || (await unit.getAttribute("aria-pressed")) !== "true") {
+      console.warn("  prepare: could not assign the SOS to the test responder");
+    }
+    console.log(`Prepared: SOS ${sosPath}, report and assignment in place.`);
+  } catch (err) {
+    console.warn(`  prepare: ${err.message.split("\n")[0]} (detail pages may be skipped)`);
+  }
+  await context.close();
+}
+
 const browser = await launch();
 try {
+  if (process.env.A11Y_PREPARE !== "0") await prepare();
   for (const [role, pages] of Object.entries(PAGES)) {
     for (const theme of THEMES) {
       for (const width of WIDTHS) {
@@ -254,16 +334,23 @@ try {
               await page.close();
               continue;
             }
-            await goto(page, path);
-            if (spec.state) await spec.state(page);
-            const violations = await audit(page);
+            // One stuck page (a dev-server reload mid-check) must not stall the run.
+            const violations = await withTimeout(
+              (async () => {
+                await goto(page, path);
+                if (spec.state) await spec.state(page);
+                return audit(page);
+              })(),
+              90_000,
+            );
             results.push({ page: spec.name, role, theme, width, path, violations });
             const count = violations.reduce((n, v) => n + v.nodes.length, 0);
             console.log(`${count ? "✗" : "✓"} ${label}${count ? ` — ${count} issue(s)` : ""}`);
           } catch (err) {
             console.warn(`  error ${label}: ${err.message.split("\n")[0]}`);
+            failures += 1;
           }
-          await page.close();
+          await withTimeout(page.close(), 10_000).catch(() => {});
         }
         await context.close();
       }
@@ -277,11 +364,22 @@ try {
 const byRule = new Map();
 for (const r of results) {
   for (const v of r.violations) {
-    const entry = byRule.get(v.id) ?? { ...v, count: 0, where: new Set(), targets: new Set() };
-    entry.count += v.nodes.length;
-    entry.where.add(`${r.page} (${r.theme}, ${r.width}px)`);
-    for (const n of v.nodes) entry.targets.add(n.target);
-    byRule.set(v.id, entry);
+    for (const n of v.nodes) {
+      const why = excepted(v.id, n.target)?.why;
+      const key = why ? `${v.id} (accepted)` : v.id;
+      const entry = byRule.get(key) ?? {
+        ...v,
+        id: key,
+        why,
+        count: 0,
+        where: new Set(),
+        targets: new Set(),
+      };
+      entry.count += 1;
+      entry.where.add(`${r.page} (${r.theme}, ${r.width}px)`);
+      entry.targets.add(n.target);
+      byRule.set(key, entry);
+    }
   }
 }
 const order = { critical: 0, serious: 1, moderate: 2, minor: 3 };
@@ -291,6 +389,7 @@ if (!rules.length) console.log("No axe violations.");
 for (const r of rules) {
   console.log(`\n[${r.impact}] ${r.id} — ${r.help} (${r.tags.join(", ") || "best practice"})`);
   console.log(`  ${r.count} node(s) on ${r.where.size} view(s)`);
+  if (r.why) console.log(`  accepted: ${r.why}`);
   for (const t of [...r.targets].slice(0, 6)) console.log(`    ${t}`);
   if (r.targets.size > 6) console.log(`    … ${r.targets.size - 6} more`);
 }
@@ -298,5 +397,6 @@ if (process.env.A11Y_JSON) {
   writeFileSync(process.env.A11Y_JSON, JSON.stringify(results, null, 2));
   console.log(`\nFull results: ${process.env.A11Y_JSON}`);
 }
-const blocking = rules.filter((r) => r.impact === "serious" || r.impact === "critical");
-process.exitCode = blocking.length ? 1 : 0;
+const blocking = rules.filter((r) => !r.why && (r.impact === "serious" || r.impact === "critical"));
+if (failures) console.log(`\n${failures} page view(s) could not be checked (see "error" lines).`);
+process.exitCode = blocking.length || failures ? 1 : 0;

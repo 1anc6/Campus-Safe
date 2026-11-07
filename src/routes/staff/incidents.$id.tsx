@@ -71,7 +71,9 @@ function AssignedIncident() {
         {error ? (
           <div className="grid min-h-[60dvh] place-items-center text-center text-sm">
             <div>
-              <p className="text-sos">{error}</p>
+              <p className="text-sos" role="alert">
+                {error}
+              </p>
               <BackLink />
             </div>
           </div>
