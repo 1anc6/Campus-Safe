@@ -13,10 +13,12 @@ import {
   X,
   Smartphone,
 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { getAdminCounters, type AdminCounters } from "@/backend/functions/admin";
 import { useViewer } from "@/lib/auth/use-viewer";
 import { cn } from "@/lib/utils";
+import { useLiveUpdates } from "@/lib/use-live-updates";
+import type { LiveKind } from "@/lib/live";
 import { IdentityCard, SignOutButton } from "@/components/shared/account-menu";
 import { NotificationBell } from "@/components/admin/notification-bell";
 import { AdminCommandPalette } from "@/components/admin/command-palette";
@@ -44,7 +46,9 @@ const NAV: NavItem[] = [
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
+/** Fallback poll, used only while the live stream is down. */
 const POLL_MS = 8000;
+const COUNTER_KINDS: LiveKind[] = ["sos", "incident", "anonymous"];
 
 function isActive(pathname: string, item: NavItem) {
   return item.exact
@@ -62,27 +66,31 @@ export function AdminShell({ children }: { children: ReactNode }) {
     null,
   );
 
-  useEffect(() => {
-    let live = true;
-    let lastLoad = 0;
-    const load = () => {
-      // Background tab: slow down to once a minute rather than stopping — this
-      // poll also drives the safe-walk watchdog, which must keep running.
-      if (document.visibilityState === "hidden" && Date.now() - lastLoad < 60_000) return;
-      lastLoad = Date.now();
-      getAdminCounters()
-        .then((c) => live && setCounters(c))
-        .catch(() => {});
-    };
-    load();
-    const t = window.setInterval(load, POLL_MS);
-    document.addEventListener("visibilitychange", load);
-    return () => {
-      live = false;
-      window.clearInterval(t);
-      document.removeEventListener("visibilitychange", load);
-    };
+  const mounted = useRef(true);
+  const lastLoad = useRef(0);
+  const loadCounters = useCallback(() => {
+    lastLoad.current = Date.now();
+    return getAdminCounters()
+      .then((c) => mounted.current && setCounters(c))
+      .catch(() => {});
   }, []);
+  useEffect(() => {
+    mounted.current = true;
+    void loadCounters();
+    return () => {
+      mounted.current = false;
+    };
+  }, [loadCounters]);
+  // Pushed on every change. Fallback poll while the stream is down: a background
+  // tab slows to once a minute rather than stopping — that poll also drives the
+  // safe-walk watchdog, which must keep running.
+  useLiveUpdates({ kinds: COUNTER_KINDS }, loadCounters, {
+    fallbackMs: POLL_MS,
+    fallback: () => {
+      if (document.visibilityState === "hidden" && Date.now() - lastLoad.current < 60_000) return;
+      void loadCounters();
+    },
+  });
 
   // Close the drawer on navigation; Escape closes it; lock page scroll while open.
   useEffect(() => setOpen(false), [pathname]);

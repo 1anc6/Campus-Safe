@@ -19,6 +19,7 @@ import { assignSos, getSos, setSosStatus } from "@/backend/functions/sos";
 import type { Responder, SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
 import { formatClock, waitLabel } from "@/lib/utils";
 import { SkeletonDetail } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/admin/sos/$id")({ component: SosCase });
 
@@ -51,13 +52,13 @@ function SosCase() {
   useEffect(() => {
     load().catch((e: unknown) => setError(e instanceof Error ? e.message : "Not found"));
     void loadResponders();
-    const poll = window.setInterval(() => void load().catch(() => {}), 5000);
     const tick = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => {
-      window.clearInterval(poll);
-      window.clearInterval(tick);
-    };
+    return () => window.clearInterval(tick);
   }, [load, loadResponders]);
+  // Pushed: GPS points, status, assignment and messages on this alert; unit
+  // load for the dispatch picker. Polls every 5 s only while the stream is down.
+  useLiveUpdates({ kinds: ["sos"], id }, load, { fallbackMs: 5000 });
+  useLiveUpdates({ kinds: ["responder"] }, loadResponders, { fallbackMs: 30_000 });
 
   async function act(fn: () => Promise<unknown>, success: string) {
     setBusy(true);

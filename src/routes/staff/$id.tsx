@@ -30,6 +30,7 @@ import type { SosAlert, SosPoint, ThreadMessage } from "@/lib/types";
 import { useLiveLocation } from "@/lib/use-live-location";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 import { SkeletonCard, SkeletonDetail, SkeletonGroup } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/staff/$id")({ component: AssignedAlert });
 
@@ -69,9 +70,10 @@ function AssignedAlert() {
 
   useEffect(() => {
     load().catch(() => setError("This alert isn't assigned to you, or it no longer exists."));
-    const i = window.setInterval(() => void load().catch(() => {}), 5000);
-    return () => window.clearInterval(i);
   }, [load]);
+  // The student's GPS points, messages and status changes arrive as they happen;
+  // polls every 5 s only while the live stream is down.
+  useLiveUpdates({ kinds: ["sos"], id }, load, { fallbackMs: 5000 });
 
   const update = async (status: Action) => {
     // Resolving closes the SOS for everyone — ask for a second tap.

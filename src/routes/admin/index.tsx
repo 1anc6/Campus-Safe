@@ -49,10 +49,14 @@ import type {
 } from "@/lib/types";
 import { cn, formatClock, waitLabel } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
+import { liveStreamHealthy, useLiveUpdates } from "@/lib/use-live-updates";
+import type { LiveKind } from "@/lib/live";
 
 export const Route = createFileRoute("/admin/")({ component: Command });
 
 type Range = "today" | "week" | "month";
+
+const DASHBOARD_KINDS: LiveKind[] = ["sos", "incident", "anonymous", "responder"];
 type KindFilter = "all" | QueueItem["kind"];
 
 const KIND_FILTERS: { id: KindFilter; label: string }[] = [
@@ -126,9 +130,10 @@ function Command() {
     }
   }, [flashAndBeep]);
 
-  // Poll a tiny change fingerprint; download the full payload only when something
-  // changed, or every 30 s (queue aging moves with the clock alone). Never paused
-  // for hidden tabs: a background console must still beep on a new SOS.
+  // Fallback while the live stream is down: poll a tiny change fingerprint and
+  // download the full payload only when something changed, or every 30 s (queue
+  // aging moves with the clock alone). Never paused for hidden tabs: a
+  // background console must still beep on a new SOS.
   const poll = useCallback(async () => {
     try {
       const v = await getLiveVersion();
@@ -145,15 +150,33 @@ function Command() {
     await refresh();
   }, [refresh]);
 
+  // Pushed: any change to a case, GPS point, message or unit refreshes within a
+  // second. The fingerprint poll above runs only while the stream is down.
+  useLiveUpdates({ kinds: DASHBOARD_KINDS }, refresh, {
+    fallbackMs: 5000,
+    refreshOnVisible: false,
+    fallback: () => void poll(),
+  });
+
+  const loadErrorRef = useRef(loadError);
+  useEffect(() => {
+    loadErrorRef.current = loadError;
+  }, [loadError]);
   useEffect(() => {
     void refresh();
-    const p = window.setInterval(() => void poll(), 5000);
+    const aging = window.setInterval(() => {
+      if (!liveStreamHealthy()) return; // the fallback poll covers this
+      // Nothing changed means nothing to fetch; still reload every 30 s for queue
+      // aging, and keep retrying a failed load.
+      if (loadErrorRef.current || Date.now() - lastFullLoad.current >= 30_000) void refresh();
+      else setUpdatedAt(Date.now());
+    }, 5000);
     const t = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
-      window.clearInterval(p);
+      window.clearInterval(aging);
       window.clearInterval(t);
     };
-  }, [refresh, poll]);
+  }, [refresh]);
 
   const queue = useMemo(
     () => (live?.queue ?? []).filter((q) => kind === "all" || q.kind === kind),
