@@ -5,7 +5,7 @@ import type { UserRole } from "./campus";
  * and the `useLiveUpdates` hook (browser), and unit-tested in `live.test.ts`.
  *
  * How it fits together:
- *   1. Database triggers (migration 0012) append a row to `live_events` whenever
+ *   1. Database triggers (migration 0013) append a row to `live_events` whenever
  *      an SOS, GPS point, incident, anonymous report, thread message, campus
  *      broadcast or responder unit changes.
  *   2. `/api/live` is a Server-Sent Events stream. One loop per server instance

@@ -115,7 +115,7 @@ campus-safe/
 │   ├── 0007_safe_walks_and_campus_alerts.sql  "walk with me" + campus broadcasts
 │   ├── 0008_sos_scheduling.sql      one open SOS per student, responder semaphore count
 │   ├── 0009_view_trigger_foreign_keys.sql   foreign keys, updated_at trigger, open_cases view
-│   └── 0012_live_events.sql         change log + triggers that feed real-time updates
+│   └── 0013_live_events.sql         change log + triggers that feed real-time updates
 │
 ├── public/                          Static files served as-is (favicon, icons)
 ├── scripts/                         migrate.mjs (applies migrations), dev/build helpers
@@ -228,7 +228,7 @@ The scheduling rules live in one small, unit-tested file:
 | Timers & interrupts | `components/shared/sos-button.tsx` | 2-second hold uses a real timer; releasing early cancels it |
 | Buffering / spooling | `components/student/sos-flow.tsx` | Offline SOS is queued locally and retried with exponential backoff (4 s, 8 s, 15 s, 30 s) |
 | Event-driven I/O | `lib/use-live-updates.ts`, `routes/api/live.ts` | Screens wait for pushed change events instead of polling; polling is only the fallback |
-| Producer–consumer log | `live_events` + triggers (migration 0012), `backend/core/live.ts` | Triggers append changes; one reader per server instance fans them out to open streams |
+| Producer–consumer log | `live_events` + triggers (migration 0013), `backend/core/live.ts` | Triggers append changes; one reader per server instance fans them out to open streams |
 | Volatile vs persistent storage | PGLite (RAM) vs Neon (disk) | Why local data resets but production data doesn't |
 | Protection / access control | Roles + server checks | Like OS permission levels; passwords hashed |
 | Process creation & signals | `scripts/run.mjs` | Starts the dev server as a child process, forwards SIGINT/SIGTERM and passes on its exit code |
@@ -248,7 +248,7 @@ broadcasts) update within about a second instead of polling.
 
 ```mermaid
 flowchart LR
-  W["Any write<br/>(SOS, GPS, report, message, broadcast)"] --> T["Triggers<br/>(migration 0012)"]
+  W["Any write<br/>(SOS, GPS, report, message, broadcast)"] --> T["Triggers<br/>(migration 0013)"]
   T --> L[("live_events<br/>change log")]
   L -- "read ~1×/s per server instance" --> H["Hub<br/>backend/core/live.ts"]
   H -- "SSE /api/live<br/>only events this user may see" --> B["useLiveUpdates<br/>lib/use-live-updates.ts"]
