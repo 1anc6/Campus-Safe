@@ -10,6 +10,7 @@ import { postThread, staffSetAnonymousStatus, trackAnonymous } from "@/backend/f
 import type { ThreadMessage } from "@/lib/types";
 import { cn, formatClock } from "@/lib/utils";
 import { SkeletonList } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/admin/anonymous")({ component: AnonymousPage });
 
@@ -30,6 +31,8 @@ function AnonymousPage() {
   useEffect(() => {
     void load();
   }, [load]);
+  // New anonymous reports and status changes appear as they happen.
+  useLiveUpdates({ kinds: ["anonymous"] }, load, { fallbackMs: 30_000, minGapMs: 2000 });
 
   return (
     <div className="space-y-5 p-4 sm:p-5 lg:p-6">
@@ -93,6 +96,11 @@ function AnonymousCase({ row, onChanged }: { row: Row; onChanged: () => Promise<
   useEffect(() => {
     void loadThread().catch(() => {});
   }, [loadThread]);
+  // The reporter's replies on their tracking code appear as they arrive.
+  useLiveUpdates({ kinds: ["anonymous"], id: row.id }, loadThread, {
+    fallbackMs: 60_000,
+    minGapMs: 3000,
+  });
 
   return (
     <div className="space-y-4 border-t border-line p-4">

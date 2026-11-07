@@ -26,6 +26,7 @@ import {
 import type { Incident, Responder, ReporterView, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
 import { SkeletonDetail } from "@/components/shared/skeleton";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/admin/incidents/$id")({ component: IncidentCase });
 
@@ -45,12 +46,20 @@ function IncidentCase() {
     setViews(d.reporterViews);
   }, [id]);
 
+  const loadResponders = useCallback(
+    () =>
+      listResponders()
+        .then(setResponders)
+        .catch(() => setResponders([])),
+    [],
+  );
   useEffect(() => {
     load().catch((e: unknown) => setError(e instanceof Error ? e.message : "Not found"));
-    listResponders()
-      .then(setResponders)
-      .catch(() => setResponders([]));
-  }, [load]);
+    void loadResponders();
+  }, [load, loadResponders]);
+  // Status changes and messages from the responder or the student appear as they happen.
+  useLiveUpdates({ kinds: ["incident"], id }, load, { fallbackMs: 30_000 });
+  useLiveUpdates({ kinds: ["responder"] }, loadResponders, { fallbackMs: 60_000 });
 
   async function act(fn: () => Promise<unknown>, success: string) {
     setBusy(true);

@@ -27,6 +27,7 @@ import { directionsUrl } from "@/lib/responder";
 import { getIncident, postThread, staffSetIncidentStatus } from "@/backend/functions/reports";
 import type { Incident, ThreadMessage } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
 export const Route = createFileRoute("/staff/incidents/$id")({ component: AssignedIncident });
 
@@ -46,9 +47,10 @@ function AssignedIncident() {
 
   useEffect(() => {
     load().catch(() => setError("This report isn't assigned to you, or it no longer exists."));
-    const i = window.setInterval(() => void load().catch(() => {}), 10_000);
-    return () => window.clearInterval(i);
   }, [load]);
+  // Messages from command and status changes arrive as they happen; polls every
+  // 10 s only while the live stream is down.
+  useLiveUpdates({ kinds: ["incident"], id }, load, { fallbackMs: 10_000 });
 
   async function setStatus(status: "in_progress" | "resolved") {
     setBusy(true);

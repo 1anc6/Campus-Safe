@@ -2,7 +2,9 @@ import { Check, Info, Megaphone, TriangleAlert } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ackCampusAlert, getMyCampusAlerts, type CampusAlert } from "@/backend/functions/alerts";
 import { cn, formatClock } from "@/lib/utils";
+import { useLiveUpdates } from "@/lib/use-live-updates";
 
+/** Fallback poll, used only while the live stream is down. */
 const POLL_MS = 30_000;
 
 const LEVEL = {
@@ -58,13 +60,16 @@ export function CampusAlertBanners() {
 
   useEffect(() => {
     void load();
-    const t = window.setInterval(() => void load(), POLL_MS);
+    // A change pushed while the tab was hidden was skipped; catch up on return.
     document.addEventListener("visibilitychange", load);
-    return () => {
-      window.clearInterval(t);
-      document.removeEventListener("visibilitychange", load);
-    };
+    return () => document.removeEventListener("visibilitychange", load);
   }, [load]);
+  // A new or ended broadcast is pushed to every open student page at once.
+  useLiveUpdates({ kinds: ["alert"] }, load, {
+    fallbackMs: POLL_MS,
+    minGapMs: 2000,
+    refreshOnVisible: false,
+  });
 
   if (alerts.length === 0) return null;
 
