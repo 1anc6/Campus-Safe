@@ -16,7 +16,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/roles.test.ts src/lib/access.test.ts src/lib/scheduling.test.ts src/lib/walk-route.test.ts src/lib/live.test.ts src/lib/push-messages.test.ts src/backend/core/web-push.test.ts",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "a11y": "node --env-file-if-exists=.env.local.example scripts/a11y-audit.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
@@ -80,6 +81,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.2.0",
+    "axe-core": "^4.14.0",
     "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",

@@ -354,7 +354,6 @@ function SharingBanner({
   const ok = sharing === "live" || sharing === "starting";
   return (
     <div
-      role="status"
       className={cn(
         "neu-well mx-auto mt-3 flex max-w-md items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-left text-xs",
         ok ? "text-ok" : "text-warn",
@@ -362,7 +361,9 @@ function SharingBanner({
     >
       {ok ? <Crosshair className="size-4 shrink-0" /> : <MapPinOff className="size-4 shrink-0" />}
       <span>
-        {SHARING_COPY[sharing]}
+        {/* Only the sharing state is a live region: the "updated 3s ago" tick
+            would otherwise be re-read every second. */}
+        <span role="status">{SHARING_COPY[sharing]}</span>
         {sharing === "live" && accuracy != null && ` · ±${Math.round(accuracy)} m`}
         {sentAt && ` · updated ${waitLabel(new Date(sentAt).toISOString(), now)} ago`}
       </span>

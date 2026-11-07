@@ -80,6 +80,7 @@ export function StudentBell({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
+          aria-label="Updates on your reports"
           side={side}
           align="end"
           sideOffset={8}

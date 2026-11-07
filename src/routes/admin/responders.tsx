@@ -32,7 +32,7 @@ function RespondersPage() {
         subtitle={
           <>
             Units command can dispatch. Give a person the responder role on the{" "}
-            <Link to="/admin/users" className="text-neon hover:underline">
+            <Link to="/admin/users" className="text-neon underline underline-offset-2">
               Users
             </Link>{" "}
             page to add them here.

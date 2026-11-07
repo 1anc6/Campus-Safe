@@ -39,7 +39,9 @@ export function Wordmark({
     <Link
       to={to}
       className="flex min-w-0 items-center gap-2.5 py-1"
-      aria-label={`${BRAND.name} home`}
+      // Icon-only: name it. With the wordmark: the visible words plus a hidden
+      // "home", so the name contains what is on screen (WCAG 2.5.3).
+      aria-label={compact ? `${BRAND.name} home` : undefined}
     >
       <BrandMark size={compact ? "sm" : "md"} />
       {!compact && (
@@ -50,6 +52,7 @@ export function Wordmark({
           {caption && (
             <span className="neu-caps block truncate text-[10px] tracking-[0.18em]">{caption}</span>
           )}
+          <span className="sr-only"> home</span>
         </span>
       )}
     </Link>

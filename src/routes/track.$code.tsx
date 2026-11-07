@@ -43,9 +43,9 @@ function TrackPage() {
   return (
     <AdaptiveShell anon>
       <p className="text-xs font-semibold uppercase tracking-wider text-violet">Anonymous track</p>
-      <p className="mt-2 break-all font-mono text-xl font-semibold tracking-wide text-neon">
+      <h1 className="mt-2 break-all font-mono text-xl font-semibold tracking-wide text-neon">
         {code.toUpperCase()}
-      </p>
+      </h1>
       {error && (
         <p className="mt-4 text-sm text-sos" role="alert">
           {error}
@@ -63,7 +63,7 @@ function TrackPage() {
             <SeverityChip value={report.severity} />
             <StatusPill status={report.status} />
           </div>
-          <h1 className="font-display text-2xl font-semibold">{report.categoryName}</h1>
+          <h2 className="font-display text-2xl font-semibold">{report.categoryName}</h2>
           <p className="text-sm text-muted">
             {report.locationName} · {report.timeRange} · {report.role}
           </p>

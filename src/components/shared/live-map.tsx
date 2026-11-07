@@ -26,6 +26,14 @@ function themeColor(name: string, fallback: string): string {
   return v || fallback;
 }
 
+/** Map moves jump instead of flying when the reader asked for reduced motion. */
+function motion(): { animate: boolean } {
+  const reduce =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  return { animate: !reduce };
+}
+
 export function LiveMap({
   markers,
   trail,
@@ -115,7 +123,7 @@ export function LiveMap({
   useEffect(() => {
     if (!recenter || !mapRef.current) return;
     lastFocus.current = null;
-    mapRef.current.flyToBounds(CAMPUS.bounds, { padding: [16, 16], duration: 0.6 });
+    mapRef.current.flyToBounds(CAMPUS.bounds, { padding: [16, 16], duration: 0.6, ...motion() });
   }, [recenter]);
 
   function draw(L: typeof import("leaflet")) {
@@ -194,14 +202,19 @@ export function LiveMap({
       // user-supplied names and must never be interpreted as HTML.
       const pin = document.createElement("div");
       pin.className = cls;
-      pin.setAttribute("aria-label", m.label ?? m.kind);
       const tip = document.createElement("span");
       tip.textContent = m.label ?? m.kind;
-      L.marker([m.lat, m.lng], {
+      const marker = L.marker([m.lat, m.lng], {
         icon:
           m.kind === "dest"
             ? L.divIcon({ className: "", html: pin, iconSize: [28, 36], iconAnchor: [14, 34] })
-            : L.divIcon({ className: "", html: pin, iconSize: [18, 18], iconAnchor: [9, 9] }),
+            : // 24px hit area around the 18px dot (WCAG 2.5.8 target size).
+              L.divIcon({
+                className: "marker-hit",
+                html: pin,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+              }),
         zIndexOffset: m.kind === "sos" || m.kind === "self" ? 1000 : m.kind === "dest" ? 900 : 0,
       })
         .addTo(layer)
@@ -211,17 +224,21 @@ export function LiveMap({
           permanent: m.labelAlways,
           offset: m.kind === "dest" ? [0, -30] : [0, 0],
         });
+      // Leaflet makes the icon a focusable role="button"; name that element
+      // itself (a label on the inner dot is not used for its name).
+      marker.getElement()?.setAttribute("aria-label", m.label ?? m.kind);
     }
 
     const fitKey = fit && fit.length ? fit.map((p) => `${p.lat},${p.lng}`).join("|") : null;
     if (fit && fit.length && fitKey !== lastFit.current) {
       lastFit.current = fitKey;
       lastFocus.current = null;
-      if (fit.length === 1) map.flyTo([fit[0]!.lat, fit[0]!.lng], 18, { duration: 0.6 });
+      if (fit.length === 1)
+        map.flyTo([fit[0]!.lat, fit[0]!.lng], 18, { duration: 0.6, ...motion() });
       else
         map.flyToBounds(
           fit.map((p) => [p.lat, p.lng] as [number, number]),
-          { padding: [56, 56], maxZoom: 18, duration: 0.6 },
+          { padding: [56, 56], maxZoom: 18, duration: 0.6, ...motion() },
         );
       return;
     }
@@ -232,7 +249,10 @@ export function LiveMap({
     // user who is panning around the map.
     const key = focus ? `${focus.lat},${focus.lng}` : null;
     if (focus && key !== lastFocus.current) {
-      map.flyTo([focus.lat, focus.lng], Math.max(map.getZoom(), 18), { duration: 0.6 });
+      map.flyTo([focus.lat, focus.lng], Math.max(map.getZoom(), 18), {
+        duration: 0.6,
+        ...motion(),
+      });
     }
     lastFocus.current = key;
   }

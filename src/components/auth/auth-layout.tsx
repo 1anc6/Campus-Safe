@@ -54,9 +54,9 @@ export function AuthLayout({
       </header>
 
       {/* Desktop chrome */}
-      <div className="absolute right-4 top-[max(1rem,var(--safe-top))] z-20 hidden lg:block">
+      <header className="absolute right-4 top-[max(1rem,var(--safe-top))] z-20 hidden lg:block">
         <ThemeToggle />
-      </div>
+      </header>
 
       <div className="relative z-10 flex flex-1 flex-col lg:grid lg:w-full lg:max-w-5xl lg:flex-none lg:grid-cols-2 lg:items-center lg:gap-10">
         <section className="hidden lg:block" aria-hidden="true">
@@ -89,9 +89,9 @@ export function AuthLayout({
           </ul>
         </section>
 
-        <section className="mx-3 mb-[max(0.75rem,var(--safe-bottom))] flex-1 rounded-[28px] bg-[var(--auth-sheet)] px-5 shadow-[var(--neu-raised)] lg:mb-0 pb-[max(1.5rem,var(--safe-bottom))] pt-8 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[32px] lg:p-9 lg:shadow-[var(--neu-raised)]">
+        <main className="mx-3 mb-[max(0.75rem,var(--safe-bottom))] flex-1 rounded-[28px] bg-[var(--auth-sheet)] px-5 shadow-[var(--neu-raised)] lg:mb-0 pb-[max(1.5rem,var(--safe-bottom))] pt-8 sm:px-8 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-[32px] lg:p-9 lg:shadow-[var(--neu-raised)]">
           <div className="mx-auto w-full max-w-md">{children}</div>
-        </section>
+        </main>
       </div>
     </div>
   );

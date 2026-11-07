@@ -22,10 +22,13 @@
   --color-line: rgb(132 156 194 / 0.24);
   --color-line-strong: rgb(116 140 180 / 0.42);
   --color-fg: #1f2c44;
-  --color-muted: #4f5f79;
-  --color-dim: #586885;
+  /* Signal colours (muted, neon, violet, sos, ok, warn, high) are deep enough to
+     clear 4.5:1 as small text on a 15% tint of themselves (the chip recipe), not
+     only on the bare surface. Checked by scripts/a11y-audit.mjs. */
+  --color-muted: #48566e;
+  --color-dim: #536380;
   /* Accent for text/icons (readable on the surface) vs the blue fill. */
-  --color-neon: #1f5bc7;
+  --color-neon: #1d55ba;
   --color-neon-dim: rgb(45 106 222 / 0.14);
   --color-accent: #2d6ade;
   /* Text on the blue accent fill. */
@@ -33,15 +36,15 @@
   /* Text on solid status fills (ok, warn): white on the deep light-theme fills,
      dark ink on the bright dark-theme fills (both clear 4.5:1). */
   --color-ink: #ffffff;
-  --color-violet: #5b46c9;
-  --color-sos: #c42239;
-  --color-ok: #00775f;
-  --color-warn: #965800;
-  --color-high: #b43b0a;
-  --color-p1: #c42239;
-  --color-p2: #b43b0a;
-  --color-p3: #965800;
-  --color-p4: #00775f;
+  --color-violet: #5944c4;
+  --color-sos: #ae1f33;
+  --color-ok: #006652;
+  --color-warn: #844d00;
+  --color-high: #a03509;
+  --color-p1: #ae1f33;
+  --color-p2: #a03509;
+  --color-p3: #844d00;
+  --color-p4: #006652;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Manrope", "Inter", ui-sans-serif, sans-serif;
@@ -70,7 +73,8 @@
   color-scheme: light;
   --neon-glow: rgb(45 106 222 / 0.32);
   --sos-glow: rgb(212 44 67 / 0.32);
-  --sos-fill: #e02f47;
+  /* White text sits on this fill (badges, banners): #dd2d45 keeps it at 4.6:1. */
+  --sos-fill: #dd2d45;
   --sos-fill-hi: #ff7f8c;
   --scrollbar: rgb(79 95 121 / 0.22);
   /* Non-SOS map pins (incidents, units, "you are here"): must never read as SOS red. */
@@ -132,20 +136,20 @@
   --color-line: rgb(150 170 205 / 0.12);
   --color-line-strong: rgb(150 170 205 / 0.22);
   --color-fg: #e5ebf4;
-  --color-muted: #aab5c7;
+  --color-muted: #aeb9ca;
   --color-dim: #95a1b5;
   --color-neon: #8db2ff;
   --color-neon-dim: rgb(90 140 245 / 0.18);
   --color-accent: #3570e0;
   --color-on-accent: #ffffff;
   --color-ink: #10202a;
-  --color-violet: #ab9dff;
-  --color-sos: #ff6b78;
+  --color-violet: #b0a3ff;
+  --color-sos: #ff8590;
   --color-ok: #5fd3a5;
   --color-warn: #f0b75e;
-  --color-high: #f68d5a;
-  --color-p1: #ff6b78;
-  --color-p2: #f68d5a;
+  --color-high: #f79161;
+  --color-p1: #ff8590;
+  --color-p2: #f79161;
   --color-p3: #f0b75e;
   --color-p4: #5fd3a5;
   --neon-glow: rgb(70 125 240 / 0.35);
@@ -172,7 +176,7 @@
 
 /* Anonymous flow: one class flips the accent to violet in either theme. */
 html.anon {
-  --color-neon: #5b46c9;
+  --color-neon: #5944c4;
   --color-accent: #5b46c9;
   --accent-fill: linear-gradient(145deg, #6854d6, #5440c0);
   --accent-lift: 6px 6px 14px rgb(91 70 201 / 0.3), -5px -5px 12px var(--neu-light);
@@ -258,8 +262,10 @@ html.anon[data-theme="dark"] {
     background: var(--color-neon-dim);
   }
 
-  /* One visible keyboard focus ring across the app (mouse clicks stay ring-free). */
-  :where(a, button, [role="button"], [role="switch"], [role="tab"], summary, select):focus-visible {
+  /* One visible keyboard focus ring across the app (mouse clicks stay ring-free).
+     Covers every focusable thing (options, radios, menu items, map, scroll
+     areas), not only links and buttons; text fields keep their own focus halo. */
+  :where(*):focus-visible {
     outline: 2px solid var(--color-neon);
     outline-offset: 2px;
   }
@@ -385,6 +391,12 @@ html.anon[data-theme="dark"] {
       6px 8px 34px var(--sos-glow),
       0 0 0 7px rgb(236 59 82 / 0.1);
   }
+}
+
+/* Leaflet icon box: a 24px target with the dot centred in it. */
+.marker-hit {
+  display: grid;
+  place-items: center;
 }
 
 .marker-pulse {
@@ -734,8 +746,10 @@ html.sos-flash .bg-chrome {
   .input::placeholder {
     color: var(--color-dim);
   }
+  /* Full-strength Signal Blue edge so focus clears 3:1 against the surface
+     (WCAG 1.4.11); the soft halo alone is too faint to find a field by. */
   .input:focus {
-    border-color: color-mix(in srgb, var(--color-neon) 55%, transparent);
+    border-color: var(--color-neon);
     box-shadow:
       var(--neu-inset-sm),
       0 0 0 3px var(--color-neon-dim);

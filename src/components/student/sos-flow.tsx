@@ -221,6 +221,14 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
     collector.current = null;
     setOverlay(null);
     setButtonKey((k) => k + 1);
+    // Give keyboard and screen-reader users their place back: the visible SOS
+    // button (re-mounted by the key change) takes focus again.
+    window.requestAnimationFrame(() => {
+      const visible = [...document.querySelectorAll<HTMLButtonElement>(".sos-btn")].find(
+        (b) => b.offsetParent !== null,
+      );
+      visible?.focus();
+    });
   }, []);
 
   useEffect(() => () => collector.current?.stop(), []);
@@ -259,6 +267,17 @@ export function SosFlowProvider({ children }: { children: ReactNode }) {
           role="alertdialog"
           aria-modal="true"
           aria-label={overlay === "countdown" ? "SOS countdown" : "Sending SOS"}
+          onKeyDown={(e) => {
+            if (overlay !== "countdown") return;
+            // Escape cancels; Tab stays on the one control (a modal keeps focus inside).
+            if (e.key === "Escape") {
+              e.preventDefault();
+              disarm();
+            } else if (e.key === "Tab") {
+              e.preventDefault();
+              e.currentTarget.querySelector<HTMLButtonElement>("button")?.focus();
+            }
+          }}
         >
           {overlay === "countdown" ? (
             <div className="flex w-full max-w-xs flex-col items-center text-center">
@@ -405,7 +424,9 @@ export function SosTrigger({
       className={className}
       onArmed={arm}
       onReleasedEarly={() =>
-        toast("Hold SOS for 2 seconds to send an alert", { id: "sos-hold-hint" })
+        toast("Hold SOS for 2 seconds, or tap it again, to send an alert", {
+          id: "sos-hold-hint",
+        })
       }
     />
   );

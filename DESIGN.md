@@ -12,24 +12,24 @@ colors:
   neu-light: "rgb(255 255 255 / 0.92)"
   neu-track: "rgb(146 168 202 / 0.32)"
   fg: "#1f2c44"
-  muted: "#4f5f79"
-  dim: "#586885"
+  muted: "#48566e"
+  dim: "#536380"
   accent: "#2d6ade"
-  neon: "#1f5bc7"
+  neon: "#1d55ba"
   neon-dim: "rgb(45 106 222 / 0.14)"
   on-accent: "#ffffff"
   ink: "#062a33"
-  sos: "#c42239"
-  sos-fill: "#ec3b52"
+  sos: "#ae1f33"
+  sos-fill: "#dd2d45"
   sos-fill-hi: "#ff7f8c"
-  violet: "#5b46c9"
-  ok: "#00775f"
-  warn: "#965800"
-  high: "#b43b0a"
-  p1: "#c42239"
-  p2: "#b43b0a"
-  p3: "#965800"
-  p4: "#00775f"
+  violet: "#5944c4"
+  ok: "#006652"
+  warn: "#844d00"
+  high: "#a03509"
+  p1: "#ae1f33"
+  p2: "#a03509"
+  p3: "#844d00"
+  p4: "#006652"
 typography:
   display:
     fontFamily: "Manrope, Inter, ui-sans-serif, sans-serif"
@@ -158,13 +158,13 @@ components:
   choice-tile-chosen:
     textColor: "{colors.neon}"
   chip-p1:
-    backgroundColor: "rgb(196 34 57 / 0.15)"
+    backgroundColor: "rgb(174 31 51 / 0.15)"
     textColor: "{colors.p1}"
     typography: "{typography.label}"
     rounded: "{rounded.full}"
     padding: "4px 10px"
   chip-anonymous:
-    backgroundColor: "rgb(91 70 201 / 0.15)"
+    backgroundColor: "rgb(89 68 196 / 0.15)"
     textColor: "{colors.violet}"
     rounded: "{rounded.full}"
     padding: "2px 0"
@@ -203,15 +203,15 @@ A single cool soft-blue surface with one blue action colour and a tightly bound 
 
 ### Secondary
 
-- **Alarm Red** (sos, sos-fill, sos-fill-hi): SOS and P1 only. `sos` is the readable red for text and chips (dark `#ff6b78`); `sos-fill` and `sos-fill-hi` (dark `#f2475a`, `#ff8994`) form the radial gradient of the SOS sphere and the live-alert map marker.
+- **Alarm Red** (sos, sos-fill, sos-fill-hi): SOS and P1 only. `sos` is the readable red for text and chips (dark `#ff8590`); `sos-fill` and `sos-fill-hi` (dark `#dc3446`, `#ff8994`) form the radial gradient of the SOS sphere and the live-alert map marker.
 
 ### Tertiary
 
-- **Anonymous Violet** (violet): anonymous reports, the ANON kind chip, "under review" and "received" status, and the whole accent while the anonymous flow is active. Dark value `#ab9dff`.
+- **Anonymous Violet** (violet): anonymous reports, the ANON kind chip, "under review" and "received" status, and the whole accent while the anonymous flow is active. Dark value `#b0a3ff`.
 
 ### Status and severity
 
-- **Resolved Green** (ok / p4), **Caution Amber** (warn / p3), **Escalation Orange** (high / p2), **Alarm Red** (p1). Severity P1 to P4 maps one-to-one to red, orange, amber, green. Each is used as text on a 15% tint of itself. Dark values: ok `#5fd3a5`, warn `#f0b75e`, high `#f68d5a`.
+- **Resolved Green** (ok / p4), **Caution Amber** (warn / p3), **Escalation Orange** (high / p2), **Alarm Red** (p1). Severity P1 to P4 maps one-to-one to red, orange, amber, green. Each is used as text on a 15% tint of itself. Dark values: ok `#5fd3a5`, warn `#f0b75e`, high `#f79161`.
 - **Deep Ink** (ink): text on solid ok and warn fills (dark `#10202a`).
 
 ### Neutral
@@ -222,7 +222,7 @@ A single cool soft-blue surface with one blue action colour and a tightly bound 
 - **Track** (neu-track): the groove under progress rings, the SOS hold ring and toggles.
 - **Panel 2 / Panel 3** (panel-2, panel-3): faint cool tints for hover on flat rows and nav items.
 - **Hairline** (line) and **Strong Hairline** (line-strong): dividers inside cards and the activity timeline connector.
-- **Slate Ink** (fg): headings and body text (dark `#e5ebf4`). **Slate** (muted): secondary text and field labels (dark `#aab5c7`). **Dim Slate** (dim): timestamps, placeholders, tertiary text (dark `#95a1b5`).
+- **Slate Ink** (fg): headings and body text (dark `#e5ebf4`). **Slate** (muted): secondary text and field labels (dark `#aeb9ca`). **Dim Slate** (dim): timestamps, placeholders, tertiary text (dark `#95a1b5`).
 
 ### Charts
 
@@ -230,7 +230,9 @@ Recharts reads its own palette that mirrors the tokens: the accent blue for volu
 
 ### Named Rules
 
-**The Dim Floor Rule.** `dim` is the lightest text colour in the system and it passes WCAG AA for small text on the surface (4.7:1 on `#e4ecf7` in light, 5.4:1 on `#252c38` in dark). Do not introduce a lighter grey for text.
+**The Tinted Chip Rule.** Every signal colour (muted, neon, violet, sos, ok, warn, high and their dark values) clears 4.5:1 as small text on a 15% tint of itself over the surface, not only on the bare surface. Check a new or changed colour with `npm run a11y` (see `docs/ACCESSIBILITY.md`). White text on `sos-fill` clears 4.5:1 in both themes.
+
+**The Dim Floor Rule.** `dim` is the lightest text colour in the system and it passes WCAG AA for small text on the surface (5.1:1 on `#e4ecf7` in light, 5.4:1 on `#252c38` in dark) and on the faint Panel 2 row tint (4.6:1). Do not introduce a lighter grey for text.
 
 **The White-On-Blue Rule.** Text on the blue accent fill is `on-accent` white in both themes, never ink.
 
@@ -313,11 +315,11 @@ Domed, tactile, few.
 - **Primary (`.btn-neon`):** the convex Command Blue fill, white bold text with slight tracking, the accent lift. Hover brightens (filter 1.06). On `:active` it sinks: scale 0.98 and an inner shadow replaces the lift. Disabled drops to 55% opacity with a wait cursor.
 - **Ghost (`.btn-ghost`):** a raised-xs pad of the surface with Slate Ink semibold text. Hover rises to raised-small and turns the label Signal Blue; `:active` presses to inset small.
 - **Auth (`.btn-auth`):** the primary recipe at 48px tall and 0.9375rem.
-- **Focus:** the global keyboard ring (2px Signal Blue outline, 2px offset); mouse clicks stay ring-free.
+- **Focus:** the global keyboard ring (2px Signal Blue outline, 2px offset) on every focusable element; mouse clicks stay ring-free.
 
 ### SOS (signature)
 
-A red sphere (radial gradient from sos-fill-hi at 34% 28% to sos-fill) sitting in a raised dish of the surface. Holding fills a conic progress ring in the dish's pressed groove from the Track colour to sos-fill. Three sizes: hero (176px sphere in a 200px dish, 8px groove, idle glow pulse), phone tab bar (72px in an 84px raised dish, 5px groove), desktop rail (44px in a 56px **pressed** dish, 4px groove, no pulse, still tight lift). Presses to scale 0.96. Besides small live-status dots, live map markers and skeleton shimmer, it is the only element allowed to animate continuously.
+A red sphere (radial gradient from sos-fill-hi at 34% 28% to sos-fill) sitting in a raised dish of the surface. Holding fills a conic progress ring in the dish's pressed groove from the Track colour to sos-fill. Three sizes: hero (176px sphere in a 200px dish, 8px groove, idle glow pulse), phone tab bar (72px in an 84px raised dish, 5px groove), desktop rail (44px in a 56px **pressed** dish, 4px groove, no pulse, still tight lift). Presses to scale 0.96. For people who cannot hold a press (keyboard taps, switch access, a screen reader's double-tap), a second press within 5 seconds of a short one also starts the countdown; the hint toast says so and a live region announces each state. Besides small live-status dots, live map markers and skeleton shimmer, it is the only element allowed to animate continuously.
 
 ### Chips
 
@@ -338,7 +340,7 @@ A red sphere (radial gradient from sos-fill-hi at 34% 28% to sos-fill) sitting i
 ### Inputs / Fields
 
 - **Style:** pressed into the surface (inset small), 14px corners, 44px tall, a transparent 1px border reserved for focus; placeholder in Dim Slate; Signal Blue caret.
-- **Focus:** the border takes 55% Signal Blue and a 3px neon-dim halo joins the inset.
+- **Focus:** the border turns full Signal Blue and a 3px neon-dim halo joins the inset.
 - **Labels:** 0.75rem semibold Slate, 7px above the field.
 
 ### Dropdowns (`NeuSelect`)

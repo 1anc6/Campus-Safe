@@ -180,18 +180,11 @@ export function ResponderPicker({
               )}
             >
               {r.name}
-              <span
-                className={cn("ml-1.5 font-normal", on ? "text-panel/70" : UNIT_STATUS[r.status])}
-              >
+              <span className={cn("ml-1.5 font-normal", on ? "text-muted" : UNIT_STATUS[r.status])}>
                 · {r.unit}
               </span>
               {forSos && (
-                <span
-                  className={cn(
-                    "ml-1.5 font-normal tabular-nums",
-                    on ? "text-panel/70" : "text-muted",
-                  )}
-                >
+                <span className="ml-1.5 font-normal tabular-nums text-muted">
                   {r.activeSos}/{MAX_ACTIVE_SOS_PER_RESPONDER}
                 </span>
               )}
